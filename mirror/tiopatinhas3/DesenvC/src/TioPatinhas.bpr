@@ -12,7 +12,7 @@
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) UMain.dfm"/>
-    <LIBFILES value=""/>
+    <LIBFILES value="CapturaWebCam.lib"/>
     <LIBRARIES value="vcldb.lib bdertl.lib dbrtl.lib vclx.lib vcl.lib rtl.lib"/>
     <SPARELIBS value="rtl.lib vcl.lib vclx.lib dbrtl.lib bdertl.lib vcldb.lib"/>
     <PACKAGES value="rtl.bpi vcl.bpi vclx.bpi vcljpg.bpi dsnap.bpi dbrtl.bpi vcldb.bpi 
@@ -66,6 +66,7 @@
       <FILE FILENAME="UCBitmap.cpp" FORMNAME="" UNITNAME="UCBitmap.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="UZoom.cpp" FORMNAME="" UNITNAME="UZoom.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="UGeral.cpp" FORMNAME="" UNITNAME="UGeral" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="CapturaWebCam.lib" FORMNAME="" UNITNAME="CapturaWebCam.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

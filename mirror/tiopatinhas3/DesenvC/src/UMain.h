@@ -18,8 +18,13 @@
 #include "UTioPatinhas.h"
 #include "UZoom.h"
 #include "UAuxTioPatinhas.h"
+#include <MPlayer.hpp>
 
 //---------------------------------------------------------------------------
+
+extern "C" __declspec(dllexport)bool IniciaCaptura(HWND win, int placa, int channel, int width, int height);
+extern "C" __declspec(dllexport)void FechaCaptura();
+extern "C" __declspec(dllexport)int Captura(byte **vetor);
 
 class TMain : public TForm
 {
@@ -29,8 +34,7 @@ __published:	// IDE-managed Components
   TFileListBox *flb1;
   TPanel *Panel;
   TImage *imgProcessada;
-  TPanel *Panel1;
-  TImage *imgOriginal;
+  TPanel *pnlCaptura;
   TPanel *Panel2;
   TImage *imgTemp;
   TStatusBar *StatusBar1;
@@ -39,13 +43,20 @@ __published:	// IDE-managed Components
   TTabSheet *tsLog;
   TMemo *mmLog;
   TButton *btReconheceCedula;
+  TButton *btIniciarCaptura;
+  TEdit *edPlaca;
+  TEdit *edCanal;
+  TButton *btCapturar;
+  TCheckBox *cbTocaSom;
+  TMediaPlayer *MediaPlayer;
   void __fastcall btAtualizaClick(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall ZoomImagem(TObject *Sender);
-  void __fastcall btAtualizaOriginalClick(TObject *Sender);
   void __fastcall btMedia2Click(TObject *Sender);
   void __fastcall btReconheceCedulaClick(TObject *Sender);
   void __fastcall flb1Click(TObject *Sender);
+  void __fastcall btIniciarCapturaClick(TObject *Sender);
+  void __fastcall btCapturarClick(TObject *Sender);
 private:
   double PeriodoContador;
   void __fastcall Zoom2(_Bitmap *Bitmap);
@@ -66,7 +77,9 @@ private:
   #undef X
   //---------------------------------------------------------------------------
   void CarregaParamsReconheceCedula(TParamsRC &ParamsRC);
+  void TocaSom(int ValorCedula);
 public:		// User declarations
+  bool AbriuCaptura;
   __fastcall TMain(TComponent* Owner);
 };
 

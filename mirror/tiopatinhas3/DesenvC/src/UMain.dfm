@@ -1,6 +1,6 @@
 object Main: TMain
-  Left = -9
-  Top = 87
+  Left = 148
+  Top = 76
   Width = 1292
   Height = 793
   HorzScrollBar.Smooth = True
@@ -63,25 +63,16 @@ object Main: TMain
       OnClick = ZoomImagem
     end
   end
-  object Panel1: TPanel
+  object pnlCaptura: TPanel
     Left = 12
     Top = 12
     Width = 333
     Height = 253
     TabOrder = 4
-    object imgOriginal: TImage
-      Left = 4
-      Top = 4
-      Width = 320
-      Height = 240
-      Proportional = True
-      Stretch = True
-      OnClick = ZoomImagem
-    end
   end
   object Panel2: TPanel
     Left = 12
-    Top = 268
+    Top = 340
     Width = 333
     Height = 253
     TabOrder = 5
@@ -149,5 +140,56 @@ object Main: TMain
     Caption = 'Reconhece Cedula'
     TabOrder = 8
     OnClick = btReconheceCedulaClick
+  end
+  object btIniciarCaptura: TButton
+    Left = 24
+    Top = 272
+    Width = 89
+    Height = 25
+    Caption = 'Iniciar Captura'
+    TabOrder = 9
+    OnClick = btIniciarCapturaClick
+  end
+  object edPlaca: TEdit
+    Left = 128
+    Top = 272
+    Width = 25
+    Height = 21
+    TabOrder = 10
+    Text = '1'
+  end
+  object edCanal: TEdit
+    Left = 160
+    Top = 272
+    Width = 25
+    Height = 21
+    TabOrder = 11
+    Text = '0'
+  end
+  object btCapturar: TButton
+    Left = 216
+    Top = 272
+    Width = 75
+    Height = 25
+    Caption = 'Capturar'
+    TabOrder = 12
+    OnClick = btCapturarClick
+  end
+  object cbTocaSom: TCheckBox
+    Left = 912
+    Top = 520
+    Width = 97
+    Height = 17
+    Caption = 'toca som'
+    TabOrder = 13
+  end
+  object MediaPlayer: TMediaPlayer
+    Left = 600
+    Top = 152
+    Width = 29
+    Height = 30
+    VisibleButtons = [btPlay]
+    Visible = False
+    TabOrder = 14
   end
 end

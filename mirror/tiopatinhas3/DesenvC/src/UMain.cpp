@@ -37,6 +37,7 @@ void __fastcall TMain::FormCreate(TObject *Sender)
   AcertaEstiloComponentes();
   PreparaContadorTempo();
   WindowState=wsMaximized;
+  AbriuCaptura=false;
 }
 //---------------------------------------------------------------------------
 
@@ -215,12 +216,6 @@ void __fastcall TMain::ZoomImagem(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TMain::btAtualizaOriginalClick(TObject *Sender)
-{
-  imgOriginal->Picture->Bitmap->Assign(imgTemp->Picture->Bitmap);  
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TMain::Status(AnsiString Texto, int Indice)
 {
   StatusBar1->Panels->Items[Indice]->Text=Texto;
@@ -282,6 +277,8 @@ void __fastcall TMain::btReconheceCedulaClick(TObject *Sender)
   {
     Status("Reconhece Cédula: "+FormatFloat("###,##0.00", (fim-comeco)*PeriodoContador)+
           " milisegundos, Cédula: R$ "+IntToStr(ParamsRC.ParamsAI.ValorCedula));
+    if (cbTocaSom->Checked)
+      TocaSom(ParamsRC.ParamsAI.ValorCedula);
   }
   else
     Status("Não achou tarja");
@@ -292,10 +289,56 @@ void __fastcall TMain::flb1Click(TObject *Sender)
 {
   _Bitmap *Bitmap=new _Bitmap;
   Bitmap->LoadFromFile(flb1->FileName);
-  imgOriginal->Picture->Bitmap->Assign(Bitmap);
   imgProcessada->Picture->Bitmap->Assign(Bitmap);
   imgTemp->Picture->Bitmap->Assign(Bitmap);
   delete Bitmap;
 }
+//---------------------------------------------------------------------------
+
+void __fastcall TMain::btIniciarCapturaClick(TObject *Sender)
+{
+  AbriuCaptura = IniciaCaptura(pnlCaptura->Handle, edPlaca->Text.ToInt(), edCanal->Text.ToInt(), 320, 240);
+  if (AbriuCaptura)
+    Status("Abriu Captura");
+  else
+    Status("erro ao abrir a captura");  
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMain::btCapturarClick(TObject *Sender)
+{
+  _Bitmap *Bitmap=new _Bitmap;
+  int y, larg, alt;
+  int ImageSize, SizeCaptured;
+  byte *vetor, *v2;
+  larg=pnlCaptura->Width;
+  alt=pnlCaptura->Height;
+  Bitmap->Width=larg;
+  Bitmap->Height=alt;
+  SizeCaptured=Captura(&vetor);
+  ImageSize=sizeof(BITMAPINFOHEADER)+larg*alt*4;
+  Bitmap->PixelFormat=pf32bit;
+  v2=vetor+sizeof(BITMAPINFOHEADER);
+  Status(IntToStr(SizeCaptured)+" - "+IntToStr(ImageSize));
+  //if (SizeCaptured == ImageSize)
+  {
+    for (y=alt-1; y>=0; y--)
+      memcpy(Bitmap->ScanLine[alt-1-y], &v2[y*(larg*4+76)], larg*4);
+    imgTemp->Picture->Bitmap->Assign(Bitmap);
+    imgProcessada->Picture->Bitmap->Assign(Bitmap);
+    btReconheceCedulaClick(this);
+  }
+  //else
+  //  Status("Erro ao capturar "+IntToStr(SizeCaptured)+" - "+IntToStr(ImageSize));
+  delete Bitmap;
+}
+//---------------------------------------------------------------------------
+
+void TMain::TocaSom(int ValorCedula)
+{
+  MediaPlayer->FileName=ExtractFilePath(Application->ExeName)+FormatFloat("000", ValorCedula)+".wav";
+  MediaPlayer->Open();
+  MediaPlayer->Play();
+}     
 //---------------------------------------------------------------------------
 
