@@ -16,6 +16,7 @@ void PreparaSelecionaTarja(TParamsABT &ParamsABT);
 void AnalizaIdentificador(TParamsAI &ParamsAI);
 byte MediaFaixa(TParamsAI &ParamsAI);
 void Identifica(TParamsAI &ParamsAI);
-float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim);
+float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim,
+                                                                        int  &MediaLarguras);
 
 #endif

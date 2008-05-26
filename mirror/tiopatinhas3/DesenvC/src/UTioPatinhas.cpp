@@ -135,19 +135,23 @@ void AnalizaBordasTarja(TParamsABT &ParamsABT)
   ParamsABT.ConjuntoMeioBordas=new TConjuntoMeioBordas(NumColunas);
   int dif;
   TVectorBorda *BordasTemp;
+  TBorda *BordaEnc, *BordaEmb;
   TMeioBordas MeioBordasTemp;                        
   Cor **ImgDest=ParamsABT.BImgDest->PMCor;
   for (x=0; x<NumColunas; x++)
   {
     BordasTemp=ParamsABT.BordasColunas->Bordas[x];
+    //percorre todas as bordas da coluna
     for (n=1; n<BordasTemp->size(); n++)
     {
-      dif=(*BordasTemp)[n].Y-(*BordasTemp)[n-1].Y;
-      if (    ((*BordasTemp)[n].TipoBorda==BORDA_ESCURO_CLARO) &&
-              ((*BordasTemp)[n-1].TipoBorda==BORDA_CLARO_ESCURO) &&
+      BordaEnc=&(*BordasTemp)[n-1];
+      BordaEmb=&(*BordasTemp)[n];
+      dif=BordaEmb->Y-BordaEnc->Y;
+      if (    (BordaEmb->TipoBorda==BORDA_ESCURO_CLARO) &&
+              (BordaEnc->TipoBorda==BORDA_CLARO_ESCURO) &&
               (dif>=ParamsABT.AltMinTarja) && (dif<=ParamsABT.AltMaxTarja) )
       {
-        MeioBordasTemp.Inicializa((*BordasTemp)[n-1].Y, (*BordasTemp)[n].Y);
+        MeioBordasTemp.Inicializa(BordaEnc->Y, BordaEmb->Y);
         ParamsABT.ConjuntoMeioBordas->VectorMeioBordas[x]->push_back(MeioBordasTemp);
         ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
       }
@@ -172,10 +176,12 @@ void PreparaSelecionaTarja(TParamsABT &ParamsABT)
   TMeioBordas *MeioBordasTemp;
   for (x=0; x<ParamsABT.ConjuntoMeioBordas->NumColunas; x++)
   {
+    //percorre todos os meio de bordas da coluna (pixels amarelos)
     for (m=0; m<ParamsABT.ConjuntoMeioBordas->VectorMeioBordas[x]->size(); m++)
     {
       Adicionou=false;
       MeioBordasTemp=&(ParamsABT.ConjuntoMeioBordas->VectorMeioBordas[x]->at(m));
+      //percorre todas as tarjas que estão ativas na coluna corrente
       for (n=0; n<ParamsABT.VectorTarja.size(); n++)
       {
         if (ParamsABT.VectorTarja[n].Ativa(x))
@@ -203,30 +209,45 @@ void PreparaSelecionaTarja(TParamsABT &ParamsABT)
 
 void SelecionaTarja(TParamsABT &ParamsABT)
 {
-  uint n, nMenorX, m;
+  uint n, nMenorX, m, LargTarjaCandidata;
+  TTarja *TarjaCandidata;
   int MenorX;
   double soma, desvio, media;
   PreparaSelecionaTarja(ParamsABT);
   MenorX=0xFFFFFF;
   nMenorX=-1;
   ParamsABT.AchouTarja=false;
+  //percorre vector com todas as tarjas
   for (n=0; n<ParamsABT.VectorTarja.size(); n++)
   {
-    if ((ParamsABT.VectorTarja[n].VetorAlturas.size()<=ParamsABT.LargMaxTarja) &&
-            (ParamsABT.VectorTarja[n].VetorAlturas.size()>=ParamsABT.LargMinTarja))
+    TarjaCandidata=&(ParamsABT.VectorTarja[n]);
+    LargTarjaCandidata=TarjaCandidata->VetorAlturas.size();
+    #ifdef DEBUG
+      Log->Add("Tarja candidata "+IntToStr(n)+".\tLargura:\t"+IntToStr(LargTarjaCandidata)+
+      "\tX:\t"+IntToStr(TarjaCandidata->X));
+    #endif
+    if ((LargTarjaCandidata<=ParamsABT.LargMaxTarja) &&
+            (LargTarjaCandidata>=ParamsABT.LargMinTarja))
     {
       soma=0;
-      //tira a média da altura de cada coluna da possível tarja
+      //calcula a média da altura de cada coluna da possível tarja
       for (m=0; m<ParamsABT.VectorTarja[n].VetorAlturas.size(); m++)
         soma+=ParamsABT.VectorTarja[n].VetorAlturas[m];
       media=soma/ParamsABT.VectorTarja[n].VetorAlturas.size();
-      //tira o desvio padrão
+      //calcula o desvio padrão
       soma=0;
       for (m=0; m<ParamsABT.VectorTarja[n].VetorAlturas.size(); m++)
         soma=fabs(media-ParamsABT.VectorTarja[n].VetorAlturas[m]);
-      desvio=soma/ParamsABT.VectorTarja[n].VetorAlturas.size();
+        desvio=soma/ParamsABT.VectorTarja[n].VetorAlturas.size();
+      #ifdef DEBUG
+        Log->Add("desvio padrão alturas: "+FloatToStr(desvio));
+      #endif
       if (desvio<ParamsABT.DesvioMax)
       {
+        #ifdef DEBUG
+          Log->Add("menor do que o limite de : "+FloatToStr(ParamsABT.DesvioMax));
+        #endif
+        //pode ser substituído por um código que pega o primeiro. mantido para debug
         if (ParamsABT.VectorTarja[n].X<MenorX)
         {
           MenorX=ParamsABT.VectorTarja[n].X;
@@ -269,7 +290,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   int x, y;
   int xIni, xFim, yIni, yFim;
   int YEnc, YEmb, LargLinha, MaiorLargLinha;
-  int XEsq, XDir, UltXEnc, UltXEmb;
+  int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
   int NumLinha, UltYComLinha, NumPixelsIdentificador;
   int *VetorLarguras;
   bool AchouLinha;
@@ -291,6 +312,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   YEmb=-1;
   MaiorLargLinha=0;
   NumLinha=0;
+  MaiorUltXEnc=0;
   NumPixelsIdentificador=0;
   UltYComLinha=-1;
   for (y=yFim; y>yIni; y--)
@@ -323,6 +345,8 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     VetorLarguras[y-yIni]=LargLinha;
     if (LargLinha>MaiorLargLinha)
       MaiorLargLinha=LargLinha;
+    if (UltXEnc>MaiorUltXEnc)
+      MaiorUltXEnc=UltXEnc;
     if (AchouLinha)
     {
       NumLinha++;
@@ -336,17 +360,26 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
         break;
     }
   }
+  int MediaLarguras;
   ParamsAI.RelacaoMedianasLargurasEncEmb=
-              RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc-yIni, YEmb-yIni);
+        RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc-yIni, YEmb-yIni, MediaLarguras);
   ParamsAI.Alt=YEmb-YEnc;
-  ParamsAI.Inclinacao=(UltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
+  if (MediaLarguras>0)
+    ParamsAI.RelacaoLargAlt=ParamsAI.Alt*1.0/MediaLarguras;
+  else
+    ParamsAI.RelacaoLargAlt=0;
+  #ifdef DEBUG
+    Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
+  #endif
+  ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
   ParamsAI.MaiorLargLinha=MaiorLargLinha;
   Identifica(ParamsAI);
   delete VetorLarguras;
 }
 //--------------------------------------------------------------------------- 
 
-float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim)
+float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim,
+                                                                        int  &MediaLarguras)
 {
   int alt=fim-comeco;
   int *vetor=new int [alt+1];
@@ -364,6 +397,7 @@ float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int f
     Log->Add("Largura encima: "+IntToStr(Larguras[0]));
     Log->Add("Largura embaixo: "+IntToStr(Larguras[1]));
   #endif
+  MediaLarguras=(Larguras[0]+Larguras[1])/2;
   return Larguras[0]*1.0/Larguras[1];
 }     
 //---------------------------------------------------------------------------
@@ -373,38 +407,60 @@ void Identifica(TParamsAI &ParamsAI)
   #ifdef DEBUG
     Log->Add("Inclinação identificador: "+FloatToStr(ParamsAI.Inclinacao));
     Log->Add("Altura identificador: "+IntToStr(ParamsAI.Alt));           
-    Log->Add("Relação larguras identificador: "+FloatToStr(ParamsAI.RelacaoMedianasLargurasEncEmb));
+    Log->Add("Relação larguras identificador: "+FloatToStr(ParamsAI.RelacaoMedianasLargurasEncEmb));   
+    Log->Add("Relação inversa larguras identificador: "+FloatToStr(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb)); 
+    Log->Add("Relação Altura/Largura: "+FloatToStr(ParamsAI.RelacaoLargAlt));
   #endif
   if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
   {                       
     #ifdef DEBUG
-      Log->Add("Inclinação maior que o limite, é R$2");
+      Log->Add("Inclinação maior que o limite, pode ser R$2\tR$20");
     #endif
-    ParamsAI.ValorCedula=2;
+    if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
+    {
+      #ifdef DEBUG
+        Log->Add("Relação Altura/Largura maior que o limite, é R$2");
+      #endif
+      ParamsAI.ValorCedula=2;
+    }
+    else
+    {                     
+      #ifdef DEBUG
+        Log->Add("Relação Altura/Largura menor que o limite, é R$20");
+      #endif
+      ParamsAI.ValorCedula=20;
+    }
   }
   else
   {
     #ifdef DEBUG
-      Log->Add("Inclinação menor que o limite, não é R$2, pode ser R$5   R$50   R$10");
+      Log->Add("Inclinação menor que o limite, pode ser R$5\tR$50\tR$10\tR$100");
     #endif
     if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
     {               
       #ifdef DEBUG
-        Log->Add("Altura maior que o limite, pode ser R$5 ou R$50");
+        Log->Add("Altura maior que o limite, pode ser R$5\tR$50\tR$100");
       #endif
-      if (ParamsAI.RelacaoMedianasLargurasEncEmb<ParamsAI.LimiarLargLinhasIdentificador)
+      if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
+      {               
+        #ifdef DEBUG
+          Log->Add("Relação medianas larguras maior que o limite, é R$50");
+        #endif
+        ParamsAI.ValorCedula=50;
+      }
+      else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
+      {    
+        #ifdef DEBUG
+          Log->Add("Relação inversa medianas larguras maior que o limite, é R$100");
+        #endif
+        ParamsAI.ValorCedula=100;
+      }
+      else
       {
         #ifdef DEBUG
           Log->Add("Relação medianas larguras menor que o limite, é R$5");
         #endif
         ParamsAI.ValorCedula=5;
-      }
-      else
-      {
-        #ifdef DEBUG
-          Log->Add("Relação medianas larguras maior que o limite, é R$50");
-        #endif
-        ParamsAI.ValorCedula=50;
       }
     }
     else
