@@ -41,6 +41,7 @@ X(LimiarAlturaIdentificador, Int)         \
 X(LimiarInclinacaoidentificador, Double)     \
 X(LimiarLargLinhasIdentificador, Double)  \
 X(LimiarRelacaoLargAlt, Double)     \
+X(LimiarNumMedColunas, Double)     
 
 #define PREFIXOS_ESTRUTURAS \
 Y(MLT, z)   \
@@ -205,6 +206,7 @@ struct TParamsAI
   float LimiarLargLinhasIdentificador;
   //limiar que define a maior relação entre largura e altura do identificador
   float LimiarRelacaoLargAlt;
+  float LimiarNumMedColunas;
 
   //Retorno
   int Alt;
@@ -212,6 +214,9 @@ struct TParamsAI
   int MaiorLargLinha;
   float RelacaoMedianasLargurasEncEmb;
   float RelacaoLargAlt;
+  //número médio de vezes que percorrendo-se da esquerda para direita a região do identificador
+  //ocorre do pixel anterior não ser de identificador, e o corrente ser de identificador
+  float NumMedColunas;
 
   int ValorCedula;
 };

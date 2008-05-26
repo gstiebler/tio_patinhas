@@ -287,13 +287,17 @@ byte MediaFaixa(TParamsAI &ParamsAI)
 
 void AnalizaIdentificador(TParamsAI &ParamsAI)
 {
+  enum TEstadoUltPixel {NADA, IDENTIFICADOR, FUNDO};
+  const int TAM_HIST=100;
+  TEstadoUltPixel EstadoUltPixel;
   int x, y;
   int xIni, xFim, yIni, yFim;
-  int YEnc, YEmb, LargLinha, MaiorLargLinha;
+  int YEnc, YEmb, LargLinha, MaiorLargLinha, NumBordasPixelLinha;
   int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
   int NumLinha, UltYComLinha, NumPixelsIdentificador;
   int *VetorLarguras;
   bool AchouLinha;
+  int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
   byte **ImgSrc=ParamsAI.TCImgSrc->TonsCinza;
   Cor **ImgDest=ParamsAI.BImgDest->PMCor;
   xIni=ParamsAI.RefTarja.x-ParamsAI.XIniParaRefTarja;
@@ -320,6 +324,8 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     XEsq=-1;
     XDir=0;
     AchouLinha=false;
+    NumBordasPixelLinha=0;
+    EstadoUltPixel=NADA;
     for (x=xIni; x<xFim; x++)
     {
       if (ImgSrc[y][x]<Limiar)
@@ -339,7 +345,12 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
 
         ImgDest[y][x].SetCyan();
         NumPixelsIdentificador++;
+        if (EstadoUltPixel!=IDENTIFICADOR)
+          NumBordasPixelLinha++;
+        EstadoUltPixel=IDENTIFICADOR;
       }
+      else
+        EstadoUltPixel=FUNDO;
     }
     LargLinha=XDir-XEsq;
     VetorLarguras[y-yIni]=LargLinha;
@@ -351,6 +362,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     {
       NumLinha++;
       UltYComLinha=y;
+      HistogramaNumBordasPixelLinha[NumBordasPixelLinha]++;
     }
     else
     {
@@ -360,6 +372,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
         break;
     }
   }
+  int soma=0;
+  for (int w=0; w<TAM_HIST; w++)
+    soma+=HistogramaNumBordasPixelLinha[w]*w;
+  ParamsAI.NumMedColunas=soma*1.0/NumLinha;
   int MediaLarguras;
   ParamsAI.RelacaoMedianasLargurasEncEmb=
         RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc-yIni, YEmb-yIni, MediaLarguras);
@@ -409,12 +425,13 @@ void Identifica(TParamsAI &ParamsAI)
     Log->Add("Altura identificador: "+IntToStr(ParamsAI.Alt));           
     Log->Add("Relação larguras identificador: "+FloatToStr(ParamsAI.RelacaoMedianasLargurasEncEmb));   
     Log->Add("Relação inversa larguras identificador: "+FloatToStr(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb)); 
-    Log->Add("Relação Altura/Largura: "+FloatToStr(ParamsAI.RelacaoLargAlt));
+    Log->Add("Relação Altura/Largura: "+FloatToStr(ParamsAI.RelacaoLargAlt));                                     
+    Log->Add("Número médio de colunas: "+FloatToStr(ParamsAI.NumMedColunas));
   #endif
   if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
   {                       
     #ifdef DEBUG
-      Log->Add("Inclinação maior que o limite, pode ser R$2\tR$20");
+      Log->Add("Inclinação maior que o limite, pode ser \tR$2\tR$20");
     #endif
     if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
     {
@@ -424,7 +441,7 @@ void Identifica(TParamsAI &ParamsAI)
       ParamsAI.ValorCedula=2;
     }
     else
-    {                     
+    {
       #ifdef DEBUG
         Log->Add("Relação Altura/Largura menor que o limite, é R$20");
       #endif
@@ -434,22 +451,22 @@ void Identifica(TParamsAI &ParamsAI)
   else
   {
     #ifdef DEBUG
-      Log->Add("Inclinação menor que o limite, pode ser R$5\tR$50\tR$10\tR$100");
+      Log->Add("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
     #endif
     if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
-    {               
+    {
       #ifdef DEBUG
-        Log->Add("Altura maior que o limite, pode ser R$5\tR$50\tR$100");
+        Log->Add("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
       #endif
       if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
-      {               
+      {
         #ifdef DEBUG
           Log->Add("Relação medianas larguras maior que o limite, é R$50");
         #endif
         ParamsAI.ValorCedula=50;
       }
       else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
-      {    
+      {
         #ifdef DEBUG
           Log->Add("Relação inversa medianas larguras maior que o limite, é R$100");
         #endif
@@ -458,13 +475,26 @@ void Identifica(TParamsAI &ParamsAI)
       else
       {
         #ifdef DEBUG
-          Log->Add("Relação medianas larguras menor que o limite, é R$5");
+          Log->Add("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
         #endif
-        ParamsAI.ValorCedula=5;
+        if (ParamsAI.NumMedColunas<ParamsAI.LimiarNumMedColunas)
+        {
+          #ifdef DEBUG
+            Log->Add("Número médio de colunas menor que o limite, é R$1");
+          #endif
+          ParamsAI.ValorCedula=1;
+        }
+        else
+        {
+          #ifdef DEBUG
+            Log->Add("Número médio de colunas maior que o limite, é R$5");
+          #endif
+          ParamsAI.ValorCedula=5;
+        }
       }
     }
     else
-    {      
+    {
       #ifdef DEBUG
         Log->Add("Altura menor que o limite, é R$10");
       #endif
