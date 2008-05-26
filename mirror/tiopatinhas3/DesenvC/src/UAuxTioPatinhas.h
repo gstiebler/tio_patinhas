@@ -38,13 +38,14 @@ X(YIniParaRefTarja, Int)                  \
 X(MaiorDistSemPixelsIdentificador, Int)   \
 X(NumMinPixelsIdentificador, Int)         \
 X(LimiarAlturaIdentificador, Int)         \
-X(LimiarInclinacaoidentificador, Int)     \
+X(LimiarInclinacaoidentificador, Double)     \
 X(LimiarLargLinhasIdentificador, Double)  \
+X(LimiarRelacaoLargAlt, Double)     \
 
 #define PREFIXOS_ESTRUTURAS \
 Y(MLT, z)   \
 Y(ABT, z)   \
-Y(AI, z)
+Y(AI, z)    \
 
 using namespace std;
 typedef unsigned int uint;
@@ -198,16 +199,19 @@ struct TParamsAI
   //Limiar que define se um identificador tem 1 ou 2 "andares"
   int LimiarAlturaIdentificador;
   //Limiar que define se um identificador é inclinado ou não
-  int LimiarInclinacaoidentificador;
+  float LimiarInclinacaoidentificador;
   //Limiar que define a proporção entre a largura mediana da parte de cima e de baixo
   //do identificador
   float LimiarLargLinhasIdentificador;
+  //limiar que define a maior relação entre largura e altura do identificador
+  float LimiarRelacaoLargAlt;
 
   //Retorno
   int Alt;
   float Inclinacao;
   int MaiorLargLinha;
   float RelacaoMedianasLargurasEncEmb;
+  float RelacaoLargAlt;
 
   int ValorCedula;
 };
