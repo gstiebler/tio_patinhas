@@ -26,88 +26,112 @@ void ReconheceCedula(TParamsRC &ParamsRC)
 
 void MostraLimiteTarja(TParamsMLT &ParamsMLT)
 {
+  struct TMaiorBorda
+  {
+    int y;
+    int DifLum;
+  };
+
   const int ALT_COLUNA=3, DY=2, DIF_MIN_LUM=15;
   int TamVetorExtremos=ALT_COLUNA+DY;
-  int x, y, n;
+  int x, y, n, j;
   int yBorda;
-  int MaisEscuroAtual, MaisClaroAtual;
-  byte VetorMaisEscuros[ALT_COLUNA+DY]={0}, VetorMaisClaros[ALT_COLUNA+DY]={0};
-  int PosVetorExtremos;
+  int DifLum;
+  int UltYBordaCE, UltYBordaEC;
+  int MaisEscuroAtual, MaisClaroAtual, MaisClaroAnterior, MaisEscuroAnterior;
   byte lum;
-  TVectorInt VectorPixelsColuna;
   byte **ImgSrc=ParamsMLT.TCImgSrc->TonsCinza;
   Cor **ImgDest=ParamsMLT.BImgDest->PMCor;
   int YIni=ParamsMLT.TCImgSrc->Alt*ParamsMLT.PropYIni;
   int XFim=ParamsMLT.TCImgSrc->Larg*ParamsMLT.PropXFim;
   TBorda BordaTemp;
+  TMaiorBorda MaiorBorda;
   ParamsMLT.BordasColunas=new TBordasColunas(XFim);
   for (x=0; x<XFim; x++)
   {
-    VectorPixelsColuna.clear();
-    for (n=0; n<ALT_COLUNA; n++)
-      //todas as posições do vetor devem ter o maior valor possível de um pixel
-      VectorPixelsColuna.push_back(255);
-
-    //Inicialização do processamento da coluna. Deixa a coluna ordenada por luminosidade
-    for (y=YIni; y<YIni+ALT_COLUNA; y++)
+    UltYBordaCE=UltYBordaEC=-1;
+    MaiorBorda.DifLum=0;
+    for (y=YIni+ALT_COLUNA; y<(ParamsMLT.TCImgSrc->Alt-ALT_COLUNA); y++)
     {
-      lum=ImgSrc[y][x];
-      for (n=0; n<ALT_COLUNA; n++)
-        if (VectorPixelsColuna.at(n)>lum)
-        {
-          VectorPixelsColuna.insert(VectorPixelsColuna.begin()+n, 1, lum);
-          break;
-        }
-      if (VectorPixelsColuna.size()>ALT_COLUNA)
-        VectorPixelsColuna.erase(VectorPixelsColuna.begin()+ALT_COLUNA);//apaga o último
-    }
+      MaisEscuroAtual=255;
+      MaisEscuroAnterior=255;
+      MaisClaroAtual=0;
+      MaisClaroAnterior=0;
 
-    PosVetorExtremos=0;
-    for (y=YIni+ALT_COLUNA; y<ParamsMLT.TCImgSrc->Alt; y++)
-    {
-      if (x==29 && y==188)
-        int x=5;
-      //pega o pixel corrente e o insere mantendo o vetor ordenado
-      lum=ImgSrc[y][x];
-      for (n=0; n<ALT_COLUNA; n++)
-        if (VectorPixelsColuna.at(n)>lum)
-        {
-          VectorPixelsColuna.insert(VectorPixelsColuna.begin()+n, 1, lum);
-          break;
-        }
-      if (VectorPixelsColuna.size()>ALT_COLUNA)
-        VectorPixelsColuna.erase(VectorPixelsColuna.begin()+ALT_COLUNA);//apaga o último
+      //define os mais claros e mais escuros atuais
+      for (j=y; j<(y+ALT_COLUNA); j++)
+      {
+        lum=ImgSrc[j][x];
+        if (lum>MaisClaroAtual)
+          MaisClaroAtual=lum;
+        if (lum<MaisEscuroAtual)
+          MaisEscuroAtual=lum;
+      }
 
-      MaisEscuroAtual=VectorPixelsColuna.back();    
-      MaisClaroAtual=VectorPixelsColuna.front();
+      //define os mais claros e os mais escuros anteriores
+      for (j=y-(ALT_COLUNA+DY); j<(y-DY); j++)
+      {
+        lum=ImgSrc[j][x];
+        if (lum>MaisClaroAnterior)
+          MaisClaroAnterior=lum;
+        if (lum<MaisEscuroAnterior)
+          MaisEscuroAnterior=lum;
+      }
+
+      if (x==25 && y==170)
+        int w=5;
 
       //borda claro encima, escuro embaixo
-      if (VetorMaisEscuros[PosVetorExtremos]>(MaisClaroAtual+DIF_MIN_LUM))
+      DifLum=MaisEscuroAnterior-MaisClaroAtual;
+      if (DifLum>DIF_MIN_LUM)
       {
-        yBorda=y-ALT_COLUNA;
-        ImgDest[yBorda][x].SetVermelho();
+        if (DifLum>MaiorBorda.DifLum)
+        {
+          MaiorBorda.DifLum=DifLum;
+          MaiorBorda.y=y;
+        }           
+        UltYBordaCE=y;
+      }
+      else
+      {
+        if (y==(UltYBordaCE+1))
+        {
+          yBorda=MaiorBorda.y-ALT_COLUNA;
+          ImgDest[yBorda][x].SetVermelho();
 
-        BordaTemp.Y=yBorda;
-        BordaTemp.TipoBorda=BORDA_CLARO_ESCURO;
-        ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
+          BordaTemp.Y=yBorda;
+          BordaTemp.TipoBorda=BORDA_CLARO_ESCURO;
+          ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
+
+          MaiorBorda.DifLum=0;
+        }
       }
 
       //borda escuro encima, claro embaixo
-      if (VetorMaisClaros[PosVetorExtremos]<(MaisEscuroAtual-DIF_MIN_LUM))
+      DifLum=MaisEscuroAtual-MaisClaroAnterior;
+      if (DifLum>DIF_MIN_LUM)
+      {    
+        if (DifLum>MaiorBorda.DifLum)
+        {
+          MaiorBorda.DifLum=DifLum;
+          MaiorBorda.y=y;
+        }                   
+        UltYBordaEC=y;
+      }  
+      else
       {
-        yBorda=y-ALT_COLUNA;
-        ImgDest[yBorda][x].SetVerde();
+        if (y==(UltYBordaEC+1))
+        {
+          yBorda=MaiorBorda.y-ALT_COLUNA;
+          ImgDest[yBorda][x].SetVerde();
 
-        BordaTemp.Y=yBorda;
-        BordaTemp.TipoBorda=BORDA_ESCURO_CLARO;
-        ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
+          BordaTemp.Y=yBorda;
+          BordaTemp.TipoBorda=BORDA_ESCURO_CLARO;
+          ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
+
+          MaiorBorda.DifLum=0;
+        }
       }
-
-      VetorMaisClaros[PosVetorExtremos]=MaisClaroAtual;
-      VetorMaisEscuros[PosVetorExtremos]=MaisEscuroAtual;
-
-      PosVetorExtremos++;
-      PosVetorExtremos%=TamVetorExtremos;
     }
   }
 }
@@ -365,7 +389,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   int soma=0;
   for (int w=0; w<TAM_HIST; w++)
     soma+=HistogramaNumBordasPixelLinha[w]*w;
-  ParamsAI.NumMedColunas=soma*1.0/NumLinha;
+  if (NumLinha>0)
+    ParamsAI.NumMedColunas=soma*1.0/NumLinha;
+  else
+    ParamsAI.NumMedColunas=-100;
   int MediaLarguras;
   ParamsAI.RelacaoMedianasLargurasEncEmb=
         RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc-yIni, YEmb-yIni, MediaLarguras);
@@ -383,7 +410,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     ParamsAI.Inclinacao=-100;
   ParamsAI.MaiorLargLinha=MaiorLargLinha;
   Identifica(ParamsAI);
-  delete VetorLarguras;
+  delete [] VetorLarguras;
 }
 //--------------------------------------------------------------------------- 
 
@@ -401,13 +428,16 @@ float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int f
     qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
     Larguras[n]=vetor[QuartoAltura];
   }
-  delete vetor;
+  delete [] vetor;
   #ifdef DEBUG
     Log->Add("Largura encima: "+IntToStr(Larguras[0]));
     Log->Add("Largura embaixo: "+IntToStr(Larguras[1]));
   #endif
   MediaLarguras=(Larguras[0]+Larguras[1])/2;
-  return Larguras[0]*1.0/Larguras[1];
+  if (Larguras[1]>0)
+    return Larguras[0]*1.0/Larguras[1];
+  else
+    return -100;
 }     
 //---------------------------------------------------------------------------
 

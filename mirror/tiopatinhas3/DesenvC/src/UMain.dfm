@@ -204,7 +204,7 @@ object Main: TMain
   end
   object cbTocaSom: TCheckBox
     Left = 688
-    Top = 496
+    Top = 528
     Width = 97
     Height = 17
     Caption = 'toca som'
@@ -235,5 +235,14 @@ object Main: TMain
     Height = 17
     Caption = 'salvar ao capturar'
     TabOrder = 16
+  end
+  object btReconheceProxima: TButton
+    Left = 688
+    Top = 496
+    Width = 113
+    Height = 25
+    Caption = 'Reconhece Proxima'
+    TabOrder = 17
+    OnClick = btReconheceProximaClick
   end
 end

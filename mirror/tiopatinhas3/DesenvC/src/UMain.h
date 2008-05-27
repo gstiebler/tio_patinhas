@@ -57,16 +57,18 @@ __published:	// IDE-managed Components
   TButton *btHistograma;
   TImage *imgHistograma;
   TImage *imgHistCumulativa;
+  TButton *btReconheceProxima;
   void __fastcall btAtualizaClick(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall ZoomImagem(TObject *Sender);
   void __fastcall btMedia2Click(TObject *Sender);
   void __fastcall btReconheceCedulaClick(TObject *Sender);
-  void __fastcall flb1Click(TObject *Sender);
   void __fastcall btIniciarCapturaClick(TObject *Sender);
   void __fastcall btCapturarClick(TObject *Sender);
   void __fastcall btSalvarClick(TObject *Sender);
   void __fastcall btHistogramaClick(TObject *Sender);
+  void __fastcall btReconheceProximaClick(TObject *Sender);
+  void __fastcall flb1Click(TObject *Sender);
 private:
   double PeriodoContador;
   void __fastcall Zoom2(_Bitmap *Bitmap);
@@ -90,6 +92,7 @@ private:
   void TocaSom(int ValorCedula);
   _Bitmap * CapturaBitmap();
   void ReconheceCedulaForm();
+  void CarregaImagens();
 public:		// User declarations
   bool AbriuCaptura;
   __fastcall TMain(TComponent* Owner);
