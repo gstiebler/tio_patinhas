@@ -264,15 +264,6 @@ void __fastcall TMain::btReconheceCedulaClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TMain::flb1Click(TObject *Sender)
-{
-  _Bitmap *Bitmap=new _Bitmap;
-  Bitmap->LoadFromFile(flb1->FileName);
-  imgProcessada->Picture->Bitmap->Assign(Bitmap);
-  imgTemp->Picture->Bitmap->Assign(Bitmap);
-  delete Bitmap;
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TMain::btIniciarCapturaClick(TObject *Sender)
 {
@@ -393,6 +384,30 @@ void __fastcall TMain::btHistogramaClick(TObject *Sender)
   Status("Função histograma "+FormatFloat("###,##0.00", (fim-comeco)*PeriodoContador)+
         " milisegundos, Mediana: "+IntToStr(Mediana));
   delete TCImgSrc;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMain::btReconheceProximaClick(TObject *Sender)
+{
+  flb1->ItemIndex++;
+  CarregaImagens();
+  ReconheceCedulaForm();
+}
+//---------------------------------------------------------------------------
+
+void TMain::CarregaImagens()
+{
+  _Bitmap *Bitmap=new _Bitmap;
+  Bitmap->LoadFromFile(flb1->FileName);
+  imgProcessada->Picture->Bitmap->Assign(Bitmap);
+  imgTemp->Picture->Bitmap->Assign(Bitmap);
+  delete Bitmap;
+}     
+//---------------------------------------------------------------------------
+
+void __fastcall TMain::flb1Click(TObject *Sender)
+{
+  CarregaImagens();  
 }
 //---------------------------------------------------------------------------
 
