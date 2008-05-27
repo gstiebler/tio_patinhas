@@ -24,104 +24,90 @@ void ReconheceCedula(TParamsRC &ParamsRC)
 }
 //---------------------------------------------------------------------------
 
-//Localiza e mostra a tarja.
-//Executa o processamento da esquerda para direita, de cima para baixo.
-//Para cada coluna, verifica nos últimos AltMinClaro pixels quantos pixels são considerados
-// como pixels claros, e quantos são considerados escuros. Os pixels são comparados com ClaroMin e
-//EscuroMax. Se o número de pixels claros for maior que NumMinClaro, a iteração é colocada no
-//estado CLARO. Analogamente, se o número de pixels escuros for maior que NumMinEscuros, a iteração
-//é colocada no estado ESCURO. Quando há transição do estado CLARO para ESCURO, este ponto é
-//considerado borda superior da tarja. Quando há transição de ESCURO para CLARO, este ponto
-//é considerado a parte de baixo da tarja.
 void MostraLimiteTarja(TParamsMLT &ParamsMLT)
 {
-  int x, y;
+  const int ALT_COLUNA=3, DY=2, DIF_MIN_LUM=15;
+  int TamVetorExtremos=ALT_COLUNA+DY;
+  int x, y, n;
   int yBorda;
-  enum TEstado {NADA, CLARO, ESCURO} estado;
+  int MaisEscuroAtual, MaisClaroAtual;
+  byte VetorMaisEscuros[ALT_COLUNA+DY]={0}, VetorMaisClaros[ALT_COLUNA+DY]={0};
+  int PosVetorExtremos;
+  byte lum;
+  TVectorInt VectorPixelsColuna;
   byte **ImgSrc=ParamsMLT.TCImgSrc->TonsCinza;
   Cor **ImgDest=ParamsMLT.BImgDest->PMCor;
   int YIni=ParamsMLT.TCImgSrc->Alt*ParamsMLT.PropYIni;
   int XFim=ParamsMLT.TCImgSrc->Larg*ParamsMLT.PropXFim;
-  int ContaClaro, ContaEscuro;
   TBorda BordaTemp;
   ParamsMLT.BordasColunas=new TBordasColunas(XFim);
   for (x=0; x<XFim; x++)
   {
-    estado=NADA;
-    ContaClaro=ContaEscuro=0;
-    //Inicialização do processamento da coluna. É executado por poucos pixels
-    for (y=YIni; y<YIni+ParamsMLT.AltMinClaro; y++)
+    VectorPixelsColuna.clear();
+    for (n=0; n<ALT_COLUNA; n++)
+      //todas as posições do vetor devem ter o maior valor possível de um pixel
+      VectorPixelsColuna.push_back(255);
+
+    //Inicialização do processamento da coluna. Deixa a coluna ordenada por luminosidade
+    for (y=YIni; y<YIni+ALT_COLUNA; y++)
     {
-      if (ImgSrc[y][x]>=ParamsMLT.ClaroMin)
-        ContaClaro++;
-      if (ImgSrc[y][x]<=ParamsMLT.EscuroMax)
-        ContaEscuro++;
+      lum=ImgSrc[y][x];
+      for (n=0; n<ALT_COLUNA; n++)
+        if (VectorPixelsColuna.at(n)>lum)
+        {
+          VectorPixelsColuna.insert(VectorPixelsColuna.begin()+n, 1, lum);
+          break;
+        }
+      if (VectorPixelsColuna.size()>ALT_COLUNA)
+        VectorPixelsColuna.erase(VectorPixelsColuna.begin()+ALT_COLUNA);//apaga o último
     }
 
-    for (y=YIni+ParamsMLT.AltMinClaro; y<ParamsMLT.TCImgSrc->Alt; y++)
+    PosVetorExtremos=0;
+    for (y=YIni+ALT_COLUNA; y<ParamsMLT.TCImgSrc->Alt; y++)
     {
-      //Atualiza a quantidade de pixels claros e de escuros que estão nos últimos AltMinClaro
-      //pixels da coluna
-      if ((ImgSrc[y-ParamsMLT.AltMinClaro][x]>=ParamsMLT.ClaroMin) && ContaClaro>=1)
-        ContaClaro--;
-      if (ImgSrc[y][x]>=ParamsMLT.ClaroMin)
-        ContaClaro++;
+      if (x==29 && y==188)
+        int x=5;
+      //pega o pixel corrente e o insere mantendo o vetor ordenado
+      lum=ImgSrc[y][x];
+      for (n=0; n<ALT_COLUNA; n++)
+        if (VectorPixelsColuna.at(n)>lum)
+        {
+          VectorPixelsColuna.insert(VectorPixelsColuna.begin()+n, 1, lum);
+          break;
+        }
+      if (VectorPixelsColuna.size()>ALT_COLUNA)
+        VectorPixelsColuna.erase(VectorPixelsColuna.begin()+ALT_COLUNA);//apaga o último
 
-      if ((ImgSrc[y-ParamsMLT.AltMinClaro][x]<=ParamsMLT.EscuroMax) && ContaEscuro>=1)
-        ContaEscuro--;
-      if (ImgSrc[y][x]<=ParamsMLT.EscuroMax)
-        ContaEscuro++;
-        
-      switch (estado)
+      MaisEscuroAtual=VectorPixelsColuna.back();    
+      MaisClaroAtual=VectorPixelsColuna.front();
+
+      //borda claro encima, escuro embaixo
+      if (VetorMaisEscuros[PosVetorExtremos]>(MaisClaroAtual+DIF_MIN_LUM))
       {
-        case NADA:
-          //se existe uma quantidade suficiente de pixels claros nos últimos pixels da coluna
-          // então entra no estado CLARO
-          if (ContaClaro>=ParamsMLT.NumMinClaro)
-          {
-            estado=CLARO;
-            yBorda=y-ParamsMLT.NumMinEscuro;
-            ImgDest[yBorda][x].SetVerde();
+        yBorda=y-ALT_COLUNA;
+        ImgDest[yBorda][x].SetVermelho();
 
-            BordaTemp.Y=yBorda;
-            BordaTemp.TipoBorda=BORDA_ESCURO_CLARO;
-            ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
-          }
-          break;
-        case CLARO:
-          if (ContaEscuro>=ParamsMLT.NumMinEscuro)
-          {
-            estado=ESCURO;
-            yBorda=y-ParamsMLT.NumMinClaro;
-            ImgDest[yBorda][x].SetVermelho();
-
-            //Se estava no estado CLARO e está no ESCURO então foi localizada a parte de cima
-            // da borda desta coluna
-            BordaTemp.Y=yBorda;
-            BordaTemp.TipoBorda=BORDA_CLARO_ESCURO;
-            ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
-          }
-          break;
-        case ESCURO:
-          if (ContaEscuro<ParamsMLT.NumMinEscuro)
-          {
-            if (ContaClaro>=ParamsMLT.NumMinClaro)
-            {
-              estado=CLARO;
-              yBorda=y-ParamsMLT.NumMinEscuro;
-              ImgDest[yBorda][x].SetVerde();
-
-              //Se estava no estado ESCURO e está no CLARO então foi localizada a parte de baixo
-              // da borda desta coluna
-              BordaTemp.Y=yBorda;
-              BordaTemp.TipoBorda=BORDA_ESCURO_CLARO;
-              ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
-            }
-            else
-              estado=NADA;
-          }
-          break;
+        BordaTemp.Y=yBorda;
+        BordaTemp.TipoBorda=BORDA_CLARO_ESCURO;
+        ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
       }
+
+      //borda escuro encima, claro embaixo
+      if (VetorMaisClaros[PosVetorExtremos]<(MaisEscuroAtual-DIF_MIN_LUM))
+      {
+        yBorda=y-ALT_COLUNA;
+        ImgDest[yBorda][x].SetVerde();
+
+        BordaTemp.Y=yBorda;
+        BordaTemp.TipoBorda=BORDA_ESCURO_CLARO;
+        ParamsMLT.BordasColunas->Bordas[x]->push_back(BordaTemp);
+      }
+
+      VetorMaisClaros[PosVetorExtremos]=MaisClaroAtual;
+      VetorMaisEscuros[PosVetorExtremos]=MaisEscuroAtual;
+
+      PosVetorExtremos++;
+      PosVetorExtremos%=TamVetorExtremos;
     }
   }
 }
