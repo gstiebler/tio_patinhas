@@ -10,14 +10,8 @@
 #define DEBUG
 
 #define PARAMETROS_MLT  \
-X(ClaroMin, Int)        \
-X(EscuroMax, Int)       \
 X(PropYIni, Double)     \
-X(PropXFim, Double)     \
-X(AltMinClaro, Int)     \
-X(AltMinEscuro, Int)    \
-X(NumMinClaro, Int)     \
-X(NumMinEscuro, Int)
+X(PropXFim, Double)
 
 #define PARAMETROS_ABT    \
 X(AltMinTarja, Int)       \
@@ -113,23 +107,9 @@ struct TParamsMLT
 {
   CTonsCinza *TCImgSrc;
   CBitmap *BImgDest;
-  //Menor luminosidade que um pixel acima da tarja pode ter
-  byte ClaroMin;
-  //Maior luminosidade que um pixel da tarja pode assumir
-  byte EscuroMax;
   //Fator que define a região de busca da tarja. Multiplica-se a largura da imagem por este fator
   float PropYIni;
   float PropXFim;
-  //Altura mínima em pixels da coluna de pixels claros que devem estar na região encima de uma tarja
-  int AltMinClaro;
-  //Altura mínima em pixels da coluna de pixels claros que devem estar na região dentro da tarja
-  int AltMinEscuro;
-  //Número mínimo de pixels claros acima do pixel corrente
-  //para se considerar que está no estado CLARO
-  int NumMinClaro;
-  //Número mínimo de pixels escuros acima do pixel corrente
-  //para se considerar que está no estado ESCURO
-  int NumMinEscuro;
   //retorno
   TBordasColunas *BordasColunas;
   
