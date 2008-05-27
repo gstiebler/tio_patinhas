@@ -19,7 +19,9 @@
 #include "UZoom.h"
 #include "UAuxTioPatinhas.h"
 #include <MPlayer.hpp>
-
+#include "UImgFuncs.h"
+#define LARG 320
+#define ALT 240
 //---------------------------------------------------------------------------
 
 extern "C" __declspec(dllexport)bool IniciaCaptura(HWND win, int placa, int channel, int width, int height);
@@ -49,6 +51,12 @@ __published:	// IDE-managed Components
   TButton *btCapturar;
   TCheckBox *cbTocaSom;
   TMediaPlayer *MediaPlayer;
+  TButton *btSalvar;
+  TCheckBox *cbSalvarAoCapturar;
+  TTabSheet *tsHistograma;
+  TButton *btHistograma;
+  TImage *imgHistograma;
+  TImage *imgHistCumulativa;
   void __fastcall btAtualizaClick(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall ZoomImagem(TObject *Sender);
@@ -57,6 +65,8 @@ __published:	// IDE-managed Components
   void __fastcall flb1Click(TObject *Sender);
   void __fastcall btIniciarCapturaClick(TObject *Sender);
   void __fastcall btCapturarClick(TObject *Sender);
+  void __fastcall btSalvarClick(TObject *Sender);
+  void __fastcall btHistogramaClick(TObject *Sender);
 private:
   double PeriodoContador;
   void __fastcall Zoom2(_Bitmap *Bitmap);
@@ -78,10 +88,14 @@ private:
   //---------------------------------------------------------------------------
   void CarregaParamsReconheceCedula(TParamsRC &ParamsRC);
   void TocaSom(int ValorCedula);
+  _Bitmap * CapturaBitmap();
+  void ReconheceCedulaForm();
 public:		// User declarations
   bool AbriuCaptura;
   __fastcall TMain(TComponent* Owner);
 };
+
+AnsiString CaminhoExecutavel();
 
 //---------------------------------------------------------------------------
 extern PACKAGE TMain *Main;

@@ -319,6 +319,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   MaiorUltXEnc=0;
   NumPixelsIdentificador=0;
   UltYComLinha=-1;
+  #ifdef DEBUG
+    Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
+        IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
+  #endif
   for (y=yFim; y>yIni; y--)
   {
     XEsq=-1;
@@ -387,7 +391,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   #ifdef DEBUG
     Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
   #endif
-  ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
+  if (ParamsAI.Alt>0)
+    ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
+  else
+    ParamsAI.Inclinacao=-100;
   ParamsAI.MaiorLargLinha=MaiorLargLinha;
   Identifica(ParamsAI);
   delete VetorLarguras;
@@ -423,8 +430,9 @@ void Identifica(TParamsAI &ParamsAI)
   #ifdef DEBUG
     Log->Add("Inclinação identificador: "+FloatToStr(ParamsAI.Inclinacao));
     Log->Add("Altura identificador: "+IntToStr(ParamsAI.Alt));           
-    Log->Add("Relação larguras identificador: "+FloatToStr(ParamsAI.RelacaoMedianasLargurasEncEmb));   
-    Log->Add("Relação inversa larguras identificador: "+FloatToStr(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb)); 
+    Log->Add("Relação larguras identificador: "+FloatToStr(ParamsAI.RelacaoMedianasLargurasEncEmb));
+    if (ParamsAI.RelacaoMedianasLargurasEncEmb>0)
+      Log->Add("Relação inversa larguras identificador: "+FloatToStr(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
     Log->Add("Relação Altura/Largura: "+FloatToStr(ParamsAI.RelacaoLargAlt));                                     
     Log->Add("Número médio de colunas: "+FloatToStr(ParamsAI.NumMedColunas));
   #endif
