@@ -20,27 +20,27 @@ object Main: TMain
   PixelsPerInch = 96
   TextHeight = 13
   object dlb1: TDirectoryListBox
-    Left = 350
-    Top = 464
+    Left = 342
+    Top = 16
     Width = 195
-    Height = 99
+    Height = 185
     FileList = flb1
     ItemHeight = 16
     TabOrder = 2
   end
   object dcb1: TDriveComboBox
-    Left = 350
-    Top = 568
+    Left = 342
+    Top = 208
     Width = 195
     Height = 19
     DirList = dlb1
     TabOrder = 1
   end
   object flb1: TFileListBox
-    Left = 350
-    Top = 597
+    Left = 342
+    Top = 237
     Width = 195
-    Height = 116
+    Height = 204
     ItemHeight = 16
     Mask = '*.tif;*.bmp'
     ShowGlyphs = True
@@ -48,8 +48,8 @@ object Main: TMain
     OnClick = flb1Click
   end
   object Panel: TPanel
-    Left = 556
-    Top = 468
+    Left = 348
+    Top = 460
     Width = 333
     Height = 253
     TabOrder = 3
@@ -64,14 +64,14 @@ object Main: TMain
     end
   end
   object pnlCaptura: TPanel
-    Left = 12
+    Left = 4
     Top = 12
-    Width = 333
-    Height = 253
+    Width = 320
+    Height = 240
     TabOrder = 4
   end
   object Panel2: TPanel
-    Left = 12
+    Left = 4
     Top = 340
     Width = 333
     Height = 253
@@ -81,8 +81,8 @@ object Main: TMain
       Top = 4
       Width = 320
       Height = 240
+      AutoSize = True
       Proportional = True
-      Stretch = True
       OnClick = ZoomImagem
     end
   end
@@ -107,12 +107,12 @@ object Main: TMain
     SimplePanel = False
   end
   object PageControl1: TPageControl
-    Left = 360
+    Left = 544
     Top = 8
-    Width = 889
+    Width = 665
     Height = 441
-    ActivePage = tsTioPatinhas
-    TabIndex = 0
+    ActivePage = tsHistograma
+    TabIndex = 2
     TabOrder = 7
     object tsTioPatinhas: TTabSheet
       Caption = 'TioPatinhas'
@@ -131,10 +131,37 @@ object Main: TMain
         TabOrder = 0
       end
     end
+    object tsHistograma: TTabSheet
+      Caption = 'tsHistograma'
+      ImageIndex = 2
+      object imgHistograma: TImage
+        Left = 152
+        Top = 32
+        Width = 256
+        Height = 102
+        OnClick = ZoomImagem
+      end
+      object imgHistCumulativa: TImage
+        Left = 152
+        Top = 152
+        Width = 256
+        Height = 102
+        OnClick = ZoomImagem
+      end
+      object btHistograma: TButton
+        Left = 32
+        Top = 24
+        Width = 75
+        Height = 25
+        Caption = 'Histograma'
+        TabOrder = 0
+        OnClick = btHistogramaClick
+      end
+    end
   end
   object btReconheceCedula: TButton
-    Left = 896
-    Top = 468
+    Left = 688
+    Top = 460
     Width = 113
     Height = 25
     Caption = 'Reconhece Cedula'
@@ -176,20 +203,37 @@ object Main: TMain
     OnClick = btCapturarClick
   end
   object cbTocaSom: TCheckBox
-    Left = 912
-    Top = 520
+    Left = 688
+    Top = 496
     Width = 97
     Height = 17
     Caption = 'toca som'
     TabOrder = 13
   end
   object MediaPlayer: TMediaPlayer
-    Left = 600
-    Top = 152
+    Left = 1064
+    Top = 472
     Width = 29
     Height = 30
     VisibleButtons = [btPlay]
     Visible = False
     TabOrder = 14
+  end
+  object btSalvar: TButton
+    Left = 24
+    Top = 312
+    Width = 97
+    Height = 25
+    Caption = 'Salvar Captura'
+    TabOrder = 15
+    OnClick = btSalvarClick
+  end
+  object cbSalvarAoCapturar: TCheckBox
+    Left = 192
+    Top = 312
+    Width = 121
+    Height = 17
+    Caption = 'salvar ao capturar'
+    TabOrder = 16
   end
 end

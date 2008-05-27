@@ -6,8 +6,8 @@
     <PROJECT value="..\Bin\TioPatinhas.exe"/>
     <OBJFILES value="..\obj\TioPatinhas.obj ..\obj\UMain.obj ..\obj\UTioPatinhas.obj 
       ..\obj\UAuxTioPatinhas.obj ..\obj\UCBitmap.obj ..\obj\UZoom.obj 
-      ..\obj\UGeral.obj"/>
-    <RESFILES value="TioPatinhas.res"/>
+      ..\obj\UGeral.obj ..\obj\UImgFuncs.obj"/>
+    <RESFILES value="TioPatinhas.res winxp.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
@@ -67,6 +67,8 @@
       <FILE FILENAME="UZoom.cpp" FORMNAME="" UNITNAME="UZoom.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="UGeral.cpp" FORMNAME="" UNITNAME="UGeral" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="CapturaWebCam.lib" FORMNAME="" UNITNAME="CapturaWebCam.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="winxp.res" FORMNAME="" UNITNAME="winxp.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="UImgFuncs.cpp" FORMNAME="" UNITNAME="UImgFuncs" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
