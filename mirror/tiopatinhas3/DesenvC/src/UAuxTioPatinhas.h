@@ -60,6 +60,12 @@ struct TBorda
 };
 //---------------------------------------------------------------------------
 
+struct TLimitesVerticaisGrupo
+{
+  int yEnc, yEmb;
+};       
+//---------------------------------------------------------------------------
+
 typedef vector<TBorda> TVectorBorda;
 
 struct TBordasColunas
@@ -114,6 +120,16 @@ struct TParamsMLT
   TBordasColunas *BordasColunas;
   
   ~TParamsMLT();
+};
+//---------------------------------------------------------------------------
+
+class CMatrizInteiro
+{
+public:
+  CMatrizInteiro(int larg, int alt);
+  ~CMatrizInteiro();
+  int **Matriz;
+  int Larg, Alt;
 };
 //---------------------------------------------------------------------------
 

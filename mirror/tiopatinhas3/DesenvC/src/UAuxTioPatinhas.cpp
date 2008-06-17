@@ -82,5 +82,25 @@ void Media2(CTonsCinza *TCImgSrc, CTonsCinza *TCImgDest)
       tcImgDest[y+1][x]=(byte)soma;
     }
   }
-}   
+}
+//---------------------------------------------------------------------------
+
+CMatrizInteiro::CMatrizInteiro(int larg, int alt)
+{
+  int y;
+  Larg=larg;
+  Alt=alt;
+  Matriz=new int * [Alt];
+  for (y=0; y<alt; y++)
+    Matriz[y]=new int [Larg];
+}
+//---------------------------------------------------------------------------
+
+CMatrizInteiro::~CMatrizInteiro()
+{
+  int y;
+  for (y=0; y<Alt; y++)
+    delete [] Matriz[y];
+  delete [] Matriz;
+}
 //---------------------------------------------------------------------------
