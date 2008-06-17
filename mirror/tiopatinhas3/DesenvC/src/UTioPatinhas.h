@@ -18,5 +18,7 @@ byte MediaFaixa(TParamsAI &ParamsAI);
 void Identifica(TParamsAI &ParamsAI);
 float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim,
                                                                         int  &MediaLarguras);
+void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
+            int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo);
 
 #endif

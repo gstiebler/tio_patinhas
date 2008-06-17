@@ -33,7 +33,6 @@ void MostraLimiteTarja(TParamsMLT &ParamsMLT)
   };
 
   const int ALT_COLUNA=3, DY=2, DIF_MIN_LUM=15;
-  int TamVetorExtremos=ALT_COLUNA+DY;
   int x, y, n, j;
   int yBorda;
   int DifLum;
@@ -78,8 +77,8 @@ void MostraLimiteTarja(TParamsMLT &ParamsMLT)
           MaisEscuroAnterior=lum;
       }
 
-      if (x==25 && y==170)
-        int w=5;
+//      if (x==25 && y==170)
+//        int w=5;
 
       //borda claro encima, escuro embaixo
       DifLum=MaisEscuroAnterior-MaisClaroAtual;
@@ -297,6 +296,7 @@ byte MediaFaixa(TParamsAI &ParamsAI)
 
 void AnalizaIdentificador(TParamsAI &ParamsAI)
 {
+  //const int TAM_VETOR_LIMITES_VERTICAIS_GRUPOS=300;
   enum TEstadoUltPixel {NADA, IDENTIFICADOR, FUNDO};
   const int TAM_HIST=100;
   TEstadoUltPixel EstadoUltPixel;
@@ -320,8 +320,16 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   byte Media=MediaFaixa(ParamsAI);
   #ifdef DEBUG
     Log->Add("Média faixa: "+IntToStr(Media));
-  #endif
+  #endif         
   byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
+//
+//
+//  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
+//  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+//  MatrizGruposConexos(ParamsAI.TCImgSrc, TPoint(xIni, yIni), TPoint(xFim, yFim),
+//            MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo);
+
+
   YEnc=0;
   YEmb=-1;
   MaiorLargLinha=0;
@@ -370,10 +378,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     VetorLarguras[y-yIni]=LargLinha;
     if (LargLinha>MaiorLargLinha)
       MaiorLargLinha=LargLinha;
-    if (UltXEnc>MaiorUltXEnc)
-      MaiorUltXEnc=UltXEnc;
     if (AchouLinha)
-    {
+    {             
+      if (UltXEnc>MaiorUltXEnc)
+        MaiorUltXEnc=UltXEnc;
       NumLinha++;
       UltYComLinha=y;
       HistogramaNumBordasPixelLinha[NumBordasPixelLinha]++;
@@ -411,6 +419,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   ParamsAI.MaiorLargLinha=MaiorLargLinha;
   Identifica(ParamsAI);
   delete [] VetorLarguras;
+  //delete MatrizGrupos;
 }
 //--------------------------------------------------------------------------- 
 
@@ -526,4 +535,102 @@ void Identifica(TParamsAI &ParamsAI)
     }
   }
 }
+//---------------------------------------------------------------------------
+
+void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
+            int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo)
+{
+  int x, y, i, j, n;
+  int larg, alt;
+  bool AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
+  bool AchouGrupoEncima;
+  bool EmGrupoNovo;
+  int ContadorGrupos, GrupoAtual;
+  byte **ImgSrc=tcImgSrc->TonsCinza;
+  larg=ARect.Width();
+  alt=ARect.Height();
+  for (y=0; y<alt; y++)
+    memset(MatrizGrupos[y], 0, larg*sizeof(int));
+  ContadorGrupos=1;
+  GrupoAtual=0;
+
+  for (y=ARect.top+1; y<ARect.bottom; y++)
+  {
+    AnteriorDentroGrupo=false;
+    for (x=ARect.left+1; x<ARect.right-1; x++)
+    {
+      if (ImgSrc[y][x]<limiar)
+      {
+        if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) não possuia grupo, prossegue
+        {
+          EmGrupoNovo=true;
+          AchouGrupoEncima=false;
+          j=y-ARect.top;
+          //procura encima por pixels com grupo
+          for (n=-1; n<=1; n++)
+          {
+            i=x-ARect.left;
+            GrupoAtual=MatrizGrupos[j-1][i+n];
+            if (GrupoAtual)
+            {
+              AchouGrupoEncima=true;
+              EmGrupoNovo=false;
+              break;
+            }
+          }
+          //se não achou pixels encima então cria um novo grupo
+          if (!AchouGrupoEncima)
+          {
+            GrupoAtual=ContadorGrupos;
+            VetorLimitesVerticaisGrupo[GrupoAtual].yEmb=0;
+            VetorLimitesVerticaisGrupo[GrupoAtual].yEnc=0xFFFF;
+            ContadorGrupos++;
+          }
+        }
+        else //já estamos dentro de um grupo
+        {
+          if (!EmGrupoNovo)
+          {
+            j=y-ARect.top-1;
+            i=x-ARect.left+1;
+            if (MatrizGrupos[j][i])//tem grupo antigo encima
+            {
+              GrupoAtual=MatrizGrupos[j][i];//o grupo atual agora é o de cima
+              EmGrupoNovo=false;
+              j=y-ARect.top;
+              i=x-ARect.left-1;
+              //devemos agora atualizar todos os pixels do grupo atual para o grupo antigo
+              while (MatrizGrupos[j][i])
+              {
+                MatrizGrupos[j][i]=GrupoAtual;
+                i--;
+                if (i==ARect.left)
+                  break;
+              }
+            }
+          }
+        }
+        j=y-ARect.top;
+        i=x-ARect.left;
+        MatrizGrupos[j][i]=GrupoAtual; 
+        AnteriorDentroGrupo=true;
+        //atualiza limites verticais do grupo caso necessário
+        if (j>VetorLimitesVerticaisGrupo[GrupoAtual].yEmb)
+          VetorLimitesVerticaisGrupo[GrupoAtual].yEmb=j; 
+        if (j<VetorLimitesVerticaisGrupo[GrupoAtual].yEnc)
+          VetorLimitesVerticaisGrupo[GrupoAtual].yEnc=j;
+      }
+      else //se pixel é mais claro que o limiar
+      {
+        AnteriorDentroGrupo=false;
+      }
+    }
+  }
+}
+//---------------------------------------------------------------------------
+
+void CopiaGruposValidos()
+{
+
+}     
 //---------------------------------------------------------------------------
