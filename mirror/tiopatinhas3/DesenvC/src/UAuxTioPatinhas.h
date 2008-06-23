@@ -31,11 +31,13 @@ X(XIniParaRefTarja, Int)                  \
 X(YIniParaRefTarja, Int)                  \
 X(MaiorDistSemPixelsIdentificador, Int)   \
 X(NumMinPixelsIdentificador, Int)         \
+X(AltMinGrupoConexoIdentificador, Int)    \
 X(LimiarAlturaIdentificador, Int)         \
-X(LimiarInclinacaoidentificador, Double)     \
+X(LimiarInclinacaoidentificador, Double)  \
 X(LimiarLargLinhasIdentificador, Double)  \
-X(LimiarRelacaoLargAlt, Double)     \
-X(LimiarNumMedColunas, Double)     
+X(LimiarRelacaoLargAlt, Double)           \
+X(LimiarNumMedColunas, Double)
+
 
 #define PREFIXOS_ESTRUTURAS \
 Y(MLT, z)   \
@@ -192,7 +194,10 @@ struct TParamsAI
   int MaiorDistSemPixelsIdentificador;
   //Usado para determinar o número mínimo de pixels já processados com luminosidade abaixo do limiar
   //para se considerar que já foram processados pixels de identificador
-  int NumMinPixelsIdentificador;  
+  int NumMinPixelsIdentificador;
+  //define a altura mínima para que um grupo conexo de pixels possivelmente de identificador
+  //seja considerado de fato do identificador
+  int AltMinGrupoConexoIdentificador;
   //Limiar que define se um identificador tem 1 ou 2 "andares"
   int LimiarAlturaIdentificador;
   //Limiar que define se um identificador é inclinado ou não
