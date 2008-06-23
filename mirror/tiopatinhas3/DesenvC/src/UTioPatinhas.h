@@ -6,6 +6,7 @@
 #include "UAuxTioPatinhas.h"
 #include "UGeral.h"
 
+#define TAM_VETOR_LIMITES_VERTICAIS_GRUPOS 300
 //---------------------------------------------------------------------------
 
 void ReconheceCedula(TParamsRC &ParamsRC);
@@ -20,5 +21,7 @@ float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int f
                                                                         int  &MediaLarguras);
 void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
             int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo);
+void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
+                bool *VetBoolGruposValidos, int AltMin);
 
 #endif

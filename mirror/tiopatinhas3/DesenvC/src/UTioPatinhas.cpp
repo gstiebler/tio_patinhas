@@ -296,9 +296,8 @@ byte MediaFaixa(TParamsAI &ParamsAI)
 
 void AnalizaIdentificador(TParamsAI &ParamsAI)
 {
-  //const int TAM_VETOR_LIMITES_VERTICAIS_GRUPOS=300;
   enum TEstadoUltPixel {NADA, IDENTIFICADOR, FUNDO};
-  const int TAM_HIST=100;
+  const int TAM_HIST=200;
   TEstadoUltPixel EstadoUltPixel;
   int x, y;
   int xIni, xFim, yIni, yFim;
@@ -306,6 +305,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
   int NumLinha, UltYComLinha, NumPixelsIdentificador;
   int *VetorLarguras;
+  bool VetBoolGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
   bool AchouLinha;
   int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
   byte **ImgSrc=ParamsAI.TCImgSrc->TonsCinza;
@@ -322,13 +322,11 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     Log->Add("Média faixa: "+IntToStr(Media));
   #endif         
   byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
-//
-//
+
 //  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
 //  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
 //  MatrizGruposConexos(ParamsAI.TCImgSrc, TPoint(xIni, yIni), TPoint(xFim, yFim),
 //            MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo);
-
 
   YEnc=0;
   YEmb=-1;
@@ -424,7 +422,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
 //--------------------------------------------------------------------------- 
 
 float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim,
-                                                                        int  &MediaLarguras)
+                                                                           int &MediaLarguras)
 {
   int alt=fim-comeco;
   int *vetor=new int [alt+1];
@@ -537,6 +535,8 @@ void Identifica(TParamsAI &ParamsAI)
 }
 //---------------------------------------------------------------------------
 
+//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
+// os grupos conexos do identificador
 void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
             int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo)
 {
@@ -629,8 +629,29 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
 }
 //---------------------------------------------------------------------------
 
-void CopiaGruposValidos()
+void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
+                bool *VetBoolGruposValidos, int AltMin)
 {
+  int altura;
+  memset(VetBoolGruposValidos, 0, TAM_VETOR_LIMITES_VERTICAIS_GRUPOS*sizeof(bool));
+  for (int n=0; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
+  {
+    altura=VetorLimitesVerticaisGrupo[n].yEmb-VetorLimitesVerticaisGrupo[n].yEnc;
+    if (altura>=AltMin)
+      VetBoolGruposValidos[n]=true;
+  }
+}
+//---------------------------------------------------------------------------
 
-}     
+//MatrizGrupos é variável de entrada e de saída
+void CopiaGruposValidos(int **MatrizGrupos, TRect ARect, bool *VetBoolGruposValidos)
+{
+  int x, y;
+  int larg, alt;
+  larg=ARect.Width();
+  alt=ARect.Height();
+  for (y=0; y<alt; y++)
+    for (x=0; x<larg; x++)
+      MatrizGrupos[y][x]=VetBoolGruposValidos[MatrizGrupos[y][x]];
+}
 //---------------------------------------------------------------------------
