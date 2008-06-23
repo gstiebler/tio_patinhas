@@ -7,6 +7,8 @@
 #include "UGeral.h"
 
 #define TAM_VETOR_LIMITES_VERTICAIS_GRUPOS 300
+#define PIXEL_ACEITO 1
+#define PIXEL_NAO_ACEITO 2
 //---------------------------------------------------------------------------
 
 void ReconheceCedula(TParamsRC &ParamsRC);
@@ -22,6 +24,8 @@ float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int f
 void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
             int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo);
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                bool *VetBoolGruposValidos, int AltMin);
+                                                              char *VetGruposValidos, int AltMin);
+void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos);
+void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos);
 
 #endif

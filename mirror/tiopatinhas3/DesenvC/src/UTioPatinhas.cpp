@@ -305,11 +305,10 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
   int NumLinha, UltYComLinha, NumPixelsIdentificador;
   int *VetorLarguras;
-  bool VetBoolGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  char VetGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
   bool AchouLinha;
   int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
-  byte **ImgSrc=ParamsAI.TCImgSrc->TonsCinza;
-  Cor **ImgDest=ParamsAI.BImgDest->PMCor;
+  TRect *ARect;
   xIni=ParamsAI.RefTarja.x-ParamsAI.XIniParaRefTarja;
   xFim=xIni+ParamsAI.LargIdentificador;
   yFim=ParamsAI.RefTarja.y-ParamsAI.YIniParaRefTarja;
@@ -323,10 +322,15 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   #endif         
   byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
 
-//  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
-//  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
-//  MatrizGruposConexos(ParamsAI.TCImgSrc, TPoint(xIni, yIni), TPoint(xFim, yFim),
-//            MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo);
+  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
+  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  ARect=new TRect(xIni, yIni, xFim, yFim);
+  MatrizGruposConexos(ParamsAI.TCImgSrc, *ARect,
+                                        MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo);
+  SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
+                                                          ParamsAI.AltMinGrupoConexoIdentificador);
+  CopiaGruposValidos(MatrizGrupos->Matriz, *ARect, VetGruposValidos);
+  PintaIdentificador(ParamsAI.BImgDest, *ARect, MatrizGrupos->Matriz);
 
   YEnc=0;
   YEmb=-1;
@@ -339,16 +343,16 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
         IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
   #endif
-  for (y=yFim; y>yIni; y--)
+  for (y=0; y>ARect->Height(); y--)
   {
     XEsq=-1;
     XDir=0;
     AchouLinha=false;
     NumBordasPixelLinha=0;
     EstadoUltPixel=NADA;
-    for (x=xIni; x<xFim; x++)
+    for (x=0; x<ARect->Width(); x++)
     {
-      if (ImgSrc[y][x]<Limiar)
+      if (MatrizGrupos->Matriz[y][x])
       {
         if (YEmb==-1)
           YEmb=y;
@@ -362,8 +366,6 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
           UltXEmb=x;
         UltXEnc=x;
         AchouLinha=true;
-
-        ImgDest[y][x].SetCyan();
         NumPixelsIdentificador++;
         if (EstadoUltPixel!=IDENTIFICADOR)
           NumBordasPixelLinha++;
@@ -417,6 +419,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   ParamsAI.MaiorLargLinha=MaiorLargLinha;
   Identifica(ParamsAI);
   delete [] VetorLarguras;
+  delete ARect;
   //delete MatrizGrupos;
 }
 //--------------------------------------------------------------------------- 
@@ -630,21 +633,23 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
 //---------------------------------------------------------------------------
 
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                bool *VetBoolGruposValidos, int AltMin)
+                                                            char *VetGruposValidos, int AltMin)
 {
   int altura;
-  memset(VetBoolGruposValidos, 0, TAM_VETOR_LIMITES_VERTICAIS_GRUPOS*sizeof(bool));
+  memset(VetGruposValidos, 0, TAM_VETOR_LIMITES_VERTICAIS_GRUPOS*sizeof(char));
   for (int n=0; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
   {
     altura=VetorLimitesVerticaisGrupo[n].yEmb-VetorLimitesVerticaisGrupo[n].yEnc;
     if (altura>=AltMin)
-      VetBoolGruposValidos[n]=true;
+      VetGruposValidos[n]=PIXEL_ACEITO;
+    else
+      VetGruposValidos[n]=PIXEL_NAO_ACEITO;
   }
 }
 //---------------------------------------------------------------------------
 
 //MatrizGrupos é variável de entrada e de saída
-void CopiaGruposValidos(int **MatrizGrupos, TRect ARect, bool *VetBoolGruposValidos)
+void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos)
 {
   int x, y;
   int larg, alt;
@@ -652,6 +657,24 @@ void CopiaGruposValidos(int **MatrizGrupos, TRect ARect, bool *VetBoolGruposVali
   alt=ARect.Height();
   for (y=0; y<alt; y++)
     for (x=0; x<larg; x++)
-      MatrizGrupos[y][x]=VetBoolGruposValidos[MatrizGrupos[y][x]];
+      MatrizGrupos[y][x]=VetGruposValidos[MatrizGrupos[y][x]];
 }
+//---------------------------------------------------------------------------
+
+void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos)
+{
+  int x, y;
+  int larg, alt;
+  Cor **ImgDest=BImgDest->PMCor;
+  larg=ARect.Width();
+  alt=ARect.Height();
+  for (y=0; y<alt; y++)
+    for (x=0; x<larg; x++)
+    {
+      if (MatrizGrupos[y][x]==PIXEL_ACEITO)
+        ImgDest[y][x].SetCyan();
+      else if (MatrizGrupos[y][x]==PIXEL_NAO_ACEITO) 
+        ImgDest[y][x].SetMagenta();
+    }
+}     
 //---------------------------------------------------------------------------
