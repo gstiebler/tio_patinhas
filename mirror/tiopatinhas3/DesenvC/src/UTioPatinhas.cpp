@@ -343,7 +343,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
         IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
   #endif
-  for (y=0; y>ARect->Height(); y--)
+  for (y=ARect->Height(); y>0; y--)
   {
     XEsq=-1;
     XDir=0;
@@ -352,7 +352,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     EstadoUltPixel=NADA;
     for (x=0; x<ARect->Width(); x++)
     {
-      if (MatrizGrupos->Matriz[y][x])
+      if (MatrizGrupos->Matriz[y][x]==PIXEL_ACEITO)
       {
         if (YEmb==-1)
           YEmb=y;
@@ -375,7 +375,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
         EstadoUltPixel=FUNDO;
     }
     LargLinha=XDir-XEsq;
-    VetorLarguras[y-yIni]=LargLinha;
+    VetorLarguras[y]=LargLinha;
     if (LargLinha>MaiorLargLinha)
       MaiorLargLinha=LargLinha;
     if (AchouLinha)
@@ -403,7 +403,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     ParamsAI.NumMedColunas=-100;
   int MediaLarguras;
   ParamsAI.RelacaoMedianasLargurasEncEmb=
-        RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc-yIni, YEmb-yIni, MediaLarguras);
+        RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
   ParamsAI.Alt=YEmb-YEnc;
   if (MediaLarguras>0)
     ParamsAI.RelacaoLargAlt=ParamsAI.Alt*1.0/MediaLarguras;
@@ -420,7 +420,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   Identifica(ParamsAI);
   delete [] VetorLarguras;
   delete ARect;
-  //delete MatrizGrupos;
+  delete MatrizGrupos;
 }
 //--------------------------------------------------------------------------- 
 
@@ -555,7 +555,7 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
   for (y=0; y<alt; y++)
     memset(MatrizGrupos[y], 0, larg*sizeof(int));
   ContadorGrupos=1;
-  GrupoAtual=0;
+  GrupoAtual=1;
 
   for (y=ARect.top+1; y<ARect.bottom; y++)
   {
@@ -637,7 +637,7 @@ void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisG
 {
   int altura;
   memset(VetGruposValidos, 0, TAM_VETOR_LIMITES_VERTICAIS_GRUPOS*sizeof(char));
-  for (int n=0; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
+  for (int n=1; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
   {
     altura=VetorLimitesVerticaisGrupo[n].yEmb-VetorLimitesVerticaisGrupo[n].yEnc;
     if (altura>=AltMin)
@@ -664,17 +664,20 @@ void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos
 void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos)
 {
   int x, y;
+  int xIni, xFim, yIni, yFim;
   int larg, alt;
+  Cor *CorTemp;
   Cor **ImgDest=BImgDest->PMCor;
   larg=ARect.Width();
   alt=ARect.Height();
   for (y=0; y<alt; y++)
     for (x=0; x<larg; x++)
     {
+      CorTemp=&(ImgDest[y+ARect.Top][x+ARect.Left]);
       if (MatrizGrupos[y][x]==PIXEL_ACEITO)
-        ImgDest[y][x].SetCyan();
+        CorTemp->SetCyan();
       else if (MatrizGrupos[y][x]==PIXEL_NAO_ACEITO) 
-        ImgDest[y][x].SetMagenta();
+        CorTemp->SetAzul();
     }
 }     
 //---------------------------------------------------------------------------

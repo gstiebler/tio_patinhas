@@ -1,8 +1,8 @@
 object Main: TMain
-  Left = 148
-  Top = 76
-  Width = 1292
-  Height = 793
+  Left = 30
+  Top = 55
+  Width = 1280
+  Height = 770
   HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
   AlphaBlendValue = 0
@@ -88,8 +88,8 @@ object Main: TMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 740
-    Width = 1284
+    Top = 717
+    Width = 1272
     Height = 19
     Panels = <
       item
