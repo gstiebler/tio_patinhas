@@ -306,6 +306,8 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   int NumLinha, UltYComLinha, NumPixelsIdentificador;
   int *VetorLarguras;
   char VetGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  //usado para indicar grupos conexos que fazem parte de outros grupos
+  int PonteiroGrupos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
   bool AchouLinha;
   int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
   TRect *ARect;
@@ -326,9 +328,9 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
   ARect=new TRect(xIni, yIni, xFim, yFim);
   MatrizGruposConexos(ParamsAI.TCImgSrc, *ARect,
-                                        MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo);
+                        MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
   SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
-                                                          ParamsAI.AltMinGrupoConexoIdentificador);
+                           ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect->Height());
   CopiaGruposValidos(MatrizGrupos->Matriz, *ARect, VetGruposValidos);
   PintaIdentificador(ParamsAI.BImgDest, *ARect, MatrizGrupos->Matriz);
 
@@ -540,18 +542,21 @@ void Identifica(TParamsAI &ParamsAI)
 
 //MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
 // os grupos conexos do identificador
-void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
-            int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo)
+void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect, int **MatrizGrupos, byte limiar,
+                          TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo, int *PonteiroGrupos)
 {
   int x, y, i, j, n;
   int larg, alt;
   bool AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
   bool AchouGrupoEncima;
   bool EmGrupoNovo;
-  int ContadorGrupos, GrupoAtual;
+  int ContadorGrupos, GrupoAtual, GrupoEncima;
   byte **ImgSrc=tcImgSrc->TonsCinza;
   larg=ARect.Width();
   alt=ARect.Height();
+  //inicialmente cada grupo aponta para ele mesmo
+  for (n=0; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
+    PonteiroGrupos[n]=n;
   for (y=0; y<alt; y++)
     memset(MatrizGrupos[y], 0, larg*sizeof(int));
   ContadorGrupos=1;
@@ -573,7 +578,7 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
           for (n=-1; n<=1; n++)
           {
             i=x-ARect.left;
-            GrupoAtual=MatrizGrupos[j-1][i+n];
+            GrupoAtual=PonteiroGrupos[MatrizGrupos[j-1][i+n]];
             if (GrupoAtual)
             {
               AchouGrupoEncima=true;
@@ -592,26 +597,21 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
         }
         else //já estamos dentro de um grupo
         {
-          //se estamos processando um grupo que foi criado na linha corrente então
           //devemos sempre ver se encima existe algum grupo antigo
-          if (EmGrupoNovo)
+          j=y-ARect.top-1;
+          i=x-ARect.left+1;    
+          GrupoEncima=PonteiroGrupos[MatrizGrupos[j][i]];
+          if (MatrizGrupos[j][i] && (GrupoEncima!=GrupoAtual))//tem grupo antigo encima
           {
-            j=y-ARect.top-1;
-            i=x-ARect.left+1;
-            if (MatrizGrupos[j][i] && (MatrizGrupos[j][i]!=GrupoAtual))//tem grupo antigo encima
+            if (EmGrupoNovo)
             {
-              GrupoAtual=MatrizGrupos[j][i];//o grupo atual agora é o de cima
+              PonteiroGrupos[GrupoAtual]=GrupoEncima;
+              GrupoAtual=GrupoEncima;//o grupo atual agora é o de cima
               EmGrupoNovo=false;
-              j=y-ARect.top;
-              i=x-ARect.left-1;
-              //devemos agora atualizar todos os pixels do grupo atual para o grupo antigo
-              while (MatrizGrupos[j][i])
-              {
-                MatrizGrupos[j][i]=GrupoAtual;
-                i--;
-                if (i==ARect.left)
-                  break;
-              }
+            }
+            else
+            {
+              PonteiroGrupos[GrupoEncima]=GrupoAtual;
             }
           }
         }
@@ -635,14 +635,17 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
 //---------------------------------------------------------------------------
 
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                                                            char *VetGruposValidos, int AltMin)
+                              char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim)
 {
-  int altura;
+  int altura, DifEmb;
+  int GrupoReal;
   memset(VetGruposValidos, 0, TAM_VETOR_LIMITES_VERTICAIS_GRUPOS*sizeof(char));
   for (int n=1; n<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++)
   {
-    altura=VetorLimitesVerticaisGrupo[n].yEmb-VetorLimitesVerticaisGrupo[n].yEnc;
-    if (altura>=AltMin)
+    GrupoReal=PonteiroGrupos[n];
+    altura=VetorLimitesVerticaisGrupo[GrupoReal].yEmb-VetorLimitesVerticaisGrupo[GrupoReal].yEnc;
+    DifEmb=yFim-VetorLimitesVerticaisGrupo[GrupoReal].yEmb;
+    if (altura>=AltMin && DifEmb<15)
       VetGruposValidos[n]=PIXEL_ACEITO;
     else
       VetGruposValidos[n]=PIXEL_NAO_ACEITO;

@@ -21,10 +21,10 @@ byte MediaFaixa(TParamsAI &ParamsAI);
 void Identifica(TParamsAI &ParamsAI);
 float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int fim,
                                                                         int  &MediaLarguras);
-void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
-            int **MatrizGrupos, byte limiar, TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo);
+void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect, int **MatrizGrupos, byte limiar,
+                          TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo, int *PonteiroGrupos);
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                                                              char *VetGruposValidos, int AltMin);
+                                char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim);
 void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos);
 void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos);
 
