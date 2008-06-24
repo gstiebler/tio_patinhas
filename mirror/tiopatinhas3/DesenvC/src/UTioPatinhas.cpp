@@ -555,7 +555,7 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
   for (y=0; y<alt; y++)
     memset(MatrizGrupos[y], 0, larg*sizeof(int));
   ContadorGrupos=1;
-  GrupoAtual=1;
+  GrupoAtual=0;
 
   for (y=ARect.top+1; y<ARect.bottom; y++)
   {
@@ -592,11 +592,13 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect,
         }
         else //já estamos dentro de um grupo
         {
-          if (!EmGrupoNovo)
+          //se estamos processando um grupo que foi criado na linha corrente então
+          //devemos sempre ver se encima existe algum grupo antigo
+          if (EmGrupoNovo)
           {
             j=y-ARect.top-1;
             i=x-ARect.left+1;
-            if (MatrizGrupos[j][i])//tem grupo antigo encima
+            if (MatrizGrupos[j][i] && (MatrizGrupos[j][i]!=GrupoAtual))//tem grupo antigo encima
             {
               GrupoAtual=MatrizGrupos[j][i];//o grupo atual agora é o de cima
               EmGrupoNovo=false;
