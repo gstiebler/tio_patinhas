@@ -5,6 +5,7 @@
 
 #include "UAuxTioPatinhas.h"
 #include "UGeral.h"
+#include "UImgFuncs.h"
 
 #define TAM_VETOR_LIMITES_VERTICAIS_GRUPOS 300
 #define PIXEL_ACEITO 1

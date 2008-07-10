@@ -103,6 +103,12 @@ CMatrizInteiro::~CMatrizInteiro()
     delete [] Matriz[y];
   delete [] Matriz;
 }
+//---------------------------------------------------------------------------     
+
+void TParamsRC::ConverteParametrosDependentesLumMediana()
+{
+  ParamsAI.DifMinMediaFaixaRef=Round((ParamsAI.DifMinMediaFaixaRef/1000.0)*LumMedianaImagem);
+}     
 //---------------------------------------------------------------------------
 
 void TParamsRC::ConverteParametrosDependentesLargura()
@@ -115,7 +121,7 @@ void TParamsRC::ConverteParametrosDependentesLargura()
 }     
 //---------------------------------------------------------------------------         
 
-void TParamsRC::ConverteParametrosAlturaFaixa()
+void TParamsRC::ConverteParametrosDependentesAlturaFaixa()
 {
   ParamsAI.DistFaixaRef=Round((ParamsAI.DistFaixaRef/1000.0)*ParamsABT.MediaAlturaTarja); 
   ParamsAI.LargFaixaRef=Round((ParamsAI.LargFaixaRef/1000.0)*ParamsABT.MediaAlturaTarja);

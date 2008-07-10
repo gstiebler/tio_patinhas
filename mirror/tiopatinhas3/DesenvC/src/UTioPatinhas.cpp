@@ -10,11 +10,13 @@
 
 void ReconheceCedula(TParamsRC &ParamsRC)
 {
+  Histograma(ParamsRC.ParamsMLT.TCImgSrc, NULL, NULL, ParamsRC.LumMedianaImagem);
+  ParamsRC.ConverteParametrosDependentesLumMediana();
   MostraLimiteTarja(ParamsRC.ParamsMLT);
   ParamsRC.ParamsABT.BImgDest=ParamsRC.ParamsMLT.BImgDest;
   ParamsRC.ParamsABT.BordasColunas=ParamsRC.ParamsMLT.BordasColunas;
   AnalizaBordasTarja(ParamsRC.ParamsABT);
-  ParamsRC.ConverteParametrosAlturaFaixa();
+  ParamsRC.ConverteParametrosDependentesAlturaFaixa();
   if (ParamsRC.ParamsABT.AchouTarja)
   {
     ParamsRC.ParamsAI.RefTarja=ParamsRC.ParamsABT.RefTarja;
@@ -41,7 +43,8 @@ void EscreveParametros(TParamsRC &ParamsRC)
     #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsAI.##a));
       PARAMETROS_AI
     #undef X      ;
-    Log->Add("Media Altura Tarja: "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.MediaAlturaTarja));
+    Log->Add("Media Altura Tarja: "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.MediaAlturaTarja));  
+    Log->Add("Luminosidade Mediana: "+FormatFloat("###,###,##0.###", ParamsRC.LumMedianaImagem));
   #endif
 }     
 //---------------------------------------------------------------------------
