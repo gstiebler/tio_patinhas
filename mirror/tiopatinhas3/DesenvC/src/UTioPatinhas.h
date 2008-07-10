@@ -27,5 +27,6 @@ void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisG
                                 char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim);
 void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos);
 void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos);
+void EscreveParametros(TParamsRC &ParamsRC);
 
 #endif

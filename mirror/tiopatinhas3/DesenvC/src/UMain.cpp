@@ -255,6 +255,7 @@ void TMain::CarregaParamsReconheceCedula(TParamsRC &ParamsRC)
   #define X(a, b) ParamsRC.ParamsAI.##a=edAI##a->Text.To##b();
     PARAMETROS_AI
   #undef X
+  ParamsRC.ConverteParametrosDependentesLargura();
 }
 //---------------------------------------------------------------------------
 
@@ -342,7 +343,7 @@ void TMain::ReconheceCedulaForm()
   __int64 comeco, fim;
   #ifdef DEBUG
     Log->Clear();
-  #endif
+  #endif                                                 
   TParamsRC ParamsRC;
   imgProcessada->Picture->Bitmap->Assign(imgTemp->Picture->Bitmap);
   ParamsRC.ParamsMLT.TCImgSrc=new CTonsCinza(imgTemp);
