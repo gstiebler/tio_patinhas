@@ -229,8 +229,10 @@ struct TParamsRC
   TParamsMLT ParamsMLT;
   TParamsABT ParamsABT;
   TParamsAI ParamsAI;
+  int LumMedianaImagem;
   void ConverteParametrosDependentesLargura();//pega os fatores e multiplica para pegar valores absolutos
-  void ConverteParametrosAlturaFaixa();//pega os fatores e multiplica para pegar valores absolutos
+  void ConverteParametrosDependentesAlturaFaixa();//pega os fatores e multiplica para pegar valores absolutos
+  void ConverteParametrosDependentesLumMediana();//pega os fatores e multiplica para pegar valores absolutos
 };
 //---------------------------------------------------------------------------
 
