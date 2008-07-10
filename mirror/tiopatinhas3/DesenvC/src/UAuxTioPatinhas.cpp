@@ -104,3 +104,28 @@ CMatrizInteiro::~CMatrizInteiro()
   delete [] Matriz;
 }
 //---------------------------------------------------------------------------
+
+void TParamsRC::ConverteParametrosDependentesLargura()
+{
+  ParamsABT.AltMinTarja=Round((ParamsABT.AltMinTarja/1000.0)*ParamsMLT.TCImgSrc->Larg);
+  ParamsABT.AltMaxTarja=Round((ParamsABT.AltMaxTarja/1000.0)*ParamsMLT.TCImgSrc->Larg);  
+  ParamsABT.DistMaxTarjas=Round((ParamsABT.DistMaxTarjas/1000.0)*ParamsMLT.TCImgSrc->Larg);  
+  ParamsABT.LargMinTarja=Round((ParamsABT.LargMinTarja/1000.0)*ParamsMLT.TCImgSrc->Larg);
+  ParamsABT.LargMaxTarja=Round((ParamsABT.LargMaxTarja/1000.0)*ParamsMLT.TCImgSrc->Larg);
+}     
+//---------------------------------------------------------------------------         
+
+void TParamsRC::ConverteParametrosAlturaFaixa()
+{
+  ParamsAI.DistFaixaRef=Round((ParamsAI.DistFaixaRef/1000.0)*ParamsABT.MediaAlturaTarja); 
+  ParamsAI.LargFaixaRef=Round((ParamsAI.LargFaixaRef/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.LargIdentificador=Round((ParamsAI.LargIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.AltIdentificador=Round((ParamsAI.AltIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);  
+  ParamsAI.XIniParaRefTarja=Round((ParamsAI.XIniParaRefTarja/1000.0)*ParamsABT.MediaAlturaTarja);   
+  ParamsAI.YIniParaRefTarja=Round((ParamsAI.YIniParaRefTarja/1000.0)*ParamsABT.MediaAlturaTarja);   
+  ParamsAI.LimiarAlturaIdentificador=Round((ParamsAI.LimiarAlturaIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.MaiorDistSemPixelsIdentificador=Round((ParamsAI.MaiorDistSemPixelsIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.NumMinPixelsIdentificador=Round((ParamsAI.NumMinPixelsIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.AltMinGrupoConexoIdentificador=Round((ParamsAI.AltMinGrupoConexoIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+}     
+//---------------------------------------------------------------------------

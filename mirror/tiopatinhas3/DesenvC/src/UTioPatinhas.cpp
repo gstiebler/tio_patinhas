@@ -14,6 +14,7 @@ void ReconheceCedula(TParamsRC &ParamsRC)
   ParamsRC.ParamsABT.BImgDest=ParamsRC.ParamsMLT.BImgDest;
   ParamsRC.ParamsABT.BordasColunas=ParamsRC.ParamsMLT.BordasColunas;
   AnalizaBordasTarja(ParamsRC.ParamsABT);
+  ParamsRC.ConverteParametrosAlturaFaixa();
   if (ParamsRC.ParamsABT.AchouTarja)
   {
     ParamsRC.ParamsAI.RefTarja=ParamsRC.ParamsABT.RefTarja;
@@ -21,7 +22,28 @@ void ReconheceCedula(TParamsRC &ParamsRC)
     ParamsRC.ParamsAI.TCImgSrc=ParamsRC.ParamsMLT.TCImgSrc;
     AnalizaIdentificador(ParamsRC.ParamsAI);
   }
+  EscreveParametros(ParamsRC);
 }
+//---------------------------------------------------------------------------
+
+void EscreveParametros(TParamsRC &ParamsRC)
+{
+  #ifdef DEBUG
+
+    #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsMLT.##a));
+      PARAMETROS_MLT
+    #undef X      ;
+
+    #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.##a));
+      PARAMETROS_ABT
+    #undef X      ;
+
+    #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsAI.##a));
+      PARAMETROS_AI
+    #undef X      ;
+    Log->Add("Media Altura Tarja: "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.MediaAlturaTarja));
+  #endif
+}     
 //---------------------------------------------------------------------------
 
 void MostraLimiteTarja(TParamsMLT &ParamsMLT)
@@ -221,7 +243,7 @@ void SelecionaTarja(TParamsABT &ParamsABT)
   uint n, nMenorX, m, LargTarjaCandidata;
   TTarja *TarjaCandidata;
   int MenorX;
-  double soma, desvio, media;
+  double soma, desvio, media, MediaTarjaSelecionada;
   PreparaSelecionaTarja(ParamsABT);
   MenorX=0xFFFFFF;
   nMenorX=-1;
@@ -247,7 +269,7 @@ void SelecionaTarja(TParamsABT &ParamsABT)
       soma=0;
       for (m=0; m<ParamsABT.VectorTarja[n].VetorAlturas.size(); m++)
         soma=fabs(media-ParamsABT.VectorTarja[n].VetorAlturas[m]);
-        desvio=soma/ParamsABT.VectorTarja[n].VetorAlturas.size();
+      desvio=soma/ParamsABT.VectorTarja[n].VetorAlturas.size();
       #ifdef DEBUG
         Log->Add("desvio padrão alturas: "+FloatToStr(desvio));
       #endif
@@ -261,6 +283,7 @@ void SelecionaTarja(TParamsABT &ParamsABT)
         {
           MenorX=ParamsABT.VectorTarja[n].X;
           nMenorX=n;
+          MediaTarjaSelecionada=media;
         }
       }
     }
@@ -269,6 +292,7 @@ void SelecionaTarja(TParamsABT &ParamsABT)
   {
     ParamsABT.RefTarja.x=ParamsABT.VectorTarja[nMenorX].X;
     ParamsABT.RefTarja.y=ParamsABT.VectorTarja[nMenorX].PriYEnc;
+    ParamsABT.MediaAlturaTarja=MediaTarjaSelecionada;
     ParamsABT.AchouTarja=true;
   }
 }

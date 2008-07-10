@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "UCBitmap.h"
+#include "UGeral.h"
 #include <vector>
 #include <Math.hpp>
 #define DEBUG
@@ -37,7 +38,6 @@ X(LimiarInclinacaoidentificador, Double)  \
 X(LimiarLargLinhasIdentificador, Double)  \
 X(LimiarRelacaoLargAlt, Double)           \
 X(LimiarNumMedColunas, Double)
-
 
 #define PREFIXOS_ESTRUTURAS \
 Y(MLT, z)   \
@@ -158,6 +158,7 @@ struct TParamsABT
   TBordasColunas *BordasColunas;
   TConjuntoMeioBordas *ConjuntoMeioBordas;  
   TVectorTarja VectorTarja;
+  double MediaAlturaTarja;
   ~TParamsABT();
 };
 //---------------------------------------------------------------------------
@@ -228,6 +229,8 @@ struct TParamsRC
   TParamsMLT ParamsMLT;
   TParamsABT ParamsABT;
   TParamsAI ParamsAI;
+  void ConverteParametrosDependentesLargura();//pega os fatores e multiplica para pegar valores absolutos
+  void ConverteParametrosAlturaFaixa();//pega os fatores e multiplica para pegar valores absolutos
 };
 //---------------------------------------------------------------------------
 
