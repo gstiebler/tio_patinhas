@@ -1,0 +1,6 @@
+MIDlet-1: Snapper, snapper.png, SnapperMIDlet
+MIDlet-Name: Snapper
+MIDlet-Vendor: Sun Microsystems
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.0
+MicroEdition-Profile: MIDP-1.0
