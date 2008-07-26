@@ -25,7 +25,7 @@
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="ilink32"/>
-    <USERDEFINES value="DEBUG;_DEBUG"/>
+    <USERDEFINES value="DEBUG"/>
     <SYSDEFINES value="NO_STRICT;_VIS_NOLIB"/>
     <MAINSOURCE value="TioPatinhas.cpp"/>
     <INCLUDEPATH value="Comum;Reconhecimento;..\..\Outros2\teste;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;..\..\Comum;&quot;C:\Arquivos de programas\Borland\CBuilder6\Projects&quot;;..\CopiaParteImagem;..;..\Localização;$(BCB)\include;$(BCB)\include\vcl;..\jaugusto\detran\cpp_projetos\src\UtilsLib;..\jaugusto\detran\cpp_projetos\include"/>
@@ -41,10 +41,9 @@
       -I&quot;C:\Arquivos de programas\Borland\CBuilder6\Projects&quot; 
       -I..\CopiaParteImagem -I.. -I..\Localização -I$(BCB)\include 
       -I$(BCB)\include\vcl -I..\jaugusto\detran\cpp_projetos\src\UtilsLib 
-      -I..\jaugusto\detran\cpp_projetos\include -src_suffix cpp -DDEBUG -D_DEBUG 
-      -boa"/>
-    <CFLAG1 value="-vGc -vGt -vGd -Od -H=c:\PROGRA~1\borland\CBUILD~2\lib\vcl60.csm -Hc -Vx 
-      -Ve -ff -X- -a8 -6 -b- -k -y -v -vi- -c -tW -tWM"/>
+      -I..\jaugusto\detran\cpp_projetos\include -src_suffix cpp -DDEBUG -boa"/>
+    <CFLAG1 value="-Od -H=c:\PROGRA~1\borland\CBUILD~2\lib\vcl60.csm -Hc -Vx -Ve -ff -X- -a8 
+      -6 -b- -k -y -v -vi- -c -tW -tWM"/>
     <PFLAGS value="-N2..\obj -N0..\obj -$Y+ -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zi"/>
@@ -54,7 +53,7 @@
   <LINKER>
     <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
-    <ALLLIB value="cg32.lib $(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
@@ -156,8 +155,8 @@ Item0=$(BCB)\source\vcl
 
 [HistoryLists\hlConditionals]
 Count=3
-Item0=DEBUG;_DEBUG
-Item1=DEBUG
+Item0=DEBUG
+Item1=DEBUG;_DEBUG
 Item2=_DEBUG
 
 [HistoryLists\hlIntOutputDir]
@@ -190,7 +189,7 @@ RemoteDebug=0
 [Compiler]
 ShowInfoMsgs=0
 LinkDebugVcl=0
-LinkCGLIB=1
+LinkCGLIB=0
 
 [CORBA]
 AddServerUnit=1
