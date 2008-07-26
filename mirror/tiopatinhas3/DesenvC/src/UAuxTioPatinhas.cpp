@@ -132,6 +132,7 @@ void TParamsRC::ConverteParametrosDependentesAlturaFaixa()
   ParamsAI.LimiarAlturaIdentificador=Round((ParamsAI.LimiarAlturaIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
   ParamsAI.MaiorDistSemPixelsIdentificador=Round((ParamsAI.MaiorDistSemPixelsIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
   ParamsAI.NumMinPixelsIdentificador=Round((ParamsAI.NumMinPixelsIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
-  ParamsAI.AltMinGrupoConexoIdentificador=Round((ParamsAI.AltMinGrupoConexoIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
+  ParamsAI.AltMinGrupoConexoIdentificador=Round((ParamsAI.AltMinGrupoConexoIdentificador/1000.0)*ParamsABT.MediaAlturaTarja); 
+  ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador=Round((ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador/1000.0)*ParamsABT.MediaAlturaTarja);
 }     
 //---------------------------------------------------------------------------

@@ -25,7 +25,7 @@ float RetornaRelacaoMedianasLargurasEncEmb(int *VetorLarguras, int comeco, int f
 void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect, int **MatrizGrupos, byte limiar,
                           TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo, int *PonteiroGrupos);
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                                char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim);
+        char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim, int DifMinEmb);
 void CopiaGruposValidos(int **MatrizGrupos, TRect &ARect, char *VetGruposValidos);
 void PintaIdentificador(CBitmap *BImgDest, TRect &ARect, int **MatrizGrupos);
 void EscreveParametros(TParamsRC &ParamsRC);

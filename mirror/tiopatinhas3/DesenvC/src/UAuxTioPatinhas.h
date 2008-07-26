@@ -8,7 +8,7 @@
 #include "UGeral.h"
 #include <vector>
 #include <Math.hpp>
-#define DEBUG
+//#define DEBUG
 
 #define PARAMETROS_MLT  \
 X(PropYIni, Double)     \
@@ -37,7 +37,8 @@ X(LimiarAlturaIdentificador, Int)         \
 X(LimiarInclinacaoidentificador, Double)  \
 X(LimiarLargLinhasIdentificador, Double)  \
 X(LimiarRelacaoLargAlt, Double)           \
-X(LimiarNumMedColunas, Double)
+X(LimiarNumMedColunas, Double)            \
+X(DifMinEmbGrupoEmbRegiaoIdentificador, Int)
 
 #define PREFIXOS_ESTRUTURAS \
 Y(MLT, z)   \
@@ -209,6 +210,9 @@ struct TParamsAI
   //limiar que define a maior relação entre largura e altura do identificador
   float LimiarRelacaoLargAlt;
   float LimiarNumMedColunas;
+  //Diferença máxima entre entre a parte de baixo da região do identificador e a parte de baixo.
+  //de cada região candidata à região de identificador. Multiplicado pela altura da tarja
+  int DifMinEmbGrupoEmbRegiaoIdentificador;
 
   //Retorno
   int Alt;

@@ -31,7 +31,8 @@ void ReconheceCedula(TParamsRC &ParamsRC)
 void EscreveParametros(TParamsRC &ParamsRC)
 {
   #ifdef DEBUG
-
+    Log->Add("Media Altura Tarja: "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.MediaAlturaTarja));  
+    Log->Add("Luminosidade Mediana: "+FormatFloat("###,###,##0.###", ParamsRC.LumMedianaImagem));
     #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsMLT.##a));
       PARAMETROS_MLT
     #undef X      ;
@@ -43,8 +44,6 @@ void EscreveParametros(TParamsRC &ParamsRC)
     #define X(a, b) Log->Add(#a": "+FormatFloat("###,###,##0.###", ParamsRC.ParamsAI.##a));
       PARAMETROS_AI
     #undef X      ;
-    Log->Add("Media Altura Tarja: "+FormatFloat("###,###,##0.###", ParamsRC.ParamsABT.MediaAlturaTarja));  
-    Log->Add("Luminosidade Mediana: "+FormatFloat("###,###,##0.###", ParamsRC.LumMedianaImagem));
   #endif
 }     
 //---------------------------------------------------------------------------
@@ -347,17 +346,23 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
   memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
   byte Media=MediaFaixa(ParamsAI);
   #ifdef DEBUG
-    Log->Add("Média faixa: "+IntToStr(Media));
+    Log->Add("Luminosidade média faixa: "+IntToStr(Media));
   #endif         
   byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
 
   CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
   TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  for (int s=0; s<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; s++)
+  {
+    VetorLimitesVerticaisGrupo[s].yEmb=0; 
+    VetorLimitesVerticaisGrupo[s].yEnc=0;
+  }
   ARect=new TRect(xIni, yIni, xFim, yFim);
   MatrizGruposConexos(ParamsAI.TCImgSrc, *ARect,
                         MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
   SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
-                           ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect->Height());
+                           ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect->Height(),
+                                ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
   CopiaGruposValidos(MatrizGrupos->Matriz, *ARect, VetGruposValidos);
   PintaIdentificador(ParamsAI.BImgDest, *ARect, MatrizGrupos->Matriz);
 
@@ -440,6 +445,7 @@ void AnalizaIdentificador(TParamsAI &ParamsAI)
     ParamsAI.RelacaoLargAlt=0;
   #ifdef DEBUG
     Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
+    Log->Add("YEmb: "+IntToStr(YEmb)+"\t\tYEnc: "+IntToStr(YEnc));
   #endif
   if (ParamsAI.Alt>0)
     ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
@@ -662,7 +668,7 @@ void MatrizGruposConexos(CTonsCinza *tcImgSrc, TRect ARect, int **MatrizGrupos, 
 //---------------------------------------------------------------------------
 
 void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisGrupo,
-                              char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim)
+        char *VetGruposValidos, int AltMin, int *PonteiroGrupos, int yFim, int DifMinEmb)
 {
   int altura, DifEmb;
   int GrupoReal;
@@ -672,7 +678,12 @@ void SelecionaGruposIdentificador(TLimitesVerticaisGrupo *VetorLimitesVerticaisG
     GrupoReal=PonteiroGrupos[n];
     altura=VetorLimitesVerticaisGrupo[GrupoReal].yEmb-VetorLimitesVerticaisGrupo[GrupoReal].yEnc;
     DifEmb=yFim-VetorLimitesVerticaisGrupo[GrupoReal].yEmb;
-    if (altura>=AltMin && DifEmb<15)
+
+    #ifdef DEBUG
+      if (altura)
+        Log->Add("Região candidata altura: "+IntToStr(altura)+" DifEmb: "+IntToStr(DifEmb));
+    #endif
+    if (altura>=AltMin && DifEmb<DifMinEmb)
       VetGruposValidos[n]=PIXEL_ACEITO;
     else
       VetGruposValidos[n]=PIXEL_NAO_ACEITO;

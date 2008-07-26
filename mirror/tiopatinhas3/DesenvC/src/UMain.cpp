@@ -323,7 +323,7 @@ _Bitmap * TMain::CapturaBitmap()
   Bitmap->PixelFormat=pf32bit;
   v2=vetor+sizeof(BITMAPINFOHEADER);
   Status(IntToStr(SizeCaptured)+" - "+IntToStr(ImageSize));  
-  if (SizeCaptured>ImageSize)
+  if (SizeCaptured>=ImageSize)
   {
     for (y=ALT-1; y>=0; y--)
       memcpy(Bitmap->ScanLine[ALT-1-y], &v2[y*(LARG*4+128)], LARG*4);
