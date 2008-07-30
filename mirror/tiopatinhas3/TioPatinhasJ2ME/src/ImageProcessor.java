@@ -9,7 +9,7 @@ class CTonsCinza {
     private int LargTotal, AltTotal,
                 LargImg, AltImg;
 
-  int [][]TonsCinza;
+  byte [][]TonsCinza;
   public int Larg, Alt;
 
   CTonsCinza(Image img){
@@ -20,13 +20,27 @@ class CTonsCinza {
       // implementar
       Larg = img.getWidth();
       Alt  = img.getHeight();
-      TonsCinza = new int[Larg][Alt];
+      TonsCinza = new byte[Larg][Alt];
       
       for (int i=0; i<Alt; i++){
         for (int j=0; j<Alt; j++){
-            TonsCinza[i][j] = (raw[i*Larg+j]& 0x00000FF);
+            TonsCinza[i][j] = (byte)(raw[i*Larg+j]& 0x00000FF);
         }
       }
+  }
+  
+  Image SaveImage() {
+      byte []raw = new byte[Larg*Alt]; 
+      int ponteiro=0;
+      for (int i=0; i<Alt; i++){
+        for (int j=0; j<Alt; j++){
+            raw[ponteiro++]=TonsCinza[i][j];
+            raw[ponteiro++]=TonsCinza[i][j];
+            raw[ponteiro++]=TonsCinza[i][j];
+        }
+      }
+      Image img = Image.createImage(raw, 0, raw.length);
+      return img;
   }
 };
 
