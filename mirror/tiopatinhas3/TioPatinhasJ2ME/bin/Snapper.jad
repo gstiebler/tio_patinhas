@@ -1,0 +1,6 @@
+MIDlet-1: Snapper, snapper.png, SnapperMIDlet
+MIDlet-Jar-Size: 4456
+MIDlet-Jar-URL: Snapper.jar
+MIDlet-Name: Snapper
+MIDlet-Vendor: Sun Microsystems
+MIDlet-Version: 1.0
