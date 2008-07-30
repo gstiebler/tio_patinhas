@@ -88,13 +88,10 @@ public class TesteJavaDesktopView extends FrameView {
         }
         TesteJavaDesktopApp.getApplication().show(aboutBox);
     }
-    public CPainel Painel2;
-
+    
     @Action
     public void NovaFunc() {
 
-
-        Painel2 = new CPainel();
 
         DataInputStream dis = null;
         String record = null;

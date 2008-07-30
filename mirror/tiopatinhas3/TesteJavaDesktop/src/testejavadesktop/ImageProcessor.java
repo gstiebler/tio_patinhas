@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.*;
 
 import java.io.FileInputStream;
- 
+
 public class ImageProcessor extends java.applet.Applet {
 
     /**
