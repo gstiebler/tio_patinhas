@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.*;
 
 import java.io.FileInputStream;
+import javax.swing.ImageIcon;
 
 public class ImageProcessor extends java.applet.Applet {
 
@@ -139,26 +140,101 @@ public class ImageProcessor extends java.applet.Applet {
         }
         return (Image) null;
     }
+
+    // This method returns a buffered image with the contents of an image
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+
+        // This code ensures that all the pixels in the image are loaded
+        image = new ImageIcon(image).getImage();
+
+        // Determine if the image has transparent pixels; for this method's
+        // implementation, see e661 Determining If an Image Has Transparent Pixels
+        boolean hasAlpha = false;//hasAlpha(image);
+
+        // Create a buffered image with a format that's compatible with the screen
+        BufferedImage bimage = null;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            // Determine the type of transparency of the new buffered image
+            int transparency = Transparency.OPAQUE;
+            if (hasAlpha) {
+                transparency = Transparency.BITMASK;
+            }
+
+            // Create the buffered image
+            GraphicsDevice gs = ge.getDefaultScreenDevice();
+            GraphicsConfiguration gc = gs.getDefaultConfiguration();
+            bimage = gc.createCompatibleImage(
+                    image.getWidth(null), image.getHeight(null), transparency);
+        } catch (HeadlessException e) {
+            // The system does not have a screen
+        }
+
+        if (bimage == null) {
+            // Create a buffered image using the default color model
+            int type = BufferedImage.TYPE_INT_RGB;
+            if (hasAlpha) {
+                type = BufferedImage.TYPE_INT_ARGB;
+            }
+            bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+        }
+
+        // Copy image to buffered image
+        Graphics g = bimage.createGraphics();
+
+        // Paint the image onto the buffered image
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+
+        return bimage;
+    }
+
+    static int Histograma(CTonsCinza TCImgSrc) {
+        int[] vetor = new int[256];
+        int[] vetorCumulativa = new int[256];
+        int n, x, y;
+        int MetadeTotal;
+        int Mediana;
+        int[][] ImgSrc = TCImgSrc.TonsCinza;
+        for (y = 0; y < TCImgSrc.Alt; y++) {
+            for (x = 0; x < TCImgSrc.Larg; x++) {
+                vetor[ImgSrc[y][x]]++;
+            }
+        }
+        vetorCumulativa[0] = vetor[0];
+        for (n = 1; n < 256; n++) {
+            vetorCumulativa[n] = vetorCumulativa[n - 1] + vetor[n];
+        }
+        Mediana = 0;
+        MetadeTotal = vetorCumulativa[255] / 2;
+        for (n = 1; n < 256; n++) {
+            if (vetorCumulativa[n] >= MetadeTotal) {
+                Mediana = n;
+                break;
+            }
+        }
+        return Mediana;
+    }
+//---------------------------------------------------------------------------
 }
 
 class CTonsCinza {
-
-    private int LargTotal,  AltTotal,  LargImg,  AltImg;
-    byte[][] TonsCinza;
+    int [][] TonsCinza;
     public int Larg,  Alt;
 
     CTonsCinza(Image img) {
-        int[] raw;
         Larg = img.getWidth(null);
         Alt = img.getHeight(null);
-        raw = new int[Larg * Alt];
-        PixelGrabber pg = new PixelGrabber(img, 0, 0, Larg, Alt, raw, 0, Larg);
+        BufferedImage bi = ImageProcessor.toBufferedImage(img);
 
-        TonsCinza = new byte[Larg][Alt];
+        TonsCinza = new int[Alt][Larg];
 
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                TonsCinza[y][x] = (byte) (raw[y * Larg + x] & 0x00000FF);
+                TonsCinza[y][x] = (bi.getRGB(x, y) & 0x00000FF);
             }
         }
     }
