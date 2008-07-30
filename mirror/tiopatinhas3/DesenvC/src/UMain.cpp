@@ -346,7 +346,7 @@ void TMain::ReconheceCedulaForm()
   #endif                                                 
   TParamsRC ParamsRC;
   imgProcessada->Picture->Bitmap->Assign(imgTemp->Picture->Bitmap);
-  ParamsRC.ParamsMLT.TCImgSrc=new CTonsCinza(imgTemp);
+  ParamsRC.ParamsMLT.TCImgSrc=new CTonsCinza(imgTemp, AZUL);
   ParamsRC.ParamsMLT.BImgDest=new CBitmap(imgProcessada);
   CarregaParamsReconheceCedula(ParamsRC);
   QueryPerformanceCounter((LARGE_INTEGER *)&comeco);

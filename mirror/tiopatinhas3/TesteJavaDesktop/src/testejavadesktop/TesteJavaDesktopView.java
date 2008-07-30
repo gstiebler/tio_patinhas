@@ -98,9 +98,13 @@ public class TesteJavaDesktopView extends FrameView {
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
             ImageProcessor imgProc = new ImageProcessor();
-            Image image = imgProc.loadbitmap("c:\\", "001real.bmp");
-
-            //Image image = Toolkit.getDefaultToolkit().getImage("img/ScanImage26.jpg");
+            Image image2 = imgProc.loadbitmap("c:\\", "002reais.bmp");
+            Image image=ImageProcessor.toBufferedImage(image2);
+            
+            //----------------Processamento-------------------------------------
+            CTonsCinza tcImgSrc=new CTonsCinza(image);
+            int Mediana=ImageProcessor.Histograma(tcImgSrc);
+            //----------------Fim Processamento---------------------------------
 
             addImage(cp, image);
 
