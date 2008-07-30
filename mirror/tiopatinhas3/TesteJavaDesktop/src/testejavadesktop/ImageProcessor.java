@@ -25,15 +25,17 @@ public class ImageProcessor extends java.applet.Applet {
     Image Object, be sure to check for (Image)null !!!!
      */
     public Image loadbitmap(String sdir, String sfile) {
-        
+
         Image image;
         System.out.println("loading:" + sdir + sfile);
         try {
             FileInputStream fs = new FileInputStream(sdir + sfile);
             int bflen = 14;  // 14 byte BITMAPFILEHEADER
+
             byte bf[] = new byte[bflen];
             fs.read(bf, 0, bflen);
             int bilen = 40; // 40-byte BITMAPINFOHEADER
+
             byte bi[] = new byte[bilen];
             fs.read(bi, 0, bilen);
             // Interperet data.
@@ -138,3 +140,41 @@ public class ImageProcessor extends java.applet.Applet {
         return (Image) null;
     }
 }
+
+class CTonsCinza {
+
+    private int LargTotal,  AltTotal,  LargImg,  AltImg;
+    byte[][] TonsCinza;
+    public int Larg,  Alt;
+
+    CTonsCinza(Image img) {
+        int[] raw;
+        Larg = img.getWidth(null);
+        Alt = img.getHeight(null);
+        raw = new int[Larg * Alt];
+        PixelGrabber pg = new PixelGrabber(img, 0, 0, Larg, Alt, raw, 0, Larg);
+
+        TonsCinza = new byte[Larg][Alt];
+
+        for (int y = 0; y < Alt; y++) {
+            for (int x = 0; x < Larg; x++) {
+                TonsCinza[y][x] = (byte) (raw[y * Larg + x] & 0x00000FF);
+            }
+        }
+    }
+
+    Image SaveImage() {
+        int[] raw = new int[Larg * Alt];
+        int ponteiro = 0;
+        for (int y = 0; y < Alt; y++) {
+            for (int x = 0; x < Larg; x++) {
+                raw[ponteiro++] = TonsCinza[y][x];
+                raw[ponteiro++] = TonsCinza[y][x];
+                raw[ponteiro++] = TonsCinza[y][x];
+            }
+        }
+        BufferedImage img = new BufferedImage(Larg, Alt, BufferedImage.TYPE_3BYTE_BGR);
+        img.setRGB(0, 0, Larg, Alt, raw, 0, Larg);
+        return img;
+    }
+};
