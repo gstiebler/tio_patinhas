@@ -305,7 +305,7 @@ class ImageProcessor {
                   ESCURO = 2;
            
         int estado;
-        int [][]ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
+        byte [][]ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
         
         int YIni=(int)(ParamsMLT.TCImgSrc.Alt*ParamsMLT.PropYIni);
         int XFim=(int)(ParamsMLT.TCImgSrc.Larg*ParamsMLT.PropXFim);
@@ -523,7 +523,7 @@ class ImageProcessor {
     static byte MediaFaixa(TParamsAI ParamsAI) {
         
         int x, y, xIni, xFim, soma;
-        int [][]ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
+        byte [][]ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
         
         xIni = ParamsAI.RefTarja.x;
         xFim = xIni + ParamsAI.LargFaixaRef;
@@ -595,7 +595,7 @@ class ImageProcessor {
         int NumLinha, UltYComLinha, NumPixelsIdentificador;
         int [] VetorLarguras;
         boolean AchouLinha;
-        int [][]ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
+        byte [][]ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
        
         xIni = ParamsAI.RefTarja.x - ParamsAI.XIniParaRefTarja;
         xFim = xIni + ParamsAI.LargIdentificador;
