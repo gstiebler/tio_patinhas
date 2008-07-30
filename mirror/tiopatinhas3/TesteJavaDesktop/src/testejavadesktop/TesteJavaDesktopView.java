@@ -92,29 +92,15 @@ public class TesteJavaDesktopView extends FrameView {
     @Action
     public void NovaFunc() {
 
-
-        DataInputStream dis = null;
-        String record = null;
-        int recCount = 0;
-
         try {
+            
 
-            File f = new File("c:\\mydata.txt");
-            FileInputStream fis = new FileInputStream(f);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            dis = new DataInputStream(bis);
-
-            Image imagem = Toolkit.getDefaultToolkit().getImage("img//ScanImage26.jpg");
-
-            mainPanel.add(new JLabel(new ImageIcon(imagem, "nada demais")));
-            Painel.add(new JLabel(new ImageIcon(imagem, "nada demais")));
-            mainPanel.add(new javax.swing.JButton());
-            Painel.add(new javax.swing.JButton());
-
-            addImage(Painel, imagem);
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
-            Image image = Toolkit.getDefaultToolkit().getImage("img/ScanImage26.jpg");
+            ImageProcessor imgProc = new ImageProcessor();
+            Image image = imgProc.loadbitmap("c:\\", "001real.bmp");
+
+            //Image image = Toolkit.getDefaultToolkit().getImage("img/ScanImage26.jpg");
 
             addImage(cp, image);
 
@@ -127,24 +113,11 @@ public class TesteJavaDesktopView extends FrameView {
 
             mainPanel.add(fr);
 
-            while ((record = dis.readLine()) != null) {
-                recCount++;
-                System.out.println(recCount + ": " + record);
-                jTextArea1.append(record + "\n");
-            }
 
         } catch (IOException e) {
             // catch io errors from FileInputStream or readLine() 
             System.out.println("Uh oh, got an IOException error!" + e.getMessage());
 
-        } finally {
-            // if the file opened okay, make sure we close it 
-            if (dis != null) {
-                try {
-                    dis.close();
-                } catch (IOException ioe) {
-                }
-            }
         }
 
     }

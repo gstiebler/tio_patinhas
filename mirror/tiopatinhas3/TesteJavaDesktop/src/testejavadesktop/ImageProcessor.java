@@ -25,6 +25,7 @@ public class ImageProcessor extends java.applet.Applet {
     Image Object, be sure to check for (Image)null !!!!
      */
     public Image loadbitmap(String sdir, String sfile) {
+        
         Image image;
         System.out.println("loading:" + sdir + sfile);
         try {
