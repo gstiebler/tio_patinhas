@@ -220,37 +220,3 @@ public class ImageProcessor extends java.applet.Applet {
     }
 //---------------------------------------------------------------------------
 }
-
-class CTonsCinza {
-    int [][] TonsCinza;
-    public int Larg,  Alt;
-
-    CTonsCinza(Image img) {
-        Larg = img.getWidth(null);
-        Alt = img.getHeight(null);
-        BufferedImage bi = ImageProcessor.toBufferedImage(img);
-
-        TonsCinza = new int[Alt][Larg];
-
-        for (int y = 0; y < Alt; y++) {
-            for (int x = 0; x < Larg; x++) {
-                TonsCinza[y][x] = (bi.getRGB(x, y) & 0x00000FF);
-            }
-        }
-    }
-
-    Image SaveImage() {
-        int[] raw = new int[Larg * Alt];
-        int ponteiro = 0;
-        for (int y = 0; y < Alt; y++) {
-            for (int x = 0; x < Larg; x++) {
-                raw[ponteiro++] = TonsCinza[y][x];
-                raw[ponteiro++] = TonsCinza[y][x];
-                raw[ponteiro++] = TonsCinza[y][x];
-            }
-        }
-        BufferedImage img = new BufferedImage(Larg, Alt, BufferedImage.TYPE_3BYTE_BGR);
-        img.setRGB(0, 0, Larg, Alt, raw, 0, Larg);
-        return img;
-    }
-};

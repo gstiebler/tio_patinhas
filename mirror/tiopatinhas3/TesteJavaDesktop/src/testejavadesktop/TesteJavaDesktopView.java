@@ -5,7 +5,6 @@ package testejavadesktop;
 
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Toolkit;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
