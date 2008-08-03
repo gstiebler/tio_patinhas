@@ -97,15 +97,15 @@ public class TesteJavaDesktopView extends FrameView {
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
             ImageProcessor imgProc = new ImageProcessor();
-            Image image2 = imgProc.loadbitmap("c:\\", "002reais.bmp");
+            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002reais.bmp");
             Image image=ImageProcessor.toBufferedImage(image2);
             
-            //----------------Processamento-------------------------------------
-            CTonsCinza tcImgSrc=new CTonsCinza(image);
-            int Mediana=ImageProcessor.Histograma(tcImgSrc);
-            //----------------Fim Processamento---------------------------------
+            TParamsRC ParamsRC=new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini", 
+                                    new CTonsCinza(image), new CBitmap(image));
+            UTioPatinhas.ReconheceCedula(ParamsRC);
 
             addImage(cp, image);
+            addImage(cp, ParamsRC.ParamsMLT.BImgDest.SaveImage());
 
             JFrame fr = new JFrame("Tio Patinhas Debug");
             fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
