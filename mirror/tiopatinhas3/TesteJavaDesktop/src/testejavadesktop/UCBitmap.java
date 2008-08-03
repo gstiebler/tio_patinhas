@@ -58,7 +58,7 @@ class Cor {
     Cor(int pixel) {
         Azul=pixel & 0xFF;
         Verde=(pixel & 0xFF00) >> 8;
-        Verde=(pixel & 0xFF00000) >> 16;
+        Vermelho=(pixel & 0xFF00000) >> 16;
     }
 
     void SetAzul() {
@@ -107,7 +107,7 @@ class Cor {
 
 class CBitmap {
 
-    Cor [][] MatrizCores;
+    Cor [][] PMCor;
     public int Larg,  Alt;
 
     CBitmap(Image img) {
@@ -115,11 +115,11 @@ class CBitmap {
         Alt = img.getHeight(null);
         BufferedImage bi = ImageProcessor.toBufferedImage(img);
 
-        MatrizCores = new Cor[Alt][Larg];
+        PMCor = new Cor[Alt][Larg];
 
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                MatrizCores[y][x] = new Cor(bi.getRGB(x, y));
+                PMCor[y][x] = new Cor(bi.getRGB(x, y));
             }
         }
     }
@@ -129,9 +129,10 @@ class CBitmap {
         int ponteiro = 0;
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                raw[ponteiro++] = MatrizCores[y][x].Azul;
-                raw[ponteiro++] = MatrizCores[y][x].Verde;
-                raw[ponteiro++] = MatrizCores[y][x].Vermelho;
+                raw[ponteiro] = PMCor[y][x].Azul;
+                raw[ponteiro] += PMCor[y][x].Verde << 8;
+                raw[ponteiro++] += PMCor[y][x].Vermelho << 16;
+                
             }
         }
         BufferedImage img = new BufferedImage(Larg, Alt, BufferedImage.TYPE_3BYTE_BGR);

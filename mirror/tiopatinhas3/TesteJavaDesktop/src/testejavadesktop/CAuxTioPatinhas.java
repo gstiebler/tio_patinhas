@@ -158,6 +158,27 @@ class TParamsRC {
     TParamsABT ParamsABT;
     TParamsAI ParamsAI;
     int LumMedianaImagem;
+
+    TParamsRC(String NomeArq, CTonsCinza TonsCinza, CBitmap Bitmap) {
+        ParamsMLT=new TParamsMLT();
+        ParamsABT=new TParamsABT();
+        ParamsAI=new TParamsAI();
+        INIFile objINI = null;
+        objINI = new INIFile(NomeArq);
+        ParamsMLT.PropYIni=(float) (objINI.getIntegerProperty("Geral", "PropYIni")/1000.0);
+        ParamsMLT.PropXFim=(float) (objINI.getIntegerProperty("Geral", "PropXFim")/1000.0);
+        
+        ParamsABT.AltMinTarja = objINI.getIntegerProperty("Geral", "AltMinTarja");
+        ParamsABT.AltMaxTarja = objINI.getIntegerProperty("Geral", "AltMaxTarja");
+        ParamsABT.DistMaxTarjas = objINI.getIntegerProperty("Geral", "DistMaxTarjas");
+        ParamsABT.LargMinTarja = objINI.getIntegerProperty("Geral", "LargMinTarja");
+        ParamsABT.LargMaxTarja = objINI.getIntegerProperty("Geral", "LargMaxTarja");
+   
+        ParamsMLT.TCImgSrc=TonsCinza;
+        ParamsMLT.BImgDest=Bitmap;
+        ConverteParametrosDependentesLargura();
+        objINI = null;
+    }
     //pega os fatores e multiplica para pegar valores absolutos
     void ConverteParametrosDependentesLargura() {
         ParamsABT.AltMinTarja = (int) Math.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
