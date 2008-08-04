@@ -102,6 +102,10 @@ class TTarja {
     int X;
     int UltYMeio;
     int PriYEnc;
+    
+    TTarja(){
+        VetorAlturas=new TVectorInt();
+    }
 
     boolean Ativa(int x) {
         return ((x - X) == VetorAlturas.size());
@@ -173,6 +177,11 @@ class TParamsABT {
     TConjuntoMeioBordas ConjuntoMeioBordas;
     TVectorTarja VectorTarja;
     double MediaAlturaTarja;
+    
+    TParamsABT(){
+        VectorTarja=new TVectorTarja();
+        RefTarja=new TPonto();
+    }
 };
 //---------------------------------------------------------------------------
 class TParamsAI {
@@ -256,9 +265,11 @@ class TParamsRC {
         ParamsABT.DistMaxTarjas = objINI.getIntegerProperty("Geral", "DistMaxTarjas");
         ParamsABT.LargMinTarja = objINI.getIntegerProperty("Geral", "LargMinTarja");
         ParamsABT.LargMaxTarja = objINI.getIntegerProperty("Geral", "LargMaxTarja");
+        ParamsABT.DesvioMax = objINI.getIntegerProperty("Geral", "DesvioMax");
 
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
+       
         ConverteParametrosDependentesLargura();
         objINI = null;
     }

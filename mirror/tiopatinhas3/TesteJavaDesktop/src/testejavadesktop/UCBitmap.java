@@ -20,7 +20,7 @@ class CTonsCinza {
 
     int[][] TonsCinza;
     public int Larg,  Alt;
-
+    int pixel, azul, verde, vermelho;
     CTonsCinza(Image img) {
         Larg = img.getWidth(null);
         Alt = img.getHeight(null);
@@ -30,7 +30,13 @@ class CTonsCinza {
 
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                TonsCinza[y][x] = (bi.getRGB(x, y) & 0x00000FF);
+                pixel=bi.getRGB(x, y);
+                azul=pixel & 0x0000FF;
+                verde=(pixel & 0xFF00) >> 8;
+                vermelho=(pixel & 0xFF0000) >> 16;
+                pixel=azul*11+verde*59+vermelho*30;
+                pixel*=0.01;
+                TonsCinza[y][x] = pixel;
             }
         }
     }
