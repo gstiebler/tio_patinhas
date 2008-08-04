@@ -5,7 +5,6 @@
 package testejavadesktop;
 
 import java.util.*;
-import java.math.*;
 
 /**
  *
@@ -19,7 +18,19 @@ class TPonto {
     int x;
     int y;
 };
-//---------------------------------------------------------------------------
+
+class TMeioBordas {
+
+    int Y1, Y2, yMeio, Altura;
+
+    void Inicializa(int y1, int y2) {
+        Y1 = y1;
+        Y2 = y2;
+        yMeio = (Y1 + Y2) / 2;
+        Altura = Y2 - Y1;
+    }
+};
+
 class TBorda {
 
     int Y;
@@ -28,34 +39,106 @@ class TBorda {
 
 class TBordasColunas {
 
-    Vector[] Bordas;
+    TVectorBorda [] Bordas;
     int NumColunas;
 
     TBordasColunas(int numColunas) {
 
         NumColunas = numColunas;
-        Bordas = new Vector[NumColunas];
+        Bordas = new TVectorBorda[NumColunas];
 
         for (int n = 0; n < NumColunas; n++) {
-            Bordas[n] = new Vector();
+            Bordas[n] = new TVectorBorda();
         }
     }
 };
 
+class TVectorMeioBordas extends Vector{
+
+    TVectorMeioBordas() {
+        super();
+    }
+    
+    void adicionaTMeioBordas(TMeioBordas elemento){
+        addElement(elemento);
+    }
+
+    TMeioBordas retornaTMeioBordas(int indice) {
+        return (TMeioBordas) (elementAt(indice));
+    }    
+}
+
 class TConjuntoMeioBordas {
 
-    Vector[] VectorMeioBordas;
+    TVectorMeioBordas [] VectorMeioBordas;
     int NumColunas;
 
     TConjuntoMeioBordas(int numColunas) {
         NumColunas = numColunas;
-        VectorMeioBordas = new Vector[NumColunas];
+        VectorMeioBordas = new TVectorMeioBordas[NumColunas];
         for (int n = 0; n < NumColunas; n++) {
-            VectorMeioBordas[n] = new Vector();
+            VectorMeioBordas[n] = new TVectorMeioBordas();
         }
     }
 }
 //---------------------------------------------------------------------------
+class TVectorInt extends Vector {
+
+    TVectorInt() {
+        super();
+    }
+    
+    void adicionaInteiro(Integer elemento){
+        addElement(elemento);
+    }
+
+    Integer retornaInteiro(int indice) {
+        return (Integer) (elementAt(indice));
+    }
+}
+
+class TTarja {
+
+    int X;
+    int UltYMeio;
+    int PriYEnc;
+
+    boolean Ativa(int x) {
+        return ((x - X) == VetorAlturas.size());
+    }
+    TVectorInt VetorAlturas;
+};
+
+class TVectorTarja extends Vector {
+
+    TVectorTarja() {
+        super();
+    }
+    
+    void adicionaTTarja(TTarja Tarja){
+        addElement(Tarja);
+    }
+
+    TTarja retornaTTarja(int indice) {
+        return (TTarja) (elementAt(indice));
+    }
+}
+
+class TVectorBorda extends Vector {
+
+    TVectorBorda() {
+        super();
+    }
+    
+    void adicionaTBorda(TBorda Borda){
+        addElement(Borda);
+    }
+
+    TBorda retornaTBorda(int indice) {
+        return (TBorda) (elementAt(indice));
+    }
+}
+
 class TParamsMLT {
 
     CTonsCinza TCImgSrc;
@@ -88,7 +171,7 @@ class TParamsABT {
     //Vetor com locais de bordas que são analizadas para saber se são bordas da tarja
     TBordasColunas BordasColunas;
     TConjuntoMeioBordas ConjuntoMeioBordas;
-    Vector VectorTarja;
+    TVectorTarja VectorTarja;
     double MediaAlturaTarja;
 };
 //---------------------------------------------------------------------------
@@ -160,22 +243,22 @@ class TParamsRC {
     int LumMedianaImagem;
 
     TParamsRC(String NomeArq, CTonsCinza TonsCinza, CBitmap Bitmap) {
-        ParamsMLT=new TParamsMLT();
-        ParamsABT=new TParamsABT();
-        ParamsAI=new TParamsAI();
+        ParamsMLT = new TParamsMLT();
+        ParamsABT = new TParamsABT();
+        ParamsAI = new TParamsAI();
         INIFile objINI = null;
         objINI = new INIFile(NomeArq);
-        ParamsMLT.PropYIni=(float) (objINI.getIntegerProperty("Geral", "PropYIni")/1000.0);
-        ParamsMLT.PropXFim=(float) (objINI.getIntegerProperty("Geral", "PropXFim")/1000.0);
-        
+        ParamsMLT.PropYIni = (float) (objINI.getIntegerProperty("Geral", "PropYIni") / 1000.0);
+        ParamsMLT.PropXFim = (float) (objINI.getIntegerProperty("Geral", "PropXFim") / 1000.0);
+
         ParamsABT.AltMinTarja = objINI.getIntegerProperty("Geral", "AltMinTarja");
         ParamsABT.AltMaxTarja = objINI.getIntegerProperty("Geral", "AltMaxTarja");
         ParamsABT.DistMaxTarjas = objINI.getIntegerProperty("Geral", "DistMaxTarjas");
         ParamsABT.LargMinTarja = objINI.getIntegerProperty("Geral", "LargMinTarja");
         ParamsABT.LargMaxTarja = objINI.getIntegerProperty("Geral", "LargMaxTarja");
-   
-        ParamsMLT.TCImgSrc=TonsCinza;
-        ParamsMLT.BImgDest=Bitmap;
+
+        ParamsMLT.TCImgSrc = TonsCinza;
+        ParamsMLT.BImgDest = Bitmap;
         ConverteParametrosDependentesLargura();
         objINI = null;
     }

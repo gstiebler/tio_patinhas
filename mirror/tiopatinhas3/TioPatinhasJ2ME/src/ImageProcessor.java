@@ -131,6 +131,28 @@ class TConjuntoMeioBordas {
     int NumColunas;
 };
 
+class TVectorInt extends Vector{
+    TVectorInt(){
+        super();
+    }
+    
+    Integer elementoEm(int indice){
+        return (Integer)(elementAt(indice));
+    }
+}
+
+class TTarja {
+    
+  int X;
+  int UltYMeio;
+  int PriYEnc;
+  
+  boolean Ativa(int x){
+      return ((x-X)==VetorAlturas.size());
+  }
+  
+  Vector VetorAlturas;
+};
 
 class TParamsABT {                 
   
@@ -156,21 +178,6 @@ class TParamsABT {
     Vector VectorTarja;
     
 };
-
-class TTarja {
-    
-  int X;
-  int UltYMeio;
-  int PriYEnc;
-  
-  boolean Ativa(int x){
-      return ((x-X)==VetorAlturas.size());
-  }
-  
-  Vector VetorAlturas;
-
-};
-
 
 class TParamsMLT{
     
