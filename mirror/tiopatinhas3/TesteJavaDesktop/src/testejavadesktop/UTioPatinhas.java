@@ -30,28 +30,23 @@ public class UTioPatinhas {
             ParamsRC.ParamsAI.RefTarja = ParamsRC.ParamsABT.RefTarja;
             ParamsRC.ParamsAI.BImgDest = ParamsRC.ParamsABT.BImgDest;
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
-            //AnalizaIdentificador(ParamsRC.ParamsAI);
+        //AnalizaIdentificador(ParamsRC.ParamsAI);
         }
-        //EscreveParametros(ParamsRC);
+    //EscreveParametros(ParamsRC);
     }
 
     static void MostraLimiteTarja(TParamsMLT ParamsMLT) {
 
-           int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
-         
-         
-         
-        int x,  y,  j;
+        int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
+
+        int x, y, j;
         int yBorda;
         int DifLum;
-        int UltYBordaCE,  UltYBordaEC;
-         
-        int MaisEscuroAtual,  MaisClaroAtual  ,MaisClaroAnterior   ,  MaisEscuroAnterior     ;
-        int lum     ;
-         
-            
-           
-           int[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
+        int UltYBordaCE, UltYBordaEC;
+
+        int MaisEscuroAtual, MaisClaroAtual, MaisClaroAnterior, MaisEscuroAnterior;
+        int lum;
+        int[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
         Cor[][] ImgDest = ParamsMLT.BImgDest.PMCor;
         int YIni = (int) (ParamsMLT.TCImgSrc.Alt * ParamsMLT.PropYIni);
         int XFim = (int) (ParamsMLT.TCImgSrc.Larg * ParamsMLT.PropXFim);
@@ -138,7 +133,10 @@ public class UTioPatinhas {
     }
 
     static void AnalizaBordasTarja(TParamsABT ParamsABT) {
-        int x, n;
+
+
+        int x,
+                n;
         int NumColunas = ParamsABT.BordasColunas.NumColunas;
         ParamsABT.ConjuntoMeioBordas = new TConjuntoMeioBordas(NumColunas);
         int dif;
@@ -172,14 +170,10 @@ public class UTioPatinhas {
     }
 
     static void SelecionaTarja(TParamsABT ParamsABT) {
-         
-         
-         
-         
-         
-        int n,  nMenorX,  m,  LargTarjaCandidata;
-         TTarja  TarjaCandidata;
-        int MenorX;
+
+        int n, nMenorX, m, LargTarjaCandidata;
+        TTarja TarjaCandidata;
+        int MenorX, AlturaTarjaMColunaN;;
         double soma, desvio, media, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
         MenorX = 0xFFFFFF;
@@ -206,7 +200,8 @@ public class UTioPatinhas {
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    soma = Math.abs(media - ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m));
+                    AlturaTarjaMColunaN=ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m);
+                    soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
                 /*#
@@ -240,6 +235,7 @@ public class UTioPatinhas {
 
     static void PreparaSelecionaTarja(TParamsABT ParamsABT) {
         int x;
+
         int n, m;
         boolean Adicionou;
         TMeioBordas MeioBordasTemp;
@@ -269,6 +265,145 @@ public class UTioPatinhas {
             }
         }
     }
+    
+    void AnalizaIdentificador(TParamsAI &ParamsAI)
+{
+  enum TEstadoUltPixel {NADA, IDENTIFICADOR, FUNDO};
+  const int TAM_HIST=200;
+  TEstadoUltPixel EstadoUltPixel;
+  int x, y;
+  int xIni, xFim, yIni, yFim;
+  int YEnc, YEmb, LargLinha, MaiorLargLinha, NumBordasPixelLinha;
+  int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
+  int NumLinha, UltYComLinha, NumPixelsIdentificador;
+  int *VetorLarguras;
+  char VetGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  //usado para indicar grupos conexos que fazem parte de outros grupos
+  int PonteiroGrupos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  bool AchouLinha;
+  int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
+  TRect *ARect;
+  xIni=ParamsAI.RefTarja.x-ParamsAI.XIniParaRefTarja;
+  xFim=xIni+ParamsAI.LargIdentificador;
+  yFim=ParamsAI.RefTarja.y-ParamsAI.YIniParaRefTarja;
+  yIni=yFim-ParamsAI.AltIdentificador;
+  int TamVetLarguras=yFim-yIni+1;
+  VetorLarguras=new int [TamVetLarguras];
+  memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
+  byte Media=MediaFaixa(ParamsAI);
+  #ifdef DEBUG
+    Log->Add("Luminosidade média faixa: "+IntToStr(Media));
+  #endif         
+  byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
+
+  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
+  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+  for (int s=0; s<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; s++)
+  {
+    VetorLimitesVerticaisGrupo[s].yEmb=0; 
+    VetorLimitesVerticaisGrupo[s].yEnc=0;
+  }
+  ARect=new TRect(xIni, yIni, xFim, yFim);
+  MatrizGruposConexos(ParamsAI.TCImgSrc, *ARect,
+                        MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
+  SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
+                           ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect->Height(),
+                                ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
+  CopiaGruposValidos(MatrizGrupos->Matriz, *ARect, VetGruposValidos);
+  PintaIdentificador(ParamsAI.BImgDest, *ARect, MatrizGrupos->Matriz);
+
+  YEnc=0;
+  YEmb=-1;
+  MaiorLargLinha=0;
+  NumLinha=0;
+  MaiorUltXEnc=0;
+  NumPixelsIdentificador=0;
+  UltYComLinha=-1;
+  #ifdef DEBUG
+    Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
+        IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
+  #endif
+  for (y=ARect->Height(); y>0; y--)
+  {
+    XEsq=-1;
+    XDir=0;
+    AchouLinha=false;
+    NumBordasPixelLinha=0;
+    EstadoUltPixel=NADA;
+    for (x=0; x<ARect->Width(); x++)
+    {
+      if (MatrizGrupos->Matriz[y][x]==PIXEL_ACEITO)
+      {
+        if (YEmb==-1)
+          YEmb=y;
+        YEnc=y;
+
+        if (XEsq==-1)
+          XEsq=x;
+        XDir=x;
+        //se for a primeira linha
+        if (NumLinha==0)
+          UltXEmb=x;
+        UltXEnc=x;
+        AchouLinha=true;
+        NumPixelsIdentificador++;
+        if (EstadoUltPixel!=IDENTIFICADOR)
+          NumBordasPixelLinha++;
+        EstadoUltPixel=IDENTIFICADOR;
+      }
+      else
+        EstadoUltPixel=FUNDO;
+    }
+    LargLinha=XDir-XEsq;
+    VetorLarguras[y]=LargLinha;
+    if (LargLinha>MaiorLargLinha)
+      MaiorLargLinha=LargLinha;
+    if (AchouLinha)
+    {             
+      if (UltXEnc>MaiorUltXEnc)
+        MaiorUltXEnc=UltXEnc;
+      NumLinha++;
+      UltYComLinha=y;
+      HistogramaNumBordasPixelLinha[NumBordasPixelLinha]++;
+    }
+    else
+    {
+      if ((UltYComLinha!=-1) &&
+                ((UltYComLinha-y)>=ParamsAI.MaiorDistSemPixelsIdentificador)  &&
+              (  NumPixelsIdentificador>ParamsAI.NumMinPixelsIdentificador  )  )
+        break;
+    }
+  }
+  int soma=0;
+  for (int w=0; w<TAM_HIST; w++)
+    soma+=HistogramaNumBordasPixelLinha[w]*w;
+  if (NumLinha>0)
+    ParamsAI.NumMedColunas=soma*1.0/NumLinha;
+  else
+    ParamsAI.NumMedColunas=-100;
+  int MediaLarguras;
+  ParamsAI.RelacaoMedianasLargurasEncEmb=
+        RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
+  ParamsAI.Alt=YEmb-YEnc;
+  if (MediaLarguras>0)
+    ParamsAI.RelacaoLargAlt=ParamsAI.Alt*1.0/MediaLarguras;
+  else
+    ParamsAI.RelacaoLargAlt=0;
+  #ifdef DEBUG
+    Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
+    Log->Add("YEmb: "+IntToStr(YEmb)+"\t\tYEnc: "+IntToStr(YEnc));
+  #endif
+  if (ParamsAI.Alt>0)
+    ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
+  else
+    ParamsAI.Inclinacao=-100;
+  ParamsAI.MaiorLargLinha=MaiorLargLinha;
+  Identifica(ParamsAI);
+  delete [] VetorLarguras;
+  delete ARect;
+  delete MatrizGrupos;
+}
+//--------------------------------------------------------------------------- 
 }
 
 class TMaiorBorda {
