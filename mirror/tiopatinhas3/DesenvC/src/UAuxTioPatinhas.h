@@ -75,6 +75,7 @@ struct TBordasColunas
 {
   TBordasColunas(int numColunas);
   ~TBordasColunas();
+  
   TVectorBorda **Bordas;
   int NumColunas;
 };
@@ -96,7 +97,7 @@ struct TConjuntoMeioBordas
   TVectorMeioBordas **VectorMeioBordas;
   int NumColunas;
 };
-//---------------------------------------------------------------------------  
+//---------------------------------------------------------------------------
 
 typedef vector<int> TVectorInt;
 
