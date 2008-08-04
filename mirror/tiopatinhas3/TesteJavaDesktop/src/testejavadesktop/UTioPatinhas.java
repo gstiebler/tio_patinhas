@@ -25,27 +25,33 @@ public class UTioPatinhas {
         ParamsRC.ParamsABT.BImgDest = ParamsRC.ParamsMLT.BImgDest;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
-    /*ParamsRC.ConverteParametrosDependentesAlturaFaixa();
-    if (ParamsRC.ParamsABT.AchouTarja)
-    {
-    ParamsRC.ParamsAI.RefTarja=ParamsRC.ParamsABT.RefTarja;
-    ParamsRC.ParamsAI.BImgDest=ParamsRC.ParamsABT.BImgDest;
-    ParamsRC.ParamsAI.TCImgSrc=ParamsRC.ParamsMLT.TCImgSrc;
-    AnalizaIdentificador(ParamsRC.ParamsAI);
-    }
-    EscreveParametros(ParamsRC);*/
+        ParamsRC.ConverteParametrosDependentesAlturaFaixa();
+        if (ParamsRC.ParamsABT.AchouTarja) {
+            ParamsRC.ParamsAI.RefTarja = ParamsRC.ParamsABT.RefTarja;
+            ParamsRC.ParamsAI.BImgDest = ParamsRC.ParamsABT.BImgDest;
+            ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
+            //AnalizaIdentificador(ParamsRC.ParamsAI);
+        }
+        //EscreveParametros(ParamsRC);
     }
 
     static void MostraLimiteTarja(TParamsMLT ParamsMLT) {
 
-        int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
-        int x, y, j;
+           int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
+         
+         
+         
+        int x,  y,  j;
         int yBorda;
         int DifLum;
-        int UltYBordaCE, UltYBordaEC;
-        int MaisEscuroAtual, MaisClaroAtual, MaisClaroAnterior, MaisEscuroAnterior;
-        int lum;
-        int[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
+        int UltYBordaCE,  UltYBordaEC;
+         
+        int MaisEscuroAtual,  MaisClaroAtual  ,MaisClaroAnterior   ,  MaisEscuroAnterior     ;
+        int lum     ;
+         
+            
+           
+           int[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
         Cor[][] ImgDest = ParamsMLT.BImgDest.PMCor;
         int YIni = (int) (ParamsMLT.TCImgSrc.Alt * ParamsMLT.PropYIni);
         int XFim = (int) (ParamsMLT.TCImgSrc.Larg * ParamsMLT.PropXFim);
@@ -166,8 +172,13 @@ public class UTioPatinhas {
     }
 
     static void SelecionaTarja(TParamsABT ParamsABT) {
-        int n, nMenorX, m, LargTarjaCandidata;
-        TTarja TarjaCandidata;
+         
+         
+         
+         
+         
+        int n,  nMenorX,  m,  LargTarjaCandidata;
+         TTarja  TarjaCandidata;
         int MenorX;
         double soma, desvio, media, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
@@ -248,7 +259,7 @@ public class UTioPatinhas {
                     }
                 }
                 if (!Adicionou) {
-                    TTarja TarjaTemp=new TTarja();
+                    TTarja TarjaTemp = new TTarja();
                     TarjaTemp.X = x;
                     TarjaTemp.UltYMeio = MeioBordasTemp.yMeio;
                     TarjaTemp.PriYEnc = MeioBordasTemp.Y1;
