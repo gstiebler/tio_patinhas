@@ -255,6 +255,14 @@ class TParamsRC {
         ParamsMLT = new TParamsMLT();
         ParamsABT = new TParamsABT();
         ParamsAI = new TParamsAI();
+        CarregaParametros(NomeArq);
+        ParamsMLT.TCImgSrc = TonsCinza;
+        ParamsMLT.BImgDest = Bitmap;
+       
+        ConverteParametrosDependentesLargura();
+    }
+    
+    void CarregaParametros(String NomeArq){
         INIFile objINI = null;
         objINI = new INIFile(NomeArq);
         ParamsMLT.PropYIni = (float) (objINI.getIntegerProperty("Geral", "PropYIni") / 1000.0);
@@ -266,13 +274,27 @@ class TParamsRC {
         ParamsABT.LargMinTarja = objINI.getIntegerProperty("Geral", "LargMinTarja");
         ParamsABT.LargMaxTarja = objINI.getIntegerProperty("Geral", "LargMaxTarja");
         ParamsABT.DesvioMax = objINI.getIntegerProperty("Geral", "DesvioMax");
+        
+        ParamsAI.DistFaixaRef = objINI.getIntegerProperty("Geral", "DistFaixaRef");
+        ParamsAI.LargFaixaRef = objINI.getIntegerProperty("Geral", "LargFaixaRef");
+        ParamsAI.DifMinMediaFaixaRef = objINI.getIntegerProperty("Geral", "DifMinMediaFaixaRef");
+        ParamsAI.LargIdentificador = objINI.getIntegerProperty("Geral", "LargIdentificador");
+        ParamsAI.AltIdentificador = objINI.getIntegerProperty("Geral", "AltIdentificador");
+        ParamsAI.XIniParaRefTarja = objINI.getIntegerProperty("Geral", "XIniParaRefTarja");
+        ParamsAI.YIniParaRefTarja = objINI.getIntegerProperty("Geral", "YIniParaRefTarja");
+        ParamsAI.LimiarAlturaIdentificador = objINI.getIntegerProperty("Geral", "LimiarAlturaIdentificador");
+        ParamsAI.LimiarInclinacaoidentificador = objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador");
+        ParamsAI.MaiorDistSemPixelsIdentificador = objINI.getIntegerProperty("Geral", "MaiorDistSemPixelsIdentificador");
+        ParamsAI.NumMinPixelsIdentificador = objINI.getIntegerProperty("Geral", "NumMinPixelsIdentificador");
+        ParamsAI.AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
+        ParamsAI.LimiarLargLinhasIdentificador = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador");
+        ParamsAI.LimiarRelacaoLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt");
+        ParamsAI.LimiarNumMedColunas = objINI.getIntegerProperty("Geral", "LimiarNumMedColunas");
+        ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = objINI.getIntegerProperty("Geral", "DifMinEmbGrupoEmbRegiaoIdentificador");
 
-        ParamsMLT.TCImgSrc = TonsCinza;
-        ParamsMLT.BImgDest = Bitmap;
-       
-        ConverteParametrosDependentesLargura();
         objINI = null;
     }
+    
     //pega os fatores e multiplica para pegar valores absolutos
     void ConverteParametrosDependentesLargura() {
         ParamsABT.AltMinTarja = (int) Math.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
