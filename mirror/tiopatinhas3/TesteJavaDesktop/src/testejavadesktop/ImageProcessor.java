@@ -191,32 +191,5 @@ public class ImageProcessor extends java.applet.Applet {
 
         return bimage;
     }
-
-    static int Histograma(CTonsCinza TCImgSrc) {
-        int[] vetor = new int[256];
-        int[] vetorCumulativa = new int[256];
-        int n, x, y;
-        int MetadeTotal;
-        int Mediana;
-        int[][] ImgSrc = TCImgSrc.TonsCinza;
-        for (y = 0; y < TCImgSrc.Alt; y++) {
-            for (x = 0; x < TCImgSrc.Larg; x++) {
-                vetor[ImgSrc[y][x]]++;
-            }
-        }
-        vetorCumulativa[0] = vetor[0];
-        for (n = 1; n < 256; n++) {
-            vetorCumulativa[n] = vetorCumulativa[n - 1] + vetor[n];
-        }
-        Mediana = 0;
-        MetadeTotal = vetorCumulativa[255] / 2;
-        for (n = 1; n < 256; n++) {
-            if (vetorCumulativa[n] >= MetadeTotal) {
-                Mediana = n;
-                break;
-            }
-        }
-        return Mediana;
-    }
 //---------------------------------------------------------------------------
 }
