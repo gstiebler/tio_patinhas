@@ -343,13 +343,13 @@ class TParamsRC {
         ParamsAI.XIniParaRefTarja = objINI.getIntegerProperty("Geral", "XIniParaRefTarja");
         ParamsAI.YIniParaRefTarja = objINI.getIntegerProperty("Geral", "YIniParaRefTarja");
         ParamsAI.LimiarAlturaIdentificador = objINI.getIntegerProperty("Geral", "LimiarAlturaIdentificador");
-        ParamsAI.LimiarInclinacaoidentificador = objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador");
+        ParamsAI.LimiarInclinacaoidentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador")/1000.0);
         ParamsAI.MaiorDistSemPixelsIdentificador = objINI.getIntegerProperty("Geral", "MaiorDistSemPixelsIdentificador");
         ParamsAI.NumMinPixelsIdentificador = objINI.getIntegerProperty("Geral", "NumMinPixelsIdentificador");
         ParamsAI.AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
-        ParamsAI.LimiarLargLinhasIdentificador = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador");
-        ParamsAI.LimiarRelacaoLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt");
-        ParamsAI.LimiarNumMedColunas = objINI.getIntegerProperty("Geral", "LimiarNumMedColunas");
+        ParamsAI.LimiarLargLinhasIdentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador")/1000.0);
+        ParamsAI.LimiarRelacaoLargAlt = (float) (objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt")/1000.0);
+        ParamsAI.LimiarNumMedColunas = (float) (objINI.getIntegerProperty("Geral", "LimiarNumMedColunas")/1000.0);
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = objINI.getIntegerProperty("Geral", "DifMinEmbGrupoEmbRegiaoIdentificador");
 
         objINI = null;

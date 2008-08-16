@@ -2,6 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+//package testejavadesktop;
+
+import java.util.*;
 
 /**
  *
@@ -180,7 +183,7 @@ public class UTioPatinhas {
                 if ((BordaEmb.TipoBorda == BORDA_ESCURO_CLARO) &&
                         (BordaEnc.TipoBorda == BORDA_CLARO_ESCURO) &&
                         (dif >= ParamsABT.AltMinTarja) && (dif <= ParamsABT.AltMaxTarja)) {
-                    MeioBordasTemp=new TMeioBordas(BordaEnc.Y, BordaEmb.Y);
+                    MeioBordasTemp = new TMeioBordas(BordaEnc.Y, BordaEmb.Y);
                     ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].addElement(MeioBordasTemp);
                     ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
                 }
@@ -210,36 +213,36 @@ public class UTioPatinhas {
         for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
             TarjaCandidata = ParamsABT.VectorTarja.retornaTTarja(n);
             LargTarjaCandidata = TarjaCandidata.VetorAlturas.size();
-            //#ifdef DEBUG
-//#             System.out.println("Tarja candidata "+String.valueOf(n)+".\tLargura:\t"+String.valueOf(LargTarjaCandidata)+
-//#                         "\tX:\t"+String.valueOf(TarjaCandidata.X)+
-//#                         "\tY:\t"+String.valueOf(TarjaCandidata.PriYEnc));
-            //#endif
+            //ifdef DEBUG
+            System.out.println("Tarja candidata " + String.valueOf(n) + ".\tLargura:\t" + String.valueOf(LargTarjaCandidata) +
+                    "\tX:\t" + String.valueOf(TarjaCandidata.X) +
+                    "\tY:\t" + String.valueOf(TarjaCandidata.PriYEnc));
+            //endif
 
             if ((LargTarjaCandidata <= ParamsABT.LargMaxTarja) &&
                     (LargTarjaCandidata >= ParamsABT.LargMinTarja)) {
                 soma = 0;
-                //calcula a média da altura de cada coluna da possível tarja
+                //calcula a mÃ©dia da altura de cada coluna da possÃ­vel tarja
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                 }
                 media = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
-                //calcula o desvio padrão
+                //calcula o desvio padrÃ£o
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                     soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
-                //#ifdef DEBUG
-//#                System.out.println("desvio padrão alturas: "+String.valueOf(desvio));
-                //#endif
+                // ifdef DEBUG
+                System.out.println("desvio padrÃ£o alturas: " + String.valueOf(desvio));
+                //endif
 
                 if (desvio < ParamsABT.DesvioMax) {
-                    //#ifdef DEBUG
-//#                     System.out.println("menor do que o limite de : "+String.valueOf(ParamsABT.DesvioMax));
-                    //#endif
-                    //pode ser substituído por um código que pega o primeiro. mantido para debug
+                    //ifdef DEBUG
+                    System.out.println("menor do que o limite de : " + String.valueOf(ParamsABT.DesvioMax));
+                    //endif
+                    //pode ser substituÃ­do por um cÃ³digo que pega o primeiro. mantido para debug
                     if (ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
                         nMenorX = n;
@@ -267,7 +270,7 @@ public class UTioPatinhas {
             for (m = 0; m < ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].size(); m++) {
                 Adicionou = false;
                 MeioBordasTemp = ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].retornaTMeioBordas(m);
-                //percorre todas as tarjas que estão ativas na coluna corrente
+                //percorre todas as tarjas que estÃ£o ativas na coluna corrente
                 for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
                     if (ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x)) {
                         if (Math.abs(ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio - MeioBordasTemp.yMeio) <= ParamsABT.DistMaxTarjas) {
@@ -288,8 +291,8 @@ public class UTioPatinhas {
             }
         }
     }
-//Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
-//do identificador, e retorna a luminosidade média dos pixels da faixa
+//Mostra a linha cyan (azul claro) que representa o ponto de referÃªncia da tarja para a localizaÃ§Ã£o
+//do identificador, e retorna a luminosidade mÃ©dia dos pixels da faixa
     static int MediaFaixa(TParamsAI ParamsAI) {
         int x, y, xIni, xFim, soma;
         int[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
@@ -302,18 +305,18 @@ public class UTioPatinhas {
             soma += ImgSrc[y][x];
             ImgDest[y][x].SetCyan();
         }
-        double retorno1=(soma * 1.0 / ParamsAI.LargFaixaRef);
-        int retorno=(int)MathUtils.round(retorno1);
+        double retorno1 = (soma * 1.0 / ParamsAI.LargFaixaRef);
+        int retorno = (int) MathUtils.round(retorno1);
         return retorno;
     }
 //---------------------------------------------------------------------------
 
-//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
+//MatrizGrupos Ã© um quadrado com dimensÃµes definidas por ARect. Ã‰ onde sÃ£o retornados
 // os grupos conexos do identificador
     static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
         int x, y, i, j, n;
-        boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
+        boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuÃ­a um grupo
         boolean AchouGrupoEncima;
         boolean EmGrupoNovo = false;
         int ContadorGrupos, GrupoAtual, GrupoEncima;
@@ -329,7 +332,7 @@ public class UTioPatinhas {
             AnteriorDentroGrupo = false;
             for (x = ARect.left + 1; x < ARect.right - 1; x++) {
                 if (ImgSrc[y][x] < limiar) {
-                    if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) não possuia grupo, prossegue
+                    if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) nÃ£o possuia grupo, prossegue
                     {
                         EmGrupoNovo = true;
                         AchouGrupoEncima = false;
@@ -344,14 +347,14 @@ public class UTioPatinhas {
                                 break;
                             }
                         }
-                        //se não achou pixels encima então cria um novo grupo
+                        //se nÃ£o achou pixels encima entÃ£o cria um novo grupo
                         if (!AchouGrupoEncima) {
                             GrupoAtual = ContadorGrupos;
                             VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = 0;
                             VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = 0xFFFF;
                             ContadorGrupos++;
                         }
-                    } else //já estamos dentro de um grupo
+                    } else //jÃ¡ estamos dentro de um grupo
                     {
                         //devemos sempre ver se encima existe algum grupo antigo
                         j = y - ARect.top - 1;
@@ -361,7 +364,7 @@ public class UTioPatinhas {
                         {
                             if (EmGrupoNovo) {
                                 PonteiroGrupos[GrupoAtual] = GrupoEncima;
-                                GrupoAtual = GrupoEncima;//o grupo atual agora é o de cima
+                                GrupoAtual = GrupoEncima;//o grupo atual agora Ã© o de cima
                                 EmGrupoNovo = false;
                             } else {
                                 PonteiroGrupos[GrupoEncima] = GrupoAtual;
@@ -372,14 +375,14 @@ public class UTioPatinhas {
                     i = x - ARect.left;
                     MatrizGrupos[j][i] = GrupoAtual;
                     AnteriorDentroGrupo = true;
-                    //atualiza limites verticais do grupo caso necessário
+                    //atualiza limites verticais do grupo caso necessÃ¡rio
                     if (j > VetorLimitesVerticaisGrupo[GrupoAtual].yEmb) {
                         VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = j;
                     }
                     if (j < VetorLimitesVerticaisGrupo[GrupoAtual].yEnc) {
                         VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = j;
                     }
-                } else //se pixel é mais claro que o limiar
+                } else //se pixel Ã© mais claro que o limiar
                 {
                     AnteriorDentroGrupo = false;
                 }
@@ -396,10 +399,10 @@ public class UTioPatinhas {
             altura = VetorLimitesVerticaisGrupo[GrupoReal].yEmb - VetorLimitesVerticaisGrupo[GrupoReal].yEnc;
             DifEmb = yFim - VetorLimitesVerticaisGrupo[GrupoReal].yEmb;
 
-            //#ifdef DEBUG
-//#             //  if (altura)
-//#                 System.out.println("Região candidata altura: "+String.valueOf(altura)+" DifEmb: "+String.valueOf(DifEmb));
-            //#endif
+            //ifdef DEBUG
+            //  if (altura)
+            System.out.println("RegiÃ£o candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
+            //endif
             if (altura >= AltMin && DifEmb < DifMinEmb) {
                 VetGruposValidos[n] = (char) PIXEL_ACEITO;
             } else {
@@ -408,7 +411,7 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
-//MatrizGrupos é variável de entrada e de saída
+//MatrizGrupos Ã© variÃ¡vel de entrada e de saÃ­da
     static void CopiaGruposValidos(int[][] MatrizGrupos, TRect ARect, char[] VetGruposValidos) {
         int x, y;
         int larg, alt;
@@ -438,33 +441,124 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
-
-    /*float RetornaRelacaoMedianasLargurasEncEmb(int [] VetorLarguras, int comeco, int fim,
-    int &MediaLarguras)
-    {
-    int alt=fim-comeco;
-    int [] vetor=new int [alt+1];
-    int MetadeAltura=alt/2;
-    int QuartoAltura=(int) Math.round(alt*1.0/4);
-    int [] Larguras=new int [2];
-    for (int n=0; n<2; n++)
-    {
-    memcpy(vetor, VetorLarguras+comeco + n*MetadeAltura, MetadeAltura*sizeof(int));
-    qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
-    Larguras[n]=vetor[QuartoAltura];
+    static float RetornaRelacaoMedianasLargurasEncEmb(int[] VetorLarguras, int comeco, int fim,
+            int[] MediaLarguras) {
+        int alt = fim - comeco;
+        int[] vetor = new int[alt + 1];
+        int MetadeAltura = alt / 2;
+        int QuartoAltura = (int) MathUtils.round(alt * 1.0 / 4);
+        int[] Larguras = new int[2];
+        for (int n = 0; n < 2; n++) {
+            System.arraycopy(VetorLarguras, comeco + n * MetadeAltura, vetor, 0, MetadeAltura);
+            Vector a=new Vector();
+            for (int u=0; u<MetadeAltura; u++)
+                a.addElement(new Integer(vetor[u]));
+            java.util. Collections.sort(a);
+            //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
+           // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
+            Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
+        }
+        //delete [] vetor;
+        //ifdef DEBUG
+        System.out.println("Largura encima: " + String.valueOf(Larguras[0]));
+        System.out.println("Largura embaixo: " + String.valueOf(Larguras[1]));
+        //endif
+        MediaLarguras[0] = (Larguras[0] + Larguras[1]) / 2;
+        if (Larguras[1] > 0) {
+            return (float) (Larguras[0] * 1.0 / Larguras[1]);
+        } else {
+            return -100;
+        }
     }
-    delete [] vetor;
-    #ifdef DEBUG
-    Log->Add("Largura encima: "+IntToStr(Larguras[0]));
-    Log->Add("Largura embaixo: "+IntToStr(Larguras[1]));
-    #endif
-    MediaLarguras=(Larguras[0]+Larguras[1])/2;
-    if (Larguras[1]>0)
-    return Larguras[0]*1.0/Larguras[1];
+    //---------------------------------------------------------------------------
+    
+ static void Identifica(TParamsAI ParamsAI)
+{
+  //ifdef DEBUG
+     System.out.println("InclinaÃ§Ã£o identificador: "+String.valueOf(ParamsAI.Inclinacao));
+     System.out.println("Altura identificador: "+String.valueOf(ParamsAI.Alt));
+     System.out.println("RelaÃ§Ã£o larguras identificador: "+String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
+    if (ParamsAI.RelacaoMedianasLargurasEncEmb>0)
+      System.out.println("RelaÃ§Ã£o inversa larguras identificador: "+String.valueOf(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
+    System.out.println("RelaÃ§Ã£o Altura/Largura: "+String.valueOf(ParamsAI.RelacaoLargAlt));
+    System.out.println("NÃºmero mÃ©dio de colunas: "+String.valueOf(ParamsAI.NumMedColunas));
+  //endif
+  if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
+  {                       
+    //ifdef DEBUG
+      System.out.println("InclinaÃ§Ã£o maior que o limite, pode ser \tR$2\tR$20");
+    ///endif
+    if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
+    {
+      //ifdef DEBUG
+      System.out.println("RelaÃ§Ã£o Altura/Largura maior que o limite, Ã© R$2");
+      //endif
+      ParamsAI.ValorCedula=2;
+    }
     else
-    return -100;
-    }     
-    //---------------------------------------------------------------------------*/
+    {
+      //ifdef DEBUG
+        System.out.println("RelaÃ§Ã£o Altura/Largura menor que o limite, Ã© R$20");
+      //endif
+      ParamsAI.ValorCedula=20;
+    }
+  }
+  else
+  {
+    //ifdef DEBUG
+      System.out.println("InclinaÃ§Ã£o menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
+    //endif
+    if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
+    {
+      //ifdef DEBUG
+        System.out.println("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
+      //endif
+      if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
+      {
+        //ifdef DEBUG
+        System.out.println("RelaÃ§Ã£o medianas larguras maior que o limite, Ã© R$50");
+        //endif
+        ParamsAI.ValorCedula=50;
+      }
+      else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
+      {
+        //ifdef DEBUG
+        System.out.println("RelaÃ§Ã£o inversa medianas larguras maior que o limite, Ã© R$100");
+        //endif
+        ParamsAI.ValorCedula=100;
+      }
+      else
+      {
+        //ifdef DEBUG
+        System.out.println("RelaÃ§Ã£o medianas larguras menor que o limite, pode ser \tR$1\tR$5");
+        //endif
+        if (ParamsAI.NumMedColunas<ParamsAI.LimiarNumMedColunas)
+        {
+          //ifdef DEBUG
+            System.out.println("NÃºmero mÃ©dio de colunas menor que o limite, Ã© R$1");
+          //endif
+          ParamsAI.ValorCedula=1;
+        }
+        else
+        {
+          //ifdef DEBUG
+            System.out.println("NÃºmero mÃ©dio de colunas maior que o limite, Ã© R$5");
+          //endif
+          ParamsAI.ValorCedula=5;
+        }
+      }
+    }
+    else
+    {
+      //ifdef DEBUG
+            System.out.println("Altura menor que o limite, Ã© R$10");
+      //endif
+      ParamsAI.ValorCedula=10;
+    }
+  }
+}
+//---------------------------------------------------------------------------
+    
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
         int NADA = 0, IDENTIFICADOR = 1, FUNDO = 2;
         int TAM_HIST = 200;
@@ -489,9 +583,9 @@ public class UTioPatinhas {
         VetorLarguras = new int[TamVetLarguras];
         //memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
         int Media = MediaFaixa(ParamsAI);
-        //#ifdef DEBUG
-//#         //  Log->Add("Luminosidade média faixa: "+IntToStr(Media));
-        //#endif         
+        //ifdef DEBUG
+        System.out.println("Luminosidade mÃ©dia faixa: " + String.valueOf(Media));
+        //endif         
         int Limiar = Media - ParamsAI.DifMinMediaFaixaRef;
 
         CMatrizInteiro MatrizGrupos = new CMatrizInteiro(xFim - xIni + 1, yFim - yIni + 1);
@@ -516,10 +610,11 @@ public class UTioPatinhas {
         MaiorUltXEnc = 0;
         NumPixelsIdentificador = 0;
         UltYComLinha = -1;
-        //#ifdef DEBUG
-//#         //  Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
-//#         //      IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
-        //#endif
+        //ifdef DEBUG
+
+        System.out.println("Ãrea do identificador: X: (" + String.valueOf(xIni) + ", " +
+                String.valueOf(xFim) + " Y: (" + String.valueOf(yIni) + ", " + String.valueOf(yFim) + ")");
+        //endif
         for (y = ARect.Height(); y > 0; y--) {
             XEsq = -1;
             XDir = 0;
@@ -581,19 +676,18 @@ public class UTioPatinhas {
         } else {
             ParamsAI.NumMedColunas = -100;
         }
-        int MediaLarguras = 0;
+        int[] MediaLarguras = new int[1];
         ParamsAI.RelacaoMedianasLargurasEncEmb =
-                //-------------------------------------------------------COLOCAR!!!!!!!!
-                //         RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
-                ParamsAI.Alt = YEmb - YEnc;
-        if (MediaLarguras > 0) {
-            ParamsAI.RelacaoLargAlt = (float) (ParamsAI.Alt * 1.0 / MediaLarguras);
+                RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
+        ParamsAI.Alt = YEmb - YEnc;
+        if (MediaLarguras[0] > 0) {
+            ParamsAI.RelacaoLargAlt = (float) (ParamsAI.Alt * 1.0 / MediaLarguras[0]);
         } else {
             ParamsAI.RelacaoLargAlt = 0;
-        //#ifdef DEBUG
-//#         //  Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
-//#         //  Log->Add("YEmb: "+IntToStr(YEmb)+"\t\tYEnc: "+IntToStr(YEnc));
-        //#endif
+            //ifdef DEBUG
+            System.out.println("UltXEnc: " + String.valueOf(MaiorUltXEnc) + "\tUltXEmb: " + String.valueOf(UltXEmb));
+            System.out.println("YEmb: " + String.valueOf(YEmb) + "\t\tYEnc: " + String.valueOf(YEnc));
+        //endif
         }
         if (ParamsAI.Alt > 0) {
             ParamsAI.Inclinacao = (float) ((MaiorUltXEnc - UltXEmb) * 1.0 / ParamsAI.Alt);
@@ -601,8 +695,7 @@ public class UTioPatinhas {
             ParamsAI.Inclinacao = -100;
         }
         ParamsAI.MaiorLargLinha = MaiorLargLinha;
-//-------------------------------------------------------COLOCAR!!!!!!!!
-    //Identifica(ParamsAI);
+    Identifica(ParamsAI);
     //delete [] VetorLarguras;
     //delete ARect;
     //delete MatrizGrupos;
