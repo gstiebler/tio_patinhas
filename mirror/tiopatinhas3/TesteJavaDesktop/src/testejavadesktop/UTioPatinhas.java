@@ -311,17 +311,14 @@ public class UTioPatinhas {
 
 //MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
 // os grupos conexos do identificador
-    static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, byte limiar,
+    static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
         int x, y, i, j, n;
-        int larg, alt;
         boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
         boolean AchouGrupoEncima;
         boolean EmGrupoNovo = false;
         int ContadorGrupos, GrupoAtual, GrupoEncima;
         int[][] ImgSrc = tcImgSrc.TonsCinza;
-        larg = ARect.Width();
-        alt = ARect.Height();
         //inicialmente cada grupo aponta para ele mesmo
         for (n = 0; n < TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++) {
             PonteiroGrupos[n] = n;
@@ -496,7 +493,7 @@ public class UTioPatinhas {
         //#ifdef DEBUG
         //  Log->Add("Luminosidade média faixa: "+IntToStr(Media));
         //#endif         
-        byte Limiar = (byte) (Media - ParamsAI.DifMinMediaFaixaRef);
+        int Limiar = Media - ParamsAI.DifMinMediaFaixaRef;
 
         CMatrizInteiro MatrizGrupos = new CMatrizInteiro(xFim - xIni + 1, yFim - yIni + 1);
         TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo =
