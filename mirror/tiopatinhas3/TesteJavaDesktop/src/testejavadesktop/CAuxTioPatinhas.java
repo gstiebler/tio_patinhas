@@ -356,29 +356,29 @@ class TParamsRC {
     }
     //pega os fatores e multiplica para pegar valores absolutos
     public void ConverteParametrosDependentesLargura() {
-        ParamsABT.AltMinTarja = (int) Math.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
-        ParamsABT.AltMaxTarja = (int) Math.round((ParamsABT.AltMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
-        ParamsABT.DistMaxTarjas = (int) Math.round((ParamsABT.DistMaxTarjas / 1000.0) * ParamsMLT.TCImgSrc.Larg);
-        ParamsABT.LargMinTarja = (int) Math.round((ParamsABT.LargMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
-        ParamsABT.LargMaxTarja = (int) Math.round((ParamsABT.LargMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
+        ParamsABT.AltMinTarja = (int) MathUtils.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
+        ParamsABT.AltMaxTarja = (int) MathUtils.round((ParamsABT.AltMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
+        ParamsABT.DistMaxTarjas = (int) MathUtils.round((ParamsABT.DistMaxTarjas / 1000.0) * ParamsMLT.TCImgSrc.Larg);
+        ParamsABT.LargMinTarja = (int) MathUtils.round((ParamsABT.LargMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
+        ParamsABT.LargMaxTarja = (int) MathUtils.round((ParamsABT.LargMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
     }
     //pega os fatores e multiplica para pegar valores absolutos
     public void ConverteParametrosDependentesAlturaFaixa() {
-        ParamsAI.DistFaixaRef = (int) Math.round((ParamsAI.DistFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.LargFaixaRef = (int) Math.round((ParamsAI.LargFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.LargIdentificador = (int) Math.round((ParamsAI.LargIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.AltIdentificador = (int) Math.round((ParamsAI.AltIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.XIniParaRefTarja = (int) Math.round((ParamsAI.XIniParaRefTarja / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.YIniParaRefTarja = (int) Math.round((ParamsAI.YIniParaRefTarja / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.LimiarAlturaIdentificador = (int) Math.round((ParamsAI.LimiarAlturaIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.MaiorDistSemPixelsIdentificador = (int) Math.round((ParamsAI.MaiorDistSemPixelsIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.NumMinPixelsIdentificador = (int) Math.round((ParamsAI.NumMinPixelsIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.AltMinGrupoConexoIdentificador = (int) Math.round((ParamsAI.AltMinGrupoConexoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
-        ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = (int) Math.round((ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.DistFaixaRef = (int) MathUtils.round((ParamsAI.DistFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.LargFaixaRef = (int) MathUtils.round((ParamsAI.LargFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.LargIdentificador = (int) MathUtils.round((ParamsAI.LargIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.AltIdentificador = (int) MathUtils.round((ParamsAI.AltIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.XIniParaRefTarja = (int) MathUtils.round((ParamsAI.XIniParaRefTarja / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.YIniParaRefTarja = (int) MathUtils.round((ParamsAI.YIniParaRefTarja / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.LimiarAlturaIdentificador = (int) MathUtils.round((ParamsAI.LimiarAlturaIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.MaiorDistSemPixelsIdentificador = (int) MathUtils.round((ParamsAI.MaiorDistSemPixelsIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.NumMinPixelsIdentificador = (int) MathUtils.round((ParamsAI.NumMinPixelsIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.AltMinGrupoConexoIdentificador = (int) MathUtils.round((ParamsAI.AltMinGrupoConexoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
+        ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = (int) MathUtils.round((ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
     }
     //pega os fatores e multiplica para pegar valores absolutos
     public void ConverteParametrosDependentesLumMediana() {
-        ParamsAI.DifMinMediaFaixaRef = (int) Math.round((ParamsAI.DifMinMediaFaixaRef / 1000.0) * LumMedianaImagem);
+        ParamsAI.DifMinMediaFaixaRef = (int) MathUtils.round((ParamsAI.DifMinMediaFaixaRef / 1000.0) * LumMedianaImagem);
     }
 };
 //---------------------------------------------------------------------------

@@ -228,7 +228,7 @@ public class UTioPatinhas {
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m);
+                    AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                     soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
@@ -272,7 +272,7 @@ public class UTioPatinhas {
                 for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
                     if (ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x)) {
                         if (Math.abs(ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio - MeioBordasTemp.yMeio) <= ParamsABT.DistMaxTarjas) {
-                            ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.adicionaInteiro(MeioBordasTemp.Altura);
+                            ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
                             ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio = MeioBordasTemp.yMeio;
                             Adicionou = true;
                         }
@@ -304,7 +304,7 @@ public class UTioPatinhas {
             ImgDest[y][x].SetCyan();
         }
         double retorno1=(soma * 1.0 / ParamsAI.LargFaixaRef);
-        int retorno=(int)Math.round(retorno1);
+        int retorno=(int)MathUtils.round(retorno1);
         return retorno;
     }
 //---------------------------------------------------------------------------
@@ -446,7 +446,7 @@ public class UTioPatinhas {
     int alt=fim-comeco;
     int [] vetor=new int [alt+1];
     int MetadeAltura=alt/2;
-    int QuartoAltura=(int) Math.round(alt*1.0/4);
+    int QuartoAltura=(int) MathUtils.round(alt*1.0/4);
     int [] Larguras=new int [2];
     for (int n=0; n<2; n++)
     {
