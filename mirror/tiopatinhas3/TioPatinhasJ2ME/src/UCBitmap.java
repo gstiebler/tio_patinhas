@@ -47,8 +47,8 @@ class CTonsCinza {
         
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                rawRGB[ponteiro++] = TonsCinza[y][x];
-                rawRGB[ponteiro++] = TonsCinza[y][x];
+                rawRGB[ponteiro] = TonsCinza[y][x];
+                rawRGB[ponteiro] = TonsCinza[y][x];
                 rawRGB[ponteiro++] = TonsCinza[y][x];
             }
         }
@@ -66,7 +66,7 @@ class Cor {
     Cor(int pixel) {
         Azul=pixel & 0xFF;
         Verde=(pixel & 0xFF00) >> 8;
-        Vermelho=(pixel & 0xFF00000) >> 16;
+        Vermelho=(pixel & 0xFF0000) >> 16;
     }
 
     void SetAzul() {
@@ -145,9 +145,10 @@ class CBitmap {
         
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                raw[ponteiro] = PMCor[y][x].Azul;
-                raw[ponteiro] += PMCor[y][x].Verde << 8;
-                raw[ponteiro++] += PMCor[y][x].Vermelho << 16;
+                rawRGB[ponteiro] = PMCor[y][x].Azul;
+                rawRGB[ponteiro] += PMCor[y][x].Verde << 8;
+                rawRGB[ponteiro] += PMCor[y][x].Vermelho << 16;
+                rawRGB[ponteiro++] += 0xFF000000;
             }
         }
         

@@ -271,24 +271,23 @@ class TParamsRC {
         ParamsABT.LargMinTarja = 47;
         ParamsABT.LargMaxTarja = 266;
         ParamsABT.DesvioMax = 150;
-/*        
-        ParamsAI.DistFaixaRef = objINI.getIntegerProperty("Geral", "DistFaixaRef");
-        ParamsAI.LargFaixaRef = objINI.getIntegerProperty("Geral", "LargFaixaRef");
-        ParamsAI.DifMinMediaFaixaRef = objINI.getIntegerProperty("Geral", "DifMinMediaFaixaRef");
-        ParamsAI.LargIdentificador = objINI.getIntegerProperty("Geral", "LargIdentificador");
-        ParamsAI.AltIdentificador = objINI.getIntegerProperty("Geral", "AltIdentificador");
-        ParamsAI.XIniParaRefTarja = objINI.getIntegerProperty("Geral", "XIniParaRefTarja");
-        ParamsAI.YIniParaRefTarja = objINI.getIntegerProperty("Geral", "YIniParaRefTarja");
-        ParamsAI.LimiarAlturaIdentificador = objINI.getIntegerProperty("Geral", "LimiarAlturaIdentificador");
-        ParamsAI.LimiarInclinacaoidentificador = objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador");
-        ParamsAI.MaiorDistSemPixelsIdentificador = objINI.getIntegerProperty("Geral", "MaiorDistSemPixelsIdentificador");
-        ParamsAI.NumMinPixelsIdentificador = objINI.getIntegerProperty("Geral", "NumMinPixelsIdentificador");
-        ParamsAI.AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
-        ParamsAI.LimiarLargLinhasIdentificador = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador");
-        ParamsAI.LimiarRelacaoLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt");
-        ParamsAI.LimiarNumMedColunas = objINI.getIntegerProperty("Geral", "LimiarNumMedColunas");
-        ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = objINI.getIntegerProperty("Geral", "DifMinEmbGrupoEmbRegiaoIdentificador");
-*/
+        
+        ParamsAI.DistFaixaRef = 91;
+        ParamsAI.LargFaixaRef = 182;
+        ParamsAI.DifMinMediaFaixaRef = 185;
+        ParamsAI.LargIdentificador = 1709;
+        ParamsAI.AltIdentificador = 1519;
+        ParamsAI.XIniParaRefTarja = 91;
+        ParamsAI.YIniParaRefTarja = 136;
+        ParamsAI.LimiarAlturaIdentificador = 619;
+        ParamsAI.LimiarInclinacaoidentificador = 600;
+        ParamsAI.MaiorDistSemPixelsIdentificador = 143;
+        ParamsAI.NumMinPixelsIdentificador = 1429;
+        ParamsAI.AltMinGrupoConexoIdentificador = 300;
+        ParamsAI.LimiarLargLinhasIdentificador = 2000;
+        ParamsAI.LimiarRelacaoLargAlt = 1200;
+        ParamsAI.LimiarNumMedColunas = 1200;
+        ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = 1000;
     }
 
     
