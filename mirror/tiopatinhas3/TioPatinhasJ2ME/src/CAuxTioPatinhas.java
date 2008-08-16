@@ -338,13 +338,13 @@ class TParamsRC {
         ParamsAI.XIniParaRefTarja = 91;
         ParamsAI.YIniParaRefTarja = 136;
         ParamsAI.LimiarAlturaIdentificador = 619;
-        ParamsAI.LimiarInclinacaoidentificador = 600;
+        ParamsAI.LimiarInclinacaoidentificador = (float)(600/1000.0);
         ParamsAI.MaiorDistSemPixelsIdentificador = 143;
         ParamsAI.NumMinPixelsIdentificador = 1429;
         ParamsAI.AltMinGrupoConexoIdentificador = 300;
-        ParamsAI.LimiarLargLinhasIdentificador = 2000;
-        ParamsAI.LimiarRelacaoLargAlt = 1200;
-        ParamsAI.LimiarNumMedColunas = 1200;
+        ParamsAI.LimiarLargLinhasIdentificador = (float)(2000/1000.0);
+        ParamsAI.LimiarRelacaoLargAlt = (float)(1200/1000.0);
+        ParamsAI.LimiarNumMedColunas = (float)(1200/1000.0);
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = 1000;
     }
     

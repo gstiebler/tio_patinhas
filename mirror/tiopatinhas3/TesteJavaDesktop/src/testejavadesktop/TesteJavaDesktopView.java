@@ -97,13 +97,14 @@ public class TesteJavaDesktopView extends FrameView {
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
             ImageProcessor imgProc = new ImageProcessor();
-            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002reais.bmp");
+            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "100.bmp");
             Image image=ImageProcessor.toBufferedImage(image2);
             
             TParamsRC ParamsRC=new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini", 
                                     new CTonsCinza(image), new CBitmap(image));
             UTioPatinhas.ReconheceCedula(ParamsRC);
-
+            System.out.println("Valor cédula: "+String.valueOf(ParamsRC.ParamsAI.ValorCedula));
+                    
             addImage(cp, image);
             addImage(cp, ParamsRC.ParamsMLT.BImgDest.SaveImage());
 
