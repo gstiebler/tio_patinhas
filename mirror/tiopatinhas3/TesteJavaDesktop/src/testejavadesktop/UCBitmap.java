@@ -46,8 +46,8 @@ class CTonsCinza {
         int ponteiro = 0;
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
-                raw[ponteiro++] = TonsCinza[y][x];
-                raw[ponteiro++] = TonsCinza[y][x];
+                raw[ponteiro] = TonsCinza[y][x];
+                raw[ponteiro] = TonsCinza[y][x];
                 raw[ponteiro++] = TonsCinza[y][x];
             }
         }

@@ -257,7 +257,8 @@ void SelecionaTarja(TParamsABT &ParamsABT)
     LargTarjaCandidata=TarjaCandidata->VetorAlturas.size();
     #ifdef DEBUG
       Log->Add("Tarja candidata "+IntToStr(n)+".\tLargura:\t"+IntToStr(LargTarjaCandidata)+
-      "\tX:\t"+IntToStr(TarjaCandidata->X));
+      "\tX:\t"+IntToStr(TarjaCandidata->X)+
+      "\tY:\t"+IntToStr(TarjaCandidata->PriYEnc));
     #endif
     if ((LargTarjaCandidata<=ParamsABT.LargMaxTarja) &&
             (LargTarjaCandidata>=ParamsABT.LargMinTarja))

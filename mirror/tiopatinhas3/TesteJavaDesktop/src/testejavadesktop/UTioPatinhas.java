@@ -4,8 +4,6 @@
  */
 package testejavadesktop;
 
-import java.util.Vector;
-
 /**
  *
  * @author Administrator
@@ -13,6 +11,9 @@ import java.util.Vector;
 public class UTioPatinhas {
 
     static int BORDA_CLARO_ESCURO = 0,  BORDA_ESCURO_CLARO = 1;
+    static int TAM_VETOR_LIMITES_VERTICAIS_GRUPOS = 300;
+    static int PIXEL_ACEITO = 1;
+    static int PIXEL_NAO_ACEITO = 2;
 
     UTioPatinhas() {
     }
@@ -29,12 +30,11 @@ public class UTioPatinhas {
             ParamsRC.ParamsAI.RefTarja = ParamsRC.ParamsABT.RefTarja;
             ParamsRC.ParamsAI.BImgDest = ParamsRC.ParamsABT.BImgDest;
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
-        //AnalizaIdentificador(ParamsRC.ParamsAI);
+            AnalizaIdentificador(ParamsRC.ParamsAI);
         }
     //EscreveParametros(ParamsRC);
     }
-    
-    
+
     static int Histograma(CTonsCinza TCImgSrc) {
         int[] vetor = new int[256];
         int[] vetorCumulativa = new int[256];
@@ -169,7 +169,7 @@ public class UTioPatinhas {
         int dif;
         TVectorBorda BordasTemp;
         TBorda BordaEnc, BordaEmb;
-        TMeioBordas MeioBordasTemp = new TMeioBordas();
+        TMeioBordas MeioBordasTemp;//= new TMeioBordas();
         Cor[][] ImgDest = ParamsABT.BImgDest.PMCor;
         for (x = 0; x < NumColunas; x++) {
             BordasTemp = ParamsABT.BordasColunas.Bordas[x];
@@ -181,7 +181,7 @@ public class UTioPatinhas {
                 if ((BordaEmb.TipoBorda == BORDA_ESCURO_CLARO) &&
                         (BordaEnc.TipoBorda == BORDA_CLARO_ESCURO) &&
                         (dif >= ParamsABT.AltMinTarja) && (dif <= ParamsABT.AltMaxTarja)) {
-                    MeioBordasTemp.Inicializa(BordaEnc.Y, BordaEmb.Y);
+                    MeioBordasTemp=new TMeioBordas(BordaEnc.Y, BordaEmb.Y);
                     ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].addElement(MeioBordasTemp);
                     ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
                 }
@@ -200,7 +200,8 @@ public class UTioPatinhas {
 
         int n, nMenorX, m, LargTarjaCandidata;
         TTarja TarjaCandidata;
-        int MenorX, AlturaTarjaMColunaN;;
+        int MenorX, AlturaTarjaMColunaN;
+        ;
         double soma, desvio, media, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
         MenorX = 0xFFFFFF;
@@ -210,39 +211,35 @@ public class UTioPatinhas {
         for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
             TarjaCandidata = ParamsABT.VectorTarja.retornaTTarja(n);
             LargTarjaCandidata = TarjaCandidata.VetorAlturas.size();
-            /*#ifdef DEBUG
-            Log->Add("Tarja candidata "+IntToStr(n)+".\tLargura:\t"+IntToStr(LargTarjaCandidata)+
-            "\tX:\t"+IntToStr(TarjaCandidata->X));
-            #
-            endif*/
+            //#ifdef DEBUG
+            System.out.println("Tarja candidata "+String.valueOf(n)+".\tLargura:\t"+String.valueOf(LargTarjaCandidata)+
+                        "\tX:\t"+String.valueOf(TarjaCandidata.X)+
+                        "\tY:\t"+String.valueOf(TarjaCandidata.PriYEnc));
+            //#endif
 
             if ((LargTarjaCandidata <= ParamsABT.LargMaxTarja) &&
                     (LargTarjaCandidata >= ParamsABT.LargMinTarja)) {
                 soma = 0;
                 //calcula a média da altura de cada coluna da possível tarja
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m);
+                    soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                 }
                 media = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    AlturaTarjaMColunaN=ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m);
+                    AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m);
                     soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
-                /*#
-                ifdef DEBUG
-                Log->Add("desvio padrão alturas: "+FloatToStr(desvio));
-                #
-                endif*/
+                //# ifdef DEBUG
+               System.out.println("desvio padrão alturas: "+String.valueOf(desvio));
+                //#endif
 
                 if (desvio < ParamsABT.DesvioMax) {
-                    /*#
-                    ifdef DEBUG
-                    Log->Add("menor do que o limite de : "+FloatToStr(ParamsABT.DesvioMax));
-                    #
-                    endif*/
+                    //#ifdef DEBUG
+                    System.out.println("menor do que o limite de : "+String.valueOf(ParamsABT.DesvioMax));
+                    //#endif
                     //pode ser substituído por um código que pega o primeiro. mantido para debug
                     if (ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
@@ -286,155 +283,334 @@ public class UTioPatinhas {
                     TarjaTemp.X = x;
                     TarjaTemp.UltYMeio = MeioBordasTemp.yMeio;
                     TarjaTemp.PriYEnc = MeioBordasTemp.Y1;
-                    TarjaTemp.VetorAlturas.adicionaInteiro(MeioBordasTemp.Altura);
+                    TarjaTemp.VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
                     ParamsABT.VectorTarja.adicionaTTarja(TarjaTemp);
                 }
             }
         }
     }
-    
-    void AnalizaIdentificador(TParamsAI &ParamsAI)
-{
-  enum TEstadoUltPixel {NADA, IDENTIFICADOR, FUNDO};
-  const int TAM_HIST=200;
-  TEstadoUltPixel EstadoUltPixel;
-  int x, y;
-  int xIni, xFim, yIni, yFim;
-  int YEnc, YEmb, LargLinha, MaiorLargLinha, NumBordasPixelLinha;
-  int XEsq, XDir, UltXEnc, UltXEmb, MaiorUltXEnc;
-  int NumLinha, UltYComLinha, NumPixelsIdentificador;
-  int *VetorLarguras;
-  char VetGruposValidos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
-  //usado para indicar grupos conexos que fazem parte de outros grupos
-  int PonteiroGrupos[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
-  bool AchouLinha;
-  int HistogramaNumBordasPixelLinha[TAM_HIST]={0};
-  TRect *ARect;
-  xIni=ParamsAI.RefTarja.x-ParamsAI.XIniParaRefTarja;
-  xFim=xIni+ParamsAI.LargIdentificador;
-  yFim=ParamsAI.RefTarja.y-ParamsAI.YIniParaRefTarja;
-  yIni=yFim-ParamsAI.AltIdentificador;
-  int TamVetLarguras=yFim-yIni+1;
-  VetorLarguras=new int [TamVetLarguras];
-  memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
-  byte Media=MediaFaixa(ParamsAI);
-  #ifdef DEBUG
-    Log->Add("Luminosidade média faixa: "+IntToStr(Media));
-  #endif         
-  byte Limiar=Media-ParamsAI.DifMinMediaFaixaRef;
+//Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
+//do identificador, e retorna a luminosidade média dos pixels da faixa
+    static int MediaFaixa(TParamsAI ParamsAI) {
+        int x, y, xIni, xFim, soma;
+        int[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
+        Cor[][] ImgDest = ParamsAI.BImgDest.PMCor;
+        xIni = ParamsAI.RefTarja.x;
+        xFim = xIni + ParamsAI.LargFaixaRef;
+        y = ParamsAI.RefTarja.y - ParamsAI.DistFaixaRef;
+        soma = 0;
+        for (x = xIni; x < xFim; x++) {
+            soma += ImgSrc[y][x];
+            ImgDest[y][x].SetCyan();
+        }
+        double retorno1=(soma * 1.0 / ParamsAI.LargFaixaRef);
+        int retorno=(int)Math.round(retorno1);
+        return retorno;
+    }
+//---------------------------------------------------------------------------
 
-  CMatrizInteiro *MatrizGrupos=new CMatrizInteiro(xFim-xIni+1, yFim-yIni+1);
-  TLimitesVerticaisGrupo VetorLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
-  for (int s=0; s<TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; s++)
-  {
-    VetorLimitesVerticaisGrupo[s].yEmb=0; 
-    VetorLimitesVerticaisGrupo[s].yEnc=0;
-  }
-  ARect=new TRect(xIni, yIni, xFim, yFim);
-  MatrizGruposConexos(ParamsAI.TCImgSrc, *ARect,
-                        MatrizGrupos->Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
-  SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
-                           ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect->Height(),
-                                ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
-  CopiaGruposValidos(MatrizGrupos->Matriz, *ARect, VetGruposValidos);
-  PintaIdentificador(ParamsAI.BImgDest, *ARect, MatrizGrupos->Matriz);
+//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
+// os grupos conexos do identificador
+    static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, byte limiar,
+            TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
+        int x, y, i, j, n;
+        int larg, alt;
+        boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
+        boolean AchouGrupoEncima;
+        boolean EmGrupoNovo = false;
+        int ContadorGrupos, GrupoAtual, GrupoEncima;
+        int[][] ImgSrc = tcImgSrc.TonsCinza;
+        larg = ARect.Width();
+        alt = ARect.Height();
+        //inicialmente cada grupo aponta para ele mesmo
+        for (n = 0; n < TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++) {
+            PonteiroGrupos[n] = n;
+        }
+        ContadorGrupos = 1;
+        GrupoAtual = 0;
 
-  YEnc=0;
-  YEmb=-1;
-  MaiorLargLinha=0;
-  NumLinha=0;
-  MaiorUltXEnc=0;
-  NumPixelsIdentificador=0;
-  UltYComLinha=-1;
-  #ifdef DEBUG
-    Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
-        IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
-  #endif
-  for (y=ARect->Height(); y>0; y--)
-  {
-    XEsq=-1;
-    XDir=0;
-    AchouLinha=false;
-    NumBordasPixelLinha=0;
-    EstadoUltPixel=NADA;
-    for (x=0; x<ARect->Width(); x++)
+        for (y = ARect.top + 1; y < ARect.bottom; y++) {
+            AnteriorDentroGrupo = false;
+            for (x = ARect.left + 1; x < ARect.right - 1; x++) {
+                if (ImgSrc[y][x] < limiar) {
+                    if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) não possuia grupo, prossegue
+                    {
+                        EmGrupoNovo = true;
+                        AchouGrupoEncima = false;
+                        j = y - ARect.top;
+                        //procura encima por pixels com grupo
+                        for (n = -1; n <= 1; n++) {
+                            i = x - ARect.left;
+                            GrupoAtual = PonteiroGrupos[MatrizGrupos[j - 1][i + n]];
+                            if (GrupoAtual > 0) {
+                                AchouGrupoEncima = true;
+                                EmGrupoNovo = false;
+                                break;
+                            }
+                        }
+                        //se não achou pixels encima então cria um novo grupo
+                        if (!AchouGrupoEncima) {
+                            GrupoAtual = ContadorGrupos;
+                            VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = 0;
+                            VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = 0xFFFF;
+                            ContadorGrupos++;
+                        }
+                    } else //já estamos dentro de um grupo
+                    {
+                        //devemos sempre ver se encima existe algum grupo antigo
+                        j = y - ARect.top - 1;
+                        i = x - ARect.left + 1;
+                        GrupoEncima = PonteiroGrupos[MatrizGrupos[j][i]];
+                        if ((MatrizGrupos[j][i] > 0) && (GrupoEncima != GrupoAtual))//tem grupo antigo encima
+                        {
+                            if (EmGrupoNovo) {
+                                PonteiroGrupos[GrupoAtual] = GrupoEncima;
+                                GrupoAtual = GrupoEncima;//o grupo atual agora é o de cima
+                                EmGrupoNovo = false;
+                            } else {
+                                PonteiroGrupos[GrupoEncima] = GrupoAtual;
+                            }
+                        }
+                    }
+                    j = y - ARect.top;
+                    i = x - ARect.left;
+                    MatrizGrupos[j][i] = GrupoAtual;
+                    AnteriorDentroGrupo = true;
+                    //atualiza limites verticais do grupo caso necessário
+                    if (j > VetorLimitesVerticaisGrupo[GrupoAtual].yEmb) {
+                        VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = j;
+                    }
+                    if (j < VetorLimitesVerticaisGrupo[GrupoAtual].yEnc) {
+                        VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = j;
+                    }
+                } else //se pixel é mais claro que o limiar
+                {
+                    AnteriorDentroGrupo = false;
+                }
+            }
+        }
+    }
+//---------------------------------------------------------------------------
+    static void SelecionaGruposIdentificador(TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo,
+            char[] VetGruposValidos, int AltMin, int[] PonteiroGrupos, int yFim, int DifMinEmb) {
+        int altura, DifEmb;
+        int GrupoReal;
+        for (int n = 1; n < TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; n++) {
+            GrupoReal = PonteiroGrupos[n];
+            altura = VetorLimitesVerticaisGrupo[GrupoReal].yEmb - VetorLimitesVerticaisGrupo[GrupoReal].yEnc;
+            DifEmb = yFim - VetorLimitesVerticaisGrupo[GrupoReal].yEmb;
+
+            //#ifdef DEBUG
+            //  if (altura)
+                System.out.println("Região candidata altura: "+String.valueOf(altura)+" DifEmb: "+String.valueOf(DifEmb));
+            //#endif
+            if (altura >= AltMin && DifEmb < DifMinEmb) {
+                VetGruposValidos[n] = (char) PIXEL_ACEITO;
+            } else {
+                VetGruposValidos[n] = (char) PIXEL_NAO_ACEITO;
+            }
+        }
+    }
+//---------------------------------------------------------------------------
+//MatrizGrupos é variável de entrada e de saída
+    static void CopiaGruposValidos(int[][] MatrizGrupos, TRect ARect, char[] VetGruposValidos) {
+        int x, y;
+        int larg, alt;
+        larg = ARect.Width();
+        alt = ARect.Height();
+        for (y = 0; y < alt; y++) {
+            for (x = 0; x < larg; x++) {
+                MatrizGrupos[y][x] = VetGruposValidos[MatrizGrupos[y][x]];
+            }
+        }
+    }
+    //---------------------------------------------------------------------------
+    static void PintaIdentificador(CBitmap BImgDest, TRect ARect, int[][] MatrizGrupos) {
+        int x, y;
+        int larg, alt;
+        Cor[][] ImgDest = BImgDest.PMCor;
+        larg = ARect.Width();
+        alt = ARect.Height();
+        for (y = 0; y < alt; y++) {
+            for (x = 0; x < larg; x++) {
+                if (MatrizGrupos[y][x] == PIXEL_ACEITO) {
+                    ImgDest[y + ARect.top][x + ARect.left].SetCyan();
+                } else if (MatrizGrupos[y][x] == PIXEL_NAO_ACEITO) {
+                    ImgDest[y + ARect.top][x + ARect.left].SetAzul();
+                }
+            }
+        }
+    }
+//---------------------------------------------------------------------------
+
+    /*float RetornaRelacaoMedianasLargurasEncEmb(int [] VetorLarguras, int comeco, int fim,
+    int &MediaLarguras)
     {
-      if (MatrizGrupos->Matriz[y][x]==PIXEL_ACEITO)
-      {
-        if (YEmb==-1)
-          YEmb=y;
-        YEnc=y;
-
-        if (XEsq==-1)
-          XEsq=x;
-        XDir=x;
-        //se for a primeira linha
-        if (NumLinha==0)
-          UltXEmb=x;
-        UltXEnc=x;
-        AchouLinha=true;
-        NumPixelsIdentificador++;
-        if (EstadoUltPixel!=IDENTIFICADOR)
-          NumBordasPixelLinha++;
-        EstadoUltPixel=IDENTIFICADOR;
-      }
-      else
-        EstadoUltPixel=FUNDO;
+    int alt=fim-comeco;
+    int [] vetor=new int [alt+1];
+    int MetadeAltura=alt/2;
+    int QuartoAltura=(int) Math.round(alt*1.0/4);
+    int [] Larguras=new int [2];
+    for (int n=0; n<2; n++)
+    {
+    memcpy(vetor, VetorLarguras+comeco + n*MetadeAltura, MetadeAltura*sizeof(int));
+    qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
+    Larguras[n]=vetor[QuartoAltura];
     }
-    LargLinha=XDir-XEsq;
-    VetorLarguras[y]=LargLinha;
-    if (LargLinha>MaiorLargLinha)
-      MaiorLargLinha=LargLinha;
-    if (AchouLinha)
-    {             
-      if (UltXEnc>MaiorUltXEnc)
-        MaiorUltXEnc=UltXEnc;
-      NumLinha++;
-      UltYComLinha=y;
-      HistogramaNumBordasPixelLinha[NumBordasPixelLinha]++;
-    }
+    delete [] vetor;
+    #ifdef DEBUG
+    Log->Add("Largura encima: "+IntToStr(Larguras[0]));
+    Log->Add("Largura embaixo: "+IntToStr(Larguras[1]));
+    #endif
+    MediaLarguras=(Larguras[0]+Larguras[1])/2;
+    if (Larguras[1]>0)
+    return Larguras[0]*1.0/Larguras[1];
     else
-    {
-      if ((UltYComLinha!=-1) &&
-                ((UltYComLinha-y)>=ParamsAI.MaiorDistSemPixelsIdentificador)  &&
-              (  NumPixelsIdentificador>ParamsAI.NumMinPixelsIdentificador  )  )
-        break;
+    return -100;
+    }     
+    //---------------------------------------------------------------------------*/
+    static void AnalizaIdentificador(TParamsAI ParamsAI) {
+        int NADA = 0, IDENTIFICADOR = 1, FUNDO = 2;
+        int TAM_HIST = 200;
+        int EstadoUltPixel;
+        int x, y;
+        int xIni, xFim, yIni, yFim;
+        int YEnc, YEmb, LargLinha, MaiorLargLinha, NumBordasPixelLinha;
+        int XEsq, XDir, UltXEnc = 0, UltXEmb = 0, MaiorUltXEnc;
+        int NumLinha, UltYComLinha, NumPixelsIdentificador;
+        int[] VetorLarguras;
+        char[] VetGruposValidos = new char[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+        //usado para indicar grupos conexos que fazem parte de outros grupos
+        int[] PonteiroGrupos = new int[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+        boolean AchouLinha;
+        int[] HistogramaNumBordasPixelLinha = new int[TAM_HIST];
+        TRect ARect;
+        xIni = ParamsAI.RefTarja.x - ParamsAI.XIniParaRefTarja;
+        xFim = xIni + ParamsAI.LargIdentificador;
+        yFim = ParamsAI.RefTarja.y - ParamsAI.YIniParaRefTarja;
+        yIni = yFim - ParamsAI.AltIdentificador;
+        int TamVetLarguras = yFim - yIni + 1;
+        VetorLarguras = new int[TamVetLarguras];
+        //memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
+        int Media = MediaFaixa(ParamsAI);
+        //#ifdef DEBUG
+        //  Log->Add("Luminosidade média faixa: "+IntToStr(Media));
+        //#endif         
+        byte Limiar = (byte) (Media - ParamsAI.DifMinMediaFaixaRef);
+
+        CMatrizInteiro MatrizGrupos = new CMatrizInteiro(xFim - xIni + 1, yFim - yIni + 1);
+        TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo =
+                new TLimitesVerticaisGrupo[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
+        for (int s = 0; s < TAM_VETOR_LIMITES_VERTICAIS_GRUPOS; s++) {
+            VetorLimitesVerticaisGrupo[s] = new TLimitesVerticaisGrupo();
+        }
+        ARect = new TRect(xIni, yIni, xFim, yFim);
+        MatrizGruposConexos(ParamsAI.TCImgSrc, ARect,
+                MatrizGrupos.Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
+        SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
+                ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect.Height(),
+                ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
+        CopiaGruposValidos(MatrizGrupos.Matriz, ARect, VetGruposValidos);
+        PintaIdentificador(ParamsAI.BImgDest, ARect, MatrizGrupos.Matriz);
+
+        YEnc = 0;
+        YEmb = -1;
+        MaiorLargLinha = 0;
+        NumLinha = 0;
+        MaiorUltXEnc = 0;
+        NumPixelsIdentificador = 0;
+        UltYComLinha = -1;
+        //#ifdef DEBUG
+        //  Log->Add("Área do identificador: X: ("+IntToStr(xIni)+", "+
+        //      IntToStr(xFim)+" Y: ("+IntToStr(yIni)+", "+IntToStr(yFim)+")");
+        //#endif
+        for (y = ARect.Height(); y > 0; y--) {
+            XEsq = -1;
+            XDir = 0;
+            AchouLinha = false;
+            NumBordasPixelLinha = 0;
+            EstadoUltPixel = NADA;
+            for (x = 0; x < ARect.Width(); x++) {
+                if (MatrizGrupos.Matriz[y][x] == PIXEL_ACEITO) {
+                    if (YEmb == -1) {
+                        YEmb = y;
+                    }
+                    YEnc = y;
+
+                    if (XEsq == -1) {
+                        XEsq = x;
+                    }
+                    XDir = x;
+                    //se for a primeira linha
+                    if (NumLinha == 0) {
+                        UltXEmb = x;
+                    }
+                    UltXEnc = x;
+                    AchouLinha = true;
+                    NumPixelsIdentificador++;
+                    if (EstadoUltPixel != IDENTIFICADOR) {
+                        NumBordasPixelLinha++;
+                    }
+                    EstadoUltPixel = IDENTIFICADOR;
+                } else {
+                    EstadoUltPixel = FUNDO;
+                }
+            }
+            LargLinha = XDir - XEsq;
+            VetorLarguras[y] = LargLinha;
+            if (LargLinha > MaiorLargLinha) {
+                MaiorLargLinha = LargLinha;
+            }
+            if (AchouLinha) {
+                if (UltXEnc > MaiorUltXEnc) {
+                    MaiorUltXEnc = UltXEnc;
+                }
+                NumLinha++;
+                UltYComLinha = y;
+                HistogramaNumBordasPixelLinha[NumBordasPixelLinha]++;
+            } else {
+                if ((UltYComLinha != -1) &&
+                        ((UltYComLinha - y) >= ParamsAI.MaiorDistSemPixelsIdentificador) &&
+                        (NumPixelsIdentificador > ParamsAI.NumMinPixelsIdentificador)) {
+                    break;
+                }
+            }
+        }
+        int soma = 0;
+        for (int w = 0; w < TAM_HIST; w++) {
+            soma += HistogramaNumBordasPixelLinha[w] * w;
+        }
+        if (NumLinha > 0) {
+            ParamsAI.NumMedColunas = (float) (soma * 1.0 / NumLinha);
+        } else {
+            ParamsAI.NumMedColunas = -100;
+        }
+        int MediaLarguras = 0;
+        ParamsAI.RelacaoMedianasLargurasEncEmb =
+                //-------------------------------------------------------COLOCAR!!!!!!!!
+                //         RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
+                ParamsAI.Alt = YEmb - YEnc;
+        if (MediaLarguras > 0) {
+            ParamsAI.RelacaoLargAlt = (float) (ParamsAI.Alt * 1.0 / MediaLarguras);
+        } else {
+            ParamsAI.RelacaoLargAlt = 0;
+        //#ifdef DEBUG
+        //  Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
+        //  Log->Add("YEmb: "+IntToStr(YEmb)+"\t\tYEnc: "+IntToStr(YEnc));
+        //#endif
+        }
+        if (ParamsAI.Alt > 0) {
+            ParamsAI.Inclinacao = (float) ((MaiorUltXEnc - UltXEmb) * 1.0 / ParamsAI.Alt);
+        } else {
+            ParamsAI.Inclinacao = -100;
+        }
+        ParamsAI.MaiorLargLinha = MaiorLargLinha;
+//-------------------------------------------------------COLOCAR!!!!!!!!
+    //Identifica(ParamsAI);
+    //delete [] VetorLarguras;
+    //delete ARect;
+    //delete MatrizGrupos;
     }
-  }
-  int soma=0;
-  for (int w=0; w<TAM_HIST; w++)
-    soma+=HistogramaNumBordasPixelLinha[w]*w;
-  if (NumLinha>0)
-    ParamsAI.NumMedColunas=soma*1.0/NumLinha;
-  else
-    ParamsAI.NumMedColunas=-100;
-  int MediaLarguras;
-  ParamsAI.RelacaoMedianasLargurasEncEmb=
-        RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
-  ParamsAI.Alt=YEmb-YEnc;
-  if (MediaLarguras>0)
-    ParamsAI.RelacaoLargAlt=ParamsAI.Alt*1.0/MediaLarguras;
-  else
-    ParamsAI.RelacaoLargAlt=0;
-  #ifdef DEBUG
-    Log->Add("UltXEnc: "+IntToStr(MaiorUltXEnc)+"\tUltXEmb: "+IntToStr(UltXEmb));
-    Log->Add("YEmb: "+IntToStr(YEmb)+"\t\tYEnc: "+IntToStr(YEnc));
-  #endif
-  if (ParamsAI.Alt>0)
-    ParamsAI.Inclinacao=(MaiorUltXEnc-UltXEmb)*1.0/ParamsAI.Alt;
-  else
-    ParamsAI.Inclinacao=-100;
-  ParamsAI.MaiorLargLinha=MaiorLargLinha;
-  Identifica(ParamsAI);
-  delete [] VetorLarguras;
-  delete ARect;
-  delete MatrizGrupos;
-}
 //--------------------------------------------------------------------------- 
 }
-
-class TMaiorBorda {
-
-    int y;
-    int DifLum;
-}
+    

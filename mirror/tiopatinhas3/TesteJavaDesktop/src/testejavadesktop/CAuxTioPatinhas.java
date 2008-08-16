@@ -13,16 +13,76 @@ import java.util.*;
 public class CAuxTioPatinhas {
 }
 
+class TMaiorBorda {
+
+    int y;
+    int DifLum;
+}
+
+class TRect {
+
+    public int left,  top,  right,  bottom;
+
+    public TRect(int xini, int yini, int xfim, int yfim) {
+        left = xini;
+        top = yini;
+        right = xfim;
+        bottom = yfim;
+    }
+
+    public int Height() {
+        return bottom - top;
+    }
+    
+    public int Width() {
+        return right-left;
+    }
+}
+
 class TPonto {
 
     int x;
     int y;
 };
 
+class CMatrizInteiro {
+
+    int[][] Matriz;
+    int Larg, Alt;
+
+    public CMatrizInteiro(int larg, int alt) {
+        Larg = larg;
+        Alt = alt;
+        Matriz = new int[Alt][Larg];
+    }
+};
+//---------------------------------------------------------------------------
+
+class TLimitesVerticaisGrupo
+{
+  int yEnc, yEmb;
+  public TLimitesVerticaisGrupo(){
+      yEnc=0;
+      yEmb=0;
+  }
+}       
+//---------------------------------------------------------------------------
+
 class TMeioBordas {
 
     int Y1, Y2, yMeio, Altura;
+    
+    /*public TMeioBordas(TMeioBordas MeioBordas){
+        Y1=MeioBordas.Y1;
+        Y1=MeioBordas.Y1;
+        yMeio=MeioBordas.yMeio;
+        Altura=MeioBordas.Altura;
+    }*/
 
+    public TMeioBordas(int y1, int y2){
+        Inicializa(y1, y2);
+    }
+    
     void Inicializa(int y1, int y2) {
         Y1 = y1;
         Y2 = y2;
@@ -39,7 +99,7 @@ class TBorda {
 
 class TBordasColunas {
 
-    TVectorBorda [] Bordas;
+    TVectorBorda[] Bordas;
     int NumColunas;
 
     TBordasColunas(int numColunas) {
@@ -53,24 +113,24 @@ class TBordasColunas {
     }
 };
 
-class TVectorMeioBordas extends Vector{
+class TVectorMeioBordas extends Vector {
 
     TVectorMeioBordas() {
         super();
     }
-    
-    void adicionaTMeioBordas(TMeioBordas elemento){
+
+    void adicionaTMeioBordas(TMeioBordas elemento) {
         addElement(elemento);
     }
 
     TMeioBordas retornaTMeioBordas(int indice) {
         return (TMeioBordas) (elementAt(indice));
-    }    
+    }
 }
 
 class TConjuntoMeioBordas {
 
-    TVectorMeioBordas [] VectorMeioBordas;
+    TVectorMeioBordas[] VectorMeioBordas;
     int NumColunas;
 
     TConjuntoMeioBordas(int numColunas) {
@@ -87,8 +147,8 @@ class TVectorInt extends Vector {
     TVectorInt() {
         super();
     }
-    
-    void adicionaInteiro(Integer elemento){
+
+    void adicionaInteiro(Integer elemento) {
         addElement(elemento);
     }
 
@@ -102,9 +162,9 @@ class TTarja {
     int X;
     int UltYMeio;
     int PriYEnc;
-    
-    TTarja(){
-        VetorAlturas=new TVectorInt();
+
+    TTarja() {
+        VetorAlturas = new TVectorInt();
     }
 
     boolean Ativa(int x) {
@@ -118,8 +178,8 @@ class TVectorTarja extends Vector {
     TVectorTarja() {
         super();
     }
-    
-    void adicionaTTarja(TTarja Tarja){
+
+    void adicionaTTarja(TTarja Tarja) {
         addElement(Tarja);
     }
 
@@ -133,8 +193,8 @@ class TVectorBorda extends Vector {
     TVectorBorda() {
         super();
     }
-    
-    void adicionaTBorda(TBorda Borda){
+
+    void adicionaTBorda(TBorda Borda) {
         addElement(Borda);
     }
 
@@ -177,10 +237,10 @@ class TParamsABT {
     TConjuntoMeioBordas ConjuntoMeioBordas;
     TVectorTarja VectorTarja;
     double MediaAlturaTarja;
-    
-    TParamsABT(){
-        VectorTarja=new TVectorTarja();
-        RefTarja=new TPonto();
+
+    TParamsABT() {
+        VectorTarja = new TVectorTarja();
+        RefTarja = new TPonto();
     }
 };
 //---------------------------------------------------------------------------
@@ -258,11 +318,11 @@ class TParamsRC {
         CarregaParametros(NomeArq);
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
-       
+
         ConverteParametrosDependentesLargura();
     }
-    
-    void CarregaParametros(String NomeArq){
+
+    public void CarregaParametros(String NomeArq) {
         INIFile objINI = null;
         objINI = new INIFile(NomeArq);
         ParamsMLT.PropYIni = (float) (objINI.getIntegerProperty("Geral", "PropYIni") / 1000.0);
@@ -273,8 +333,8 @@ class TParamsRC {
         ParamsABT.DistMaxTarjas = objINI.getIntegerProperty("Geral", "DistMaxTarjas");
         ParamsABT.LargMinTarja = objINI.getIntegerProperty("Geral", "LargMinTarja");
         ParamsABT.LargMaxTarja = objINI.getIntegerProperty("Geral", "LargMaxTarja");
-        ParamsABT.DesvioMax = objINI.getIntegerProperty("Geral", "DesvioMax");
-        
+        ParamsABT.DesvioMax = (float) objINI.getIntegerProperty("Geral", "DesvioMax") / 1000.0;
+
         ParamsAI.DistFaixaRef = objINI.getIntegerProperty("Geral", "DistFaixaRef");
         ParamsAI.LargFaixaRef = objINI.getIntegerProperty("Geral", "LargFaixaRef");
         ParamsAI.DifMinMediaFaixaRef = objINI.getIntegerProperty("Geral", "DifMinMediaFaixaRef");
@@ -294,9 +354,8 @@ class TParamsRC {
 
         objINI = null;
     }
-    
     //pega os fatores e multiplica para pegar valores absolutos
-    void ConverteParametrosDependentesLargura() {
+    public void ConverteParametrosDependentesLargura() {
         ParamsABT.AltMinTarja = (int) Math.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
         ParamsABT.AltMaxTarja = (int) Math.round((ParamsABT.AltMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
         ParamsABT.DistMaxTarjas = (int) Math.round((ParamsABT.DistMaxTarjas / 1000.0) * ParamsMLT.TCImgSrc.Larg);
@@ -304,7 +363,7 @@ class TParamsRC {
         ParamsABT.LargMaxTarja = (int) Math.round((ParamsABT.LargMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
     }
     //pega os fatores e multiplica para pegar valores absolutos
-    void ConverteParametrosDependentesAlturaFaixa() {
+    public void ConverteParametrosDependentesAlturaFaixa() {
         ParamsAI.DistFaixaRef = (int) Math.round((ParamsAI.DistFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
         ParamsAI.LargFaixaRef = (int) Math.round((ParamsAI.LargFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
         ParamsAI.LargIdentificador = (int) Math.round((ParamsAI.LargIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
@@ -318,7 +377,7 @@ class TParamsRC {
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = (int) Math.round((ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
     }
     //pega os fatores e multiplica para pegar valores absolutos
-    void ConverteParametrosDependentesLumMediana() {
+    public void ConverteParametrosDependentesLumMediana() {
         ParamsAI.DifMinMediaFaixaRef = (int) Math.round((ParamsAI.DifMinMediaFaixaRef / 1000.0) * LumMedianaImagem);
     }
 };
