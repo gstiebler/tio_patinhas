@@ -2,25 +2,85 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.util.*;
 
 /**
+ *
  * @author Administrator
  */
 public class CAuxTioPatinhas {
 }
+
+class TMaiorBorda {
+
+    int y;
+    int DifLum;
+}
+
+class TRect {
+
+    public int left,  top,  right,  bottom;
+
+    public TRect(int xini, int yini, int xfim, int yfim) {
+        left = xini;
+        top = yini;
+        right = xfim;
+        bottom = yfim;
+    }
+
+    public int Height() {
+        return bottom - top;
+    }
+    
+    public int Width() {
+        return right-left;
+    }
+}
+
 class TPonto {
 
     int x;
     int y;
 };
 
+class CMatrizInteiro {
+
+    int[][] Matriz;
+    int Larg, Alt;
+
+    public CMatrizInteiro(int larg, int alt) {
+        Larg = larg;
+        Alt = alt;
+        Matriz = new int[Alt][Larg];
+    }
+};
+//---------------------------------------------------------------------------
+
+class TLimitesVerticaisGrupo
+{
+  int yEnc, yEmb;
+  public TLimitesVerticaisGrupo(){
+      yEnc=0;
+      yEmb=0;
+  }
+}       
+//---------------------------------------------------------------------------
+
 class TMeioBordas {
 
     int Y1, Y2, yMeio, Altura;
+    
+    /*public TMeioBordas(TMeioBordas MeioBordas){
+        Y1=MeioBordas.Y1;
+        Y1=MeioBordas.Y1;
+        yMeio=MeioBordas.yMeio;
+        Altura=MeioBordas.Altura;
+    }*/
 
+    public TMeioBordas(int y1, int y2){
+        Inicializa(y1, y2);
+    }
+    
     void Inicializa(int y1, int y2) {
         Y1 = y1;
         Y2 = y2;
@@ -37,7 +97,7 @@ class TBorda {
 
 class TBordasColunas {
 
-    TVectorBorda [] Bordas;
+    TVectorBorda[] Bordas;
     int NumColunas;
 
     TBordasColunas(int numColunas) {
@@ -51,24 +111,24 @@ class TBordasColunas {
     }
 };
 
-class TVectorMeioBordas extends Vector{
+class TVectorMeioBordas extends Vector {
 
     TVectorMeioBordas() {
         super();
     }
-    
-    void adicionaTMeioBordas(TMeioBordas elemento){
+
+    void adicionaTMeioBordas(TMeioBordas elemento) {
         addElement(elemento);
     }
 
     TMeioBordas retornaTMeioBordas(int indice) {
         return (TMeioBordas) (elementAt(indice));
-    }    
+    }
 }
 
 class TConjuntoMeioBordas {
 
-    TVectorMeioBordas [] VectorMeioBordas;
+    TVectorMeioBordas[] VectorMeioBordas;
     int NumColunas;
 
     TConjuntoMeioBordas(int numColunas) {
@@ -85,8 +145,8 @@ class TVectorInt extends Vector {
     TVectorInt() {
         super();
     }
-    
-    void adicionaInteiro(Integer elemento){
+
+    void adicionaInteiro(Integer elemento) {
         addElement(elemento);
     }
 
@@ -100,9 +160,9 @@ class TTarja {
     int X;
     int UltYMeio;
     int PriYEnc;
-    
-    TTarja(){
-        VetorAlturas=new TVectorInt();
+
+    TTarja() {
+        VetorAlturas = new TVectorInt();
     }
 
     boolean Ativa(int x) {
@@ -116,8 +176,8 @@ class TVectorTarja extends Vector {
     TVectorTarja() {
         super();
     }
-    
-    void adicionaTTarja(TTarja Tarja){
+
+    void adicionaTTarja(TTarja Tarja) {
         addElement(Tarja);
     }
 
@@ -131,8 +191,8 @@ class TVectorBorda extends Vector {
     TVectorBorda() {
         super();
     }
-    
-    void adicionaTBorda(TBorda Borda){
+
+    void adicionaTBorda(TBorda Borda) {
         addElement(Borda);
     }
 
@@ -175,10 +235,10 @@ class TParamsABT {
     TConjuntoMeioBordas ConjuntoMeioBordas;
     TVectorTarja VectorTarja;
     double MediaAlturaTarja;
-    
-    TParamsABT(){
-        VectorTarja=new TVectorTarja();
-        RefTarja=new TPonto();
+
+    TParamsABT() {
+        VectorTarja = new TVectorTarja();
+        RefTarja = new TPonto();
     }
 };
 //---------------------------------------------------------------------------
@@ -256,21 +316,19 @@ class TParamsRC {
         CarregaParametros(NomeArq);
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
-       
+
         ConverteParametrosDependentesLargura();
     }
-    
-    public void CarregaParametros(String NomeArq){
 
+    public void CarregaParametros(String NomeArq) {
         ParamsMLT.PropYIni = (float) (300/1000.0);
         ParamsMLT.PropXFim = (float) (600/1000.0);
-
         ParamsABT.AltMinTarja = 47;
         ParamsABT.AltMaxTarja = 94;
         ParamsABT.DistMaxTarjas = 3;
         ParamsABT.LargMinTarja = 47;
         ParamsABT.LargMaxTarja = 266;
-        ParamsABT.DesvioMax = 150;
+        ParamsABT.DesvioMax = 150/1000.0;
         
         ParamsAI.DistFaixaRef = 91;
         ParamsAI.LargFaixaRef = 182;
@@ -289,7 +347,7 @@ class TParamsRC {
         ParamsAI.LimiarNumMedColunas = 1200;
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = 1000;
     }
-
+    
     
     //pega os fatores e multiplica para pegar valores absolutos
     public void ConverteParametrosDependentesLargura() {
