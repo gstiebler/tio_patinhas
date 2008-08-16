@@ -22,7 +22,7 @@ public class UTioPatinhas {
         int n, x, y;
         int MetadeTotal;
         int Mediana;
-        int[][] ImgSrc = TCImgSrc.TonsCinza;
+        int [][] ImgSrc = TCImgSrc.TonsCinza;
         for (y = 0; y < TCImgSrc.Alt; y++) {
             for (x = 0; x < TCImgSrc.Larg; x++) {
                 vetor[ImgSrc[y][x]]++;
@@ -72,7 +72,7 @@ public class UTioPatinhas {
 
         int MaisEscuroAtual, MaisClaroAtual, MaisClaroAnterior, MaisEscuroAnterior;
         int lum;
-        int[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
+        int [][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
         Cor[][] ImgDest = ParamsMLT.BImgDest.PMCor;
         int YIni = (int) (ParamsMLT.TCImgSrc.Alt * ParamsMLT.PropYIni);
         int XFim = (int) (ParamsMLT.TCImgSrc.Larg * ParamsMLT.PropXFim);
