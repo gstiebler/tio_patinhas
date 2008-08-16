@@ -1,6 +1,6 @@
 object Main: TMain
-  Left = 13
-  Top = 47
+  Left = 58
+  Top = 80
   Width = 1280
   Height = 766
   HorzScrollBar.Smooth = True
