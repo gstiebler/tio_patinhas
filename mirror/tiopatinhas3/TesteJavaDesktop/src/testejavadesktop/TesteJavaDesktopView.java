@@ -97,7 +97,7 @@ public class TesteJavaDesktopView extends FrameView {
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
             ImageProcessor imgProc = new ImageProcessor();
-            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "100.bmp");
+            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002.bmp");
             Image image=ImageProcessor.toBufferedImage(image2);
             
             TParamsRC ParamsRC=new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini", 

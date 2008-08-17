@@ -203,7 +203,6 @@ public class UTioPatinhas {
         int n, nMenorX, m, LargTarjaCandidata;
         TTarja TarjaCandidata;
         int MenorX, AlturaTarjaMColunaN;
-        ;
         double soma, desvio, media, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
         MenorX = 0xFFFFFF;
@@ -450,13 +449,15 @@ public class UTioPatinhas {
         int[] Larguras = new int[2];
         for (int n = 0; n < 2; n++) {
             System.arraycopy(VetorLarguras, comeco + n * MetadeAltura, vetor, 0, MetadeAltura);
-            Vector a=new Vector();
-            for (int u=0; u<MetadeAltura; u++)
-                a.addElement(new Integer(vetor[u]));
-            java.util.Collections.sort(a);
+            COrdenacao.OrdenaInt(vetor, MetadeAltura);
+            Larguras[n]=vetor[QuartoAltura];
+            //Vector a=new Vector();
+            //for (int u=0; u<MetadeAltura; u++)
+            //    a.addElement(new Integer(vetor[u]));
+            //java.util.Collections.sort(a);
             //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
-           // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
-            Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
+            // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
+            //Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
         }
         //delete [] vetor;
         //ifdef DEBUG

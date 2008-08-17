@@ -124,10 +124,9 @@ public class TioPatinhasMIDlet
         UTioPatinhas.ReconheceCedula(ParamsRC);
 
         //mMainForm.append(img);
+        
+        mMainForm.append(new StringItem("Valor: ", String.valueOf(ParamsRC.ParamsAI.ValorCedula)));
         mMainForm.append(ParamsRC.ParamsMLT.BImgDest.SaveImage());
-
-
-
         //Image thumb = createThumbnail(image);
 
         // Place it in the main form.
@@ -187,7 +186,7 @@ public class TioPatinhasMIDlet
         int TAM_IMG = LARG * ALT;
         byte[] temp = new byte[TAM_IMG * 3 + 54];
         int[] retorno = new int[TAM_IMG];
-        DataInputStream dis = new DataInputStream(this.getClass().getResourceAsStream("/002reais.bmp"));
+        DataInputStream dis = new DataInputStream(this.getClass().getResourceAsStream("/010.bmp"));
         dis.reset();
         try {
             dis.read(temp, 0, TAM_IMG * 3 + 54);

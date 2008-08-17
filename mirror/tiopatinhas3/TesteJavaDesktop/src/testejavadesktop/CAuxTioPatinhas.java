@@ -33,9 +33,9 @@ class TRect {
     public int Height() {
         return bottom - top;
     }
-    
+
     public int Width() {
-        return right-left;
+        return right - left;
     }
 }
 
@@ -57,32 +57,30 @@ class CMatrizInteiro {
     }
 };
 //---------------------------------------------------------------------------
+class TLimitesVerticaisGrupo {
 
-class TLimitesVerticaisGrupo
-{
-  int yEnc, yEmb;
-  public TLimitesVerticaisGrupo(){
-      yEnc=0;
-      yEmb=0;
-  }
-}       
+    int yEnc, yEmb;
+
+    public TLimitesVerticaisGrupo() {
+        yEnc = 0;
+        yEmb = 0;
+    }
+}
 //---------------------------------------------------------------------------
-
 class TMeioBordas {
 
     int Y1, Y2, yMeio, Altura;
-    
-    /*public TMeioBordas(TMeioBordas MeioBordas){
-        Y1=MeioBordas.Y1;
-        Y1=MeioBordas.Y1;
-        yMeio=MeioBordas.yMeio;
-        Altura=MeioBordas.Altura;
-    }*/
 
-    public TMeioBordas(int y1, int y2){
+    /*public TMeioBordas(TMeioBordas MeioBordas){
+    Y1=MeioBordas.Y1;
+    Y1=MeioBordas.Y1;
+    yMeio=MeioBordas.yMeio;
+    Altura=MeioBordas.Altura;
+    }*/
+    public TMeioBordas(int y1, int y2) {
         Inicializa(y1, y2);
     }
-    
+
     void Inicializa(int y1, int y2) {
         Y1 = y1;
         Y2 = y2;
@@ -200,6 +198,25 @@ class TVectorBorda extends Vector {
 
     TBorda retornaTBorda(int indice) {
         return (TBorda) (elementAt(indice));
+    }
+}
+
+class COrdenacao {
+
+    static public void OrdenaInt(int[] Vetor, int TamVet) {
+        boolean mudou = true;
+        int temp;
+        while (mudou) {
+            mudou=false;
+            for (int n = 1; n < TamVet; n++) {
+                if (Vetor[n] < Vetor[n - 1]) {
+                    temp = Vetor[n];
+                    Vetor[n] = Vetor[n - 1];
+                    Vetor[n - 1] = temp;
+                    mudou = true;
+                }
+            }
+        }
     }
 }
 
@@ -343,13 +360,13 @@ class TParamsRC {
         ParamsAI.XIniParaRefTarja = objINI.getIntegerProperty("Geral", "XIniParaRefTarja");
         ParamsAI.YIniParaRefTarja = objINI.getIntegerProperty("Geral", "YIniParaRefTarja");
         ParamsAI.LimiarAlturaIdentificador = objINI.getIntegerProperty("Geral", "LimiarAlturaIdentificador");
-        ParamsAI.LimiarInclinacaoidentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador")/1000.0);
+        ParamsAI.LimiarInclinacaoidentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarInclinacaoidentificador") / 1000.0);
         ParamsAI.MaiorDistSemPixelsIdentificador = objINI.getIntegerProperty("Geral", "MaiorDistSemPixelsIdentificador");
         ParamsAI.NumMinPixelsIdentificador = objINI.getIntegerProperty("Geral", "NumMinPixelsIdentificador");
         ParamsAI.AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
-        ParamsAI.LimiarLargLinhasIdentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador")/1000.0);
-        ParamsAI.LimiarRelacaoLargAlt = (float) (objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt")/1000.0);
-        ParamsAI.LimiarNumMedColunas = (float) (objINI.getIntegerProperty("Geral", "LimiarNumMedColunas")/1000.0);
+        ParamsAI.LimiarLargLinhasIdentificador = (float) (objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador") / 1000.0);
+        ParamsAI.LimiarRelacaoLargAlt = (float) (objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt") / 1000.0);
+        ParamsAI.LimiarNumMedColunas = (float) (objINI.getIntegerProperty("Geral", "LimiarNumMedColunas") / 1000.0);
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = objINI.getIntegerProperty("Geral", "DifMinEmbGrupoEmbRegiaoIdentificador");
 
         objINI = null;

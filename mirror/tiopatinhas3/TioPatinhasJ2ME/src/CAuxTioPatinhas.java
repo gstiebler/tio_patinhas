@@ -201,6 +201,25 @@ class TVectorBorda extends Vector {
     }
 }
 
+class COrdenacao {
+
+    static public void OrdenaInt(int[] Vetor, int TamVet) {
+        boolean mudou = true;
+        int temp;
+        while (mudou) {
+            mudou=false;
+            for (int n = 1; n < TamVet; n++) {
+                if (Vetor[n] < Vetor[n - 1]) {
+                    temp = Vetor[n];
+                    Vetor[n] = Vetor[n - 1];
+                    Vetor[n - 1] = temp;
+                    mudou = true;
+                }
+            }
+        }
+    }
+}
+
 class TParamsMLT {
 
     CTonsCinza TCImgSrc;

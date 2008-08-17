@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-//package testejavadesktop;
 
 import java.util.*;
 
@@ -203,7 +202,6 @@ public class UTioPatinhas {
         int n, nMenorX, m, LargTarjaCandidata;
         TTarja TarjaCandidata;
         int MenorX, AlturaTarjaMColunaN;
-        ;
         double soma, desvio, media, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
         MenorX = 0xFFFFFF;
@@ -222,12 +220,12 @@ public class UTioPatinhas {
             if ((LargTarjaCandidata <= ParamsABT.LargMaxTarja) &&
                     (LargTarjaCandidata >= ParamsABT.LargMinTarja)) {
                 soma = 0;
-                //calcula a mÃ©dia da altura de cada coluna da possÃ­vel tarja
+                //calcula a média da altura de cada coluna da possível tarja
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                 }
                 media = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
-                //calcula o desvio padrÃ£o
+                //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
@@ -235,14 +233,14 @@ public class UTioPatinhas {
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
                 // ifdef DEBUG
-                System.out.println("desvio padrÃ£o alturas: " + String.valueOf(desvio));
+                System.out.println("desvio padrão alturas: " + String.valueOf(desvio));
                 //endif
 
                 if (desvio < ParamsABT.DesvioMax) {
                     //ifdef DEBUG
                     System.out.println("menor do que o limite de : " + String.valueOf(ParamsABT.DesvioMax));
                     //endif
-                    //pode ser substituÃ­do por um cÃ³digo que pega o primeiro. mantido para debug
+                    //pode ser substituído por um código que pega o primeiro. mantido para debug
                     if (ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
                         nMenorX = n;
@@ -270,7 +268,7 @@ public class UTioPatinhas {
             for (m = 0; m < ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].size(); m++) {
                 Adicionou = false;
                 MeioBordasTemp = ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].retornaTMeioBordas(m);
-                //percorre todas as tarjas que estÃ£o ativas na coluna corrente
+                //percorre todas as tarjas que estão ativas na coluna corrente
                 for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
                     if (ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x)) {
                         if (Math.abs(ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio - MeioBordasTemp.yMeio) <= ParamsABT.DistMaxTarjas) {
@@ -291,8 +289,8 @@ public class UTioPatinhas {
             }
         }
     }
-//Mostra a linha cyan (azul claro) que representa o ponto de referÃªncia da tarja para a localizaÃ§Ã£o
-//do identificador, e retorna a luminosidade mÃ©dia dos pixels da faixa
+//Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
+//do identificador, e retorna a luminosidade média dos pixels da faixa
     static int MediaFaixa(TParamsAI ParamsAI) {
         int x, y, xIni, xFim, soma;
         int[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
@@ -311,12 +309,12 @@ public class UTioPatinhas {
     }
 //---------------------------------------------------------------------------
 
-//MatrizGrupos Ã© um quadrado com dimensÃµes definidas por ARect. Ã‰ onde sÃ£o retornados
+//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
 // os grupos conexos do identificador
     static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
         int x, y, i, j, n;
-        boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuÃ­a um grupo
+        boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
         boolean AchouGrupoEncima;
         boolean EmGrupoNovo = false;
         int ContadorGrupos, GrupoAtual, GrupoEncima;
@@ -332,7 +330,7 @@ public class UTioPatinhas {
             AnteriorDentroGrupo = false;
             for (x = ARect.left + 1; x < ARect.right - 1; x++) {
                 if (ImgSrc[y][x] < limiar) {
-                    if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) nÃ£o possuia grupo, prossegue
+                    if (!AnteriorDentroGrupo)//se pixel anterior (da esquerda) não possuia grupo, prossegue
                     {
                         EmGrupoNovo = true;
                         AchouGrupoEncima = false;
@@ -347,14 +345,14 @@ public class UTioPatinhas {
                                 break;
                             }
                         }
-                        //se nÃ£o achou pixels encima entÃ£o cria um novo grupo
+                        //se não achou pixels encima então cria um novo grupo
                         if (!AchouGrupoEncima) {
                             GrupoAtual = ContadorGrupos;
                             VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = 0;
                             VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = 0xFFFF;
                             ContadorGrupos++;
                         }
-                    } else //jÃ¡ estamos dentro de um grupo
+                    } else //já estamos dentro de um grupo
                     {
                         //devemos sempre ver se encima existe algum grupo antigo
                         j = y - ARect.top - 1;
@@ -364,7 +362,7 @@ public class UTioPatinhas {
                         {
                             if (EmGrupoNovo) {
                                 PonteiroGrupos[GrupoAtual] = GrupoEncima;
-                                GrupoAtual = GrupoEncima;//o grupo atual agora Ã© o de cima
+                                GrupoAtual = GrupoEncima;//o grupo atual agora é o de cima
                                 EmGrupoNovo = false;
                             } else {
                                 PonteiroGrupos[GrupoEncima] = GrupoAtual;
@@ -375,14 +373,14 @@ public class UTioPatinhas {
                     i = x - ARect.left;
                     MatrizGrupos[j][i] = GrupoAtual;
                     AnteriorDentroGrupo = true;
-                    //atualiza limites verticais do grupo caso necessÃ¡rio
+                    //atualiza limites verticais do grupo caso necessário
                     if (j > VetorLimitesVerticaisGrupo[GrupoAtual].yEmb) {
                         VetorLimitesVerticaisGrupo[GrupoAtual].yEmb = j;
                     }
                     if (j < VetorLimitesVerticaisGrupo[GrupoAtual].yEnc) {
                         VetorLimitesVerticaisGrupo[GrupoAtual].yEnc = j;
                     }
-                } else //se pixel Ã© mais claro que o limiar
+                } else //se pixel é mais claro que o limiar
                 {
                     AnteriorDentroGrupo = false;
                 }
@@ -401,7 +399,7 @@ public class UTioPatinhas {
 
             //ifdef DEBUG
             //  if (altura)
-            System.out.println("RegiÃ£o candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
+            System.out.println("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
             //endif
             if (altura >= AltMin && DifEmb < DifMinEmb) {
                 VetGruposValidos[n] = (char) PIXEL_ACEITO;
@@ -411,7 +409,7 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
-//MatrizGrupos Ã© variÃ¡vel de entrada e de saÃ­da
+//MatrizGrupos é variável de entrada e de saída
     static void CopiaGruposValidos(int[][] MatrizGrupos, TRect ARect, char[] VetGruposValidos) {
         int x, y;
         int larg, alt;
@@ -450,13 +448,15 @@ public class UTioPatinhas {
         int[] Larguras = new int[2];
         for (int n = 0; n < 2; n++) {
             System.arraycopy(VetorLarguras, comeco + n * MetadeAltura, vetor, 0, MetadeAltura);
-            Vector a=new Vector();
-            for (int u=0; u<MetadeAltura; u++)
-                a.addElement(new Integer(vetor[u]));
-            java.util. Collections.sort(a);
+            COrdenacao.OrdenaInt(vetor, MetadeAltura);
+            Larguras[n]=vetor[QuartoAltura];
+            //Vector a=new Vector();
+            //for (int u=0; u<MetadeAltura; u++)
+            //    a.addElement(new Integer(vetor[u]));
+            //java.util.Collections.sort(a);
             //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
-           // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
-            Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
+            // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
+            //Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
         }
         //delete [] vetor;
         //ifdef DEBUG
@@ -475,30 +475,30 @@ public class UTioPatinhas {
  static void Identifica(TParamsAI ParamsAI)
 {
   //ifdef DEBUG
-     System.out.println("InclinaÃ§Ã£o identificador: "+String.valueOf(ParamsAI.Inclinacao));
+     System.out.println("Inclinação identificador: "+String.valueOf(ParamsAI.Inclinacao));
      System.out.println("Altura identificador: "+String.valueOf(ParamsAI.Alt));
-     System.out.println("RelaÃ§Ã£o larguras identificador: "+String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
+     System.out.println("Relação larguras identificador: "+String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
     if (ParamsAI.RelacaoMedianasLargurasEncEmb>0)
-      System.out.println("RelaÃ§Ã£o inversa larguras identificador: "+String.valueOf(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
-    System.out.println("RelaÃ§Ã£o Altura/Largura: "+String.valueOf(ParamsAI.RelacaoLargAlt));
-    System.out.println("NÃºmero mÃ©dio de colunas: "+String.valueOf(ParamsAI.NumMedColunas));
+      System.out.println("Relação inversa larguras identificador: "+String.valueOf(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
+    System.out.println("Relação Altura/Largura: "+String.valueOf(ParamsAI.RelacaoLargAlt));
+    System.out.println("Número médio de colunas: "+String.valueOf(ParamsAI.NumMedColunas));
   //endif
   if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
   {                       
     //ifdef DEBUG
-      System.out.println("InclinaÃ§Ã£o maior que o limite, pode ser \tR$2\tR$20");
+      System.out.println("Inclinação maior que o limite, pode ser \tR$2\tR$20");
     ///endif
     if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
     {
       //ifdef DEBUG
-      System.out.println("RelaÃ§Ã£o Altura/Largura maior que o limite, Ã© R$2");
+      System.out.println("Relação Altura/Largura maior que o limite, é R$2");
       //endif
       ParamsAI.ValorCedula=2;
     }
     else
     {
       //ifdef DEBUG
-        System.out.println("RelaÃ§Ã£o Altura/Largura menor que o limite, Ã© R$20");
+        System.out.println("Relação Altura/Largura menor que o limite, é R$20");
       //endif
       ParamsAI.ValorCedula=20;
     }
@@ -506,7 +506,7 @@ public class UTioPatinhas {
   else
   {
     //ifdef DEBUG
-      System.out.println("InclinaÃ§Ã£o menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
+      System.out.println("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
     //endif
     if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
     {
@@ -516,33 +516,33 @@ public class UTioPatinhas {
       if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
       {
         //ifdef DEBUG
-        System.out.println("RelaÃ§Ã£o medianas larguras maior que o limite, Ã© R$50");
+        System.out.println("Relação medianas larguras maior que o limite, é R$50");
         //endif
         ParamsAI.ValorCedula=50;
       }
       else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
       {
         //ifdef DEBUG
-        System.out.println("RelaÃ§Ã£o inversa medianas larguras maior que o limite, Ã© R$100");
+        System.out.println("Relação inversa medianas larguras maior que o limite, é R$100");
         //endif
         ParamsAI.ValorCedula=100;
       }
       else
       {
         //ifdef DEBUG
-        System.out.println("RelaÃ§Ã£o medianas larguras menor que o limite, pode ser \tR$1\tR$5");
+        System.out.println("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
         //endif
         if (ParamsAI.NumMedColunas<ParamsAI.LimiarNumMedColunas)
         {
           //ifdef DEBUG
-            System.out.println("NÃºmero mÃ©dio de colunas menor que o limite, Ã© R$1");
+            System.out.println("Número médio de colunas menor que o limite, é R$1");
           //endif
           ParamsAI.ValorCedula=1;
         }
         else
         {
           //ifdef DEBUG
-            System.out.println("NÃºmero mÃ©dio de colunas maior que o limite, Ã© R$5");
+            System.out.println("Número médio de colunas maior que o limite, é R$5");
           //endif
           ParamsAI.ValorCedula=5;
         }
@@ -551,7 +551,7 @@ public class UTioPatinhas {
     else
     {
       //ifdef DEBUG
-            System.out.println("Altura menor que o limite, Ã© R$10");
+            System.out.println("Altura menor que o limite, é R$10");
       //endif
       ParamsAI.ValorCedula=10;
     }
@@ -584,7 +584,7 @@ public class UTioPatinhas {
         //memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
         int Media = MediaFaixa(ParamsAI);
         //ifdef DEBUG
-        System.out.println("Luminosidade mÃ©dia faixa: " + String.valueOf(Media));
+        System.out.println("Luminosidade média faixa: " + String.valueOf(Media));
         //endif         
         int Limiar = Media - ParamsAI.DifMinMediaFaixaRef;
 
@@ -612,7 +612,7 @@ public class UTioPatinhas {
         UltYComLinha = -1;
         //ifdef DEBUG
 
-        System.out.println("Ãrea do identificador: X: (" + String.valueOf(xIni) + ", " +
+        System.out.println("Área do identificador: X: (" + String.valueOf(xIni) + ", " +
                 String.valueOf(xFim) + " Y: (" + String.valueOf(yIni) + ", " + String.valueOf(yFim) + ")");
         //endif
         for (y = ARect.Height(); y > 0; y--) {
