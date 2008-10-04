@@ -20,6 +20,8 @@ public class UTioPatinhas {
     static int TAM_VETOR_LIMITES_VERTICAIS_GRUPOS = 300;
     static int PIXEL_ACEITO = 1;
     static int PIXEL_NAO_ACEITO = 2;
+    static int DELTA_Y_HISTOGRAM = 5,
+               DELTA_X_HISTOGRAM = 5;
 
     UTioPatinhas() {
     }
@@ -90,17 +92,18 @@ public class UTioPatinhas {
     }
 
     /**
-     * Calcula o histograma da imagem toda, retornando a mediana de RGB.
+     * Calcula o histograma da imagem toda, retornando a mediana de tons de cinza.
      */
     static int Histograma(CTonsCinza TCImgSrc) {
+        
         int[] vetor = new int[256];
         int[] vetorCumulativa = new int[256];
         int n, x, y;
         int MetadeTotal;
         int Mediana;
         int[][] ImgSrc = TCImgSrc.TonsCinza;
-        for (y = 0; y < TCImgSrc.Alt; y++) {
-            for (x = 0; x < TCImgSrc.Larg; x++) {
+        for (y = 0; y < TCImgSrc.Alt; y+=DELTA_Y_HISTOGRAM) {
+            for (x = 0; x < TCImgSrc.Larg; x+=DELTA_X_HISTOGRAM) {
                 vetor[ImgSrc[y][x]]++;
             }
         }
@@ -119,6 +122,7 @@ public class UTioPatinhas {
         return Mediana;
     }
 
+    
     /**
      * Varre a imagem verticalmente detectando grande variação de contraste entre
      * os pixels. Estas variações são marcadas superiormente com uma faixa vermelha
@@ -381,10 +385,16 @@ public class UTioPatinhas {
     }
 //---------------------------------------------------------------------------
 
-//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
-// os grupos conexos do identificador
+    /**
+     * Processa a imagem na região marcada pelo ARect agrupando os grupos conexos de pixels escuros.
+     * O ARect guarda a regiao detectada como o identificador na cedula.
+     * 
+     * entradas de dados: CTonsCinza tcImgSrc, TRect ARect, int limiar
+     * saidas de dados: int[][] MatrizGrupos, TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos
+     */
     static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
+        
         int x, y, i, j, n;
         boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
         boolean AchouGrupoEncima;
@@ -460,6 +470,10 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
+    /**
+     * Corta fora dos grupos conexos os grupos cujas alturas sejam muito pequenas
+     * em comparação com a altura da faixa preta de referencia detectada.
+     */
     static void SelecionaGruposIdentificador(TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo,
             char[] VetGruposValidos, int AltMin, int[] PonteiroGrupos, int yFim, int DifMinEmb) {
         int altura, DifEmb;
@@ -544,8 +558,12 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
     
+    /**
+     * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
+     * sobre qual identificador foi detectado.
+     */
  static void Identifica(TParamsAI ParamsAI)
-{
+ {
   //ifdef DEBUG
      System.out.println("Inclinação identificador: "+String.valueOf(ParamsAI.Inclinacao));
      System.out.println("Altura identificador: "+String.valueOf(ParamsAI.Alt));
@@ -631,7 +649,11 @@ public class UTioPatinhas {
 }
 //---------------------------------------------------------------------------
     
+ /**
+  * Analiza o identificador para detectar o valor das notas.
+  */
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
+        
         int NADA = 0, IDENTIFICADOR = 1, FUNDO = 2;
         int TAM_HIST = 200;
         int EstadoUltPixel;

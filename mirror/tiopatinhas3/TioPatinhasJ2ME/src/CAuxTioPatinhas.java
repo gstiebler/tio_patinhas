@@ -56,6 +56,9 @@ class CMatrizInteiro {
 };
 //---------------------------------------------------------------------------
 
+/**
+ * Guarda os limites superiores e inferiores de um GrupoConexo
+ */
 class TLimitesVerticaisGrupo
 {
   int yEnc, yEmb;
