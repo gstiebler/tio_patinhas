@@ -8,13 +8,19 @@ import javax.microedition.lcdui.Image;
 public class UCBitmap {
 
 }
+
+/**
+ * 
+ */
 class CTonsCinza {
 
     int[][] TonsCinza;
     public int Larg,  Alt;
     int pixel, azul, verde, vermelho, raw[];
     
-    
+    /**
+     * Constrói um CTonsCinza a partir de uma Image
+     */
     CTonsCinza(Image img) {
        
         Larg = img.getWidth();
@@ -39,6 +45,9 @@ class CTonsCinza {
         }
     }
 
+    /**
+     * Retorna uma Image gerada a partir do CTonsCinza
+     */
     Image SaveImage() {
         
         int[] rawRGB = new int[Larg*Alt];

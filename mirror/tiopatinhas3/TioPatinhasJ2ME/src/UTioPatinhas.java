@@ -3,7 +3,12 @@
  * and open the template in the editor.
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
+import javax.microedition.media.Player;
 
 /**
  *
@@ -20,6 +25,9 @@ public class UTioPatinhas {
     }
 
     static void ReconheceCedula(TParamsRC ParamsRC) {
+
+        System.out.println("Processamento iniciado.");
+
         ParamsRC.LumMedianaImagem = Histograma(ParamsRC.ParamsMLT.TCImgSrc);
         ParamsRC.ConverteParametrosDependentesLumMediana();
         MostraLimiteTarja(ParamsRC.ParamsMLT);
@@ -33,9 +41,57 @@ public class UTioPatinhas {
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
             AnalizaIdentificador(ParamsRC.ParamsAI);
         }
+        
+        System.out.println("Processamento concluido!");
     //EscreveParametros(ParamsRC);
     }
+    
+    
+    /**
+     * Diz o valor da nota
+     */
+    void say(int value){
+        
+        String valueSoundFile = null;
+        
+        switch (value){
+            case 1:
+                valueSoundFile = "01.wav";
+                break;
+            case 2:
+                valueSoundFile = "02.wav";
+                break;
+            case 5:
+                valueSoundFile = "05.wav";
+                break;
+            case 10:
+                valueSoundFile = "10.wav";
+                break;
+            case 20:
+                valueSoundFile = "20.wav";
+                break;
+            case 50:
+                valueSoundFile = "50.wav";
+                break;
+            case 100:
+                valueSoundFile = "100.wav";
+                break;
+            default:
+                valueSoundFile = "unknown.wav";
+                break;
+        }
+        
+        try {
+            InputStream is = getClass().getResourceAsStream(valueSoundFile);
+            Player audioPlayer = Manager.createPlayer(is, "audio/X-wav");
+            audioPlayer.start();
+        } catch (IOException ioe) {
+        } catch (MediaException me) { }
+    }
 
+    /**
+     * Calcula o histograma da imagem toda, retornando a mediana de RGB.
+     */
     static int Histograma(CTonsCinza TCImgSrc) {
         int[] vetor = new int[256];
         int[] vetorCumulativa = new int[256];
@@ -63,6 +119,11 @@ public class UTioPatinhas {
         return Mediana;
     }
 
+    /**
+     * Varre a imagem verticalmente detectando grande variação de contraste entre
+     * os pixels. Estas variações são marcadas superiormente com uma faixa vermelha
+     * e inferiormente com uma faixa verde.
+     */
     static void MostraLimiteTarja(TParamsMLT ParamsMLT) {
 
         int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
@@ -160,8 +221,11 @@ public class UTioPatinhas {
         }
     }
 
+    /**
+     * Analiza os limites vermelhos e verdes de cada uma das tarjas, marcando
+     * a faixa amarela na distancia média entre as mesmas.
+     */
     static void AnalizaBordasTarja(TParamsABT ParamsABT) {
-
 
         int x,
                 n;
@@ -197,6 +261,11 @@ public class UTioPatinhas {
         }
     }
 
+    
+    /**
+     * Descarta as tarjas que estao fora dos limites de largura e com a altura
+     * variando muito (analizando os desvios padrão calculados em preparaSelecionaTarja)
+     */
     static void SelecionaTarja(TParamsABT ParamsABT) {
 
         int n, nMenorX, m, LargTarjaCandidata;
@@ -257,6 +326,9 @@ public class UTioPatinhas {
         }
     }
 
+    /**
+     * Calcula os desvios padrões das alturas de cada coluna das tarjas detectadas.
+     */
     static void PreparaSelecionaTarja(TParamsABT ParamsABT) {
         int x;
 
