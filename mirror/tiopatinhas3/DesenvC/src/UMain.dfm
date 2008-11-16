@@ -1,6 +1,6 @@
 object Main: TMain
-  Left = 58
-  Top = 80
+  Left = 55
+  Top = 36
   Width = 1280
   Height = 766
   HorzScrollBar.Smooth = True
@@ -244,5 +244,14 @@ object Main: TMain
     Caption = 'Reconhece Proxima'
     TabOrder = 17
     OnClick = btReconheceProximaClick
+  end
+  object Button1: TButton
+    Left = 720
+    Top = 592
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 18
+    OnClick = Button1Click
   end
 end

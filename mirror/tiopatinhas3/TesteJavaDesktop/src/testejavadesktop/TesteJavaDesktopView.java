@@ -18,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -87,24 +88,25 @@ public class TesteJavaDesktopView extends FrameView {
         }
         TesteJavaDesktopApp.getApplication().show(aboutBox);
     }
-    
+
     @Action
     public void NovaFunc() {
 
         try {
-            
+
 
             JPanel cp = new JPanel(new GridLayout(0, 1));
 
             ImageProcessor imgProc = new ImageProcessor();
             Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002.bmp");
-            Image image=ImageProcessor.toBufferedImage(image2);
-            
-            TParamsRC ParamsRC=new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini", 
-                                    new CTonsCinza(image), new CBitmap(image));
+            Image image = ImageProcessor.toBufferedImage(image2);
+
+            TParamsRC ParamsRC = new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini",
+                    new CTonsCinza(image), new CBitmap(image));
             UTioPatinhas.ReconheceCedula(ParamsRC);
-            System.out.println("Valor cédula: "+String.valueOf(ParamsRC.ParamsAI.ValorCedula));
-                    
+            System.out.println("Valor cédula: " +
+                    String.valueOf(ParamsRC.ParamsAI.ValorCedula));
+
             addImage(cp, image);
             addImage(cp, ParamsRC.ParamsMLT.BImgDest.SaveImage());
 
@@ -122,6 +124,51 @@ public class TesteJavaDesktopView extends FrameView {
             // catch io errors from FileInputStream or readLine() 
             System.out.println("Uh oh, got an IOException error!" + e.getMessage());
 
+        }
+
+    }
+
+    private int Reconhece(String arquivo) {
+        ImageProcessor imgProc = new ImageProcessor();
+        Image image2 = imgProc.loadbitmap("", arquivo);
+        Image image = ImageProcessor.toBufferedImage(image2);
+
+        TParamsRC ParamsRC = new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini",
+                new CTonsCinza(image), new CBitmap(image));
+        UTioPatinhas.ReconheceCedula(ParamsRC);
+        System.out.println("Valor cédula: " +
+                String.valueOf(ParamsRC.ParamsAI.ValorCedula));
+        return ParamsRC.ParamsAI.ValorCedula;
+    }
+
+    @Action
+    public void ExecutaTestes() {
+        int[] notas = {1, 2, 5, 10, 20, 50, 100};
+        String PastaBase = "P:\\TioPatinhas\\dinheiro\\testes\\";
+        int TotalNotas, Acertos;
+        for (int n = 0; n < notas.length; n++) {
+            TotalNotas = 0;
+            Acertos = 0;
+            String pasta = PastaBase + notas[n];
+            File dir = new File(pasta);
+            String[] children = dir.list();
+            if (children == null) {
+                // Either dir does not exist or is not a directory
+            } else {
+                for (int i = 0; i < children.length; i++) {
+                    // Get filename of file or directory
+                    String sarq = children[i];
+                    int nota = Reconhece(pasta + "\\" + sarq);
+                    System.out.println(nota);
+                    TotalNotas++;
+                    if (nota == notas[n]) {
+                        Acertos++;
+                    }
+                }
+            }
+            
+            jTextArea1.append(notas[n] +": "+Acertos*100.0/TotalNotas+ "\n");
+            jTextArea1.repaint();
         }
 
     }
@@ -144,7 +191,7 @@ public class TesteJavaDesktopView extends FrameView {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
-        Painel = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -179,20 +226,8 @@ public class TesteJavaDesktopView extends FrameView {
             .addGap(0, 182, Short.MAX_VALUE)
         );
 
-        Painel.setBackground(resourceMap.getColor("Painel.background")); // NOI18N
-        Painel.setForeground(resourceMap.getColor("Painel.foreground")); // NOI18N
-        Painel.setName("Painel"); // NOI18N
-
-        javax.swing.GroupLayout PainelLayout = new javax.swing.GroupLayout(Painel);
-        Painel.setLayout(PainelLayout);
-        PainelLayout.setHorizontalGroup(
-            PainelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-        );
-        PainelLayout.setVerticalGroup(
-            PainelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 107, Short.MAX_VALUE)
-        );
+        jButton2.setAction(actionMap.get("ExecutaTestes")); // NOI18N
+        jButton2.setName("jButton2"); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -202,27 +237,28 @@ public class TesteJavaDesktopView extends FrameView {
                 .addGap(30, 30, 30)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
-                        .addComponent(Painel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70)
+                        .addComponent(jButton2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+            .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
                 .addGap(23, 23, 23))
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(130, 130, 130)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Painel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -253,8 +289,8 @@ public class TesteJavaDesktopView extends FrameView {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JPanel Painel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;

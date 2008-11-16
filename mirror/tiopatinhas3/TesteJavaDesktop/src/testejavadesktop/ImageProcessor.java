@@ -28,9 +28,10 @@ public class ImageProcessor extends java.applet.Applet {
     public Image loadbitmap(String sdir, String sfile) {
 
         Image image;
-        System.out.println("loading:" + sdir + sfile);
+        String str_file=sdir+sfile;
+        System.out.println("loading:" + str_file);
         try {
-            FileInputStream fs = new FileInputStream(sdir + sfile);
+            FileInputStream fs = new FileInputStream(str_file);
             int bflen = 14;  // 14 byte BITMAPFILEHEADER
 
             byte bf[] = new byte[bflen];
