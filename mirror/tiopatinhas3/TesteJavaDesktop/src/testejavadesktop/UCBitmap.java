@@ -21,6 +21,13 @@ class CTonsCinza {
     int[][] TonsCinza;
     public int Larg,  Alt;
     int pixel, azul, verde, vermelho;
+    
+    CTonsCinza(int larg, int alt)
+    {
+        Larg=larg;
+        Alt=alt;
+    }
+    
     CTonsCinza(Image img) {
         Larg = img.getWidth(null);
         Alt = img.getHeight(null);
@@ -116,6 +123,12 @@ class CBitmap {
     Cor [][] PMCor;
     public int Larg,  Alt;
 
+    CBitmap(int larg, int alt)
+    {
+        Larg=larg;
+        Alt=alt;
+    }
+    
     CBitmap(Image img) {
         Larg = img.getWidth(null);
         Alt = img.getHeight(null);

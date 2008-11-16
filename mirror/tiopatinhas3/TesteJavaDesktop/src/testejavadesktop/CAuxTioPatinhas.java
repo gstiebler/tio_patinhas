@@ -338,21 +338,18 @@ class TParamsRC {
     TParamsABT ParamsABT;
     TParamsAI ParamsAI;
     int LumMedianaImagem;
-
-    TParamsRC(String NomeArq, CTonsCinza TonsCinza, CBitmap Bitmap) {
+    TParamsRC(INIFile objINI, CTonsCinza TonsCinza, CBitmap Bitmap) {
         ParamsMLT = new TParamsMLT();
         ParamsABT = new TParamsABT();
         ParamsAI = new TParamsAI();
-        CarregaParametros(NomeArq);
+        CarregaParametros(objINI);
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
 
         ConverteParametrosDependentesLargura();
     }
 
-    public void CarregaParametros(String NomeArq) {
-        INIFile objINI = null;
-        objINI = new INIFile(NomeArq);
+    public void CarregaParametros(INIFile objINI) {
         ParamsMLT.PropYIni = (float) (objINI.getIntegerProperty("Geral", "PropYIni") / 1000.0);
         ParamsMLT.PropXFim = (float) (objINI.getIntegerProperty("Geral", "PropXFim") / 1000.0);
 

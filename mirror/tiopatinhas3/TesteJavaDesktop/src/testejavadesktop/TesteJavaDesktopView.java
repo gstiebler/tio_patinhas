@@ -101,7 +101,7 @@ public class TesteJavaDesktopView extends FrameView {
             Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002.bmp");
             Image image = ImageProcessor.toBufferedImage(image2);
 
-            TParamsRC ParamsRC = new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini",
+            TParamsRC ParamsRC = new TParamsRC(new INIFile("p:\\TioPatinhas\\ParamsTP.ini"),
                     new CTonsCinza(image), new CBitmap(image));
             UTioPatinhas.ReconheceCedula(ParamsRC);
             System.out.println("Valor cédula: " +
@@ -127,50 +127,12 @@ public class TesteJavaDesktopView extends FrameView {
         }
 
     }
+    
 
-    private int Reconhece(String arquivo) {
-        ImageProcessor imgProc = new ImageProcessor();
-        Image image2 = imgProc.loadbitmap("", arquivo);
-        Image image = ImageProcessor.toBufferedImage(image2);
-
-        TParamsRC ParamsRC = new TParamsRC("p:\\TioPatinhas\\ParamsTP.ini",
-                new CTonsCinza(image), new CBitmap(image));
-        UTioPatinhas.ReconheceCedula(ParamsRC);
-        System.out.println("Valor cédula: " +
-                String.valueOf(ParamsRC.ParamsAI.ValorCedula));
-        return ParamsRC.ParamsAI.ValorCedula;
-    }
 
     @Action
     public void ExecutaTestes() {
-        int[] notas = {1, 2, 5, 10, 20, 50, 100};
-        String PastaBase = "P:\\TioPatinhas\\dinheiro\\testes\\";
-        int TotalNotas, Acertos;
-        for (int n = 0; n < notas.length; n++) {
-            TotalNotas = 0;
-            Acertos = 0;
-            String pasta = PastaBase + notas[n];
-            File dir = new File(pasta);
-            String[] children = dir.list();
-            if (children == null) {
-                // Either dir does not exist or is not a directory
-            } else {
-                for (int i = 0; i < children.length; i++) {
-                    // Get filename of file or directory
-                    String sarq = children[i];
-                    int nota = Reconhece(pasta + "\\" + sarq);
-                    System.out.println(nota);
-                    TotalNotas++;
-                    if (nota == notas[n]) {
-                        Acertos++;
-                    }
-                }
-            }
-            
-            jTextArea1.append(notas[n] +": "+Acertos*100.0/TotalNotas+ "\n");
-            jTextArea1.repaint();
-        }
-
+        jTextArea1.append(CTestes.ExecutaTestes());
     }
 
     static void addImage(JPanel cp, Image img) throws MalformedURLException {
