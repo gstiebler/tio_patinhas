@@ -485,6 +485,7 @@ public class UTioPatinhas {
 
             //ifdef DEBUG
             //  if (altura)
+            if (altura>0)
             System.out.println("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
             //endif
             if (altura >= AltMin && DifEmb < DifMinEmb) {
@@ -568,8 +569,9 @@ public class UTioPatinhas {
      System.out.println("Inclinação identificador: "+String.valueOf(ParamsAI.Inclinacao));
      System.out.println("Altura identificador: "+String.valueOf(ParamsAI.Alt));
      System.out.println("Relação larguras identificador: "+String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
-    if (ParamsAI.RelacaoMedianasLargurasEncEmb>0)
+        if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
       System.out.println("Relação inversa larguras identificador: "+String.valueOf(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
+        }
     System.out.println("Relação Altura/Largura: "+String.valueOf(ParamsAI.RelacaoLargAlt));
     System.out.println("Número médio de colunas: "+String.valueOf(ParamsAI.NumMedColunas));
   //endif

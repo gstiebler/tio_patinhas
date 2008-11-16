@@ -412,3 +412,9 @@ void __fastcall TMain::flb1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TMain::Button1Click(TObject *Sender)
+{
+  imgProcessada->Picture->Bitmap->SaveToFile("c:\\tiopatinhas.bmp");  
+}
+//---------------------------------------------------------------------------
+

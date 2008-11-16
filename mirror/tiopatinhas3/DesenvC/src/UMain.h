@@ -58,6 +58,7 @@ __published:	// IDE-managed Components
   TImage *imgHistograma;
   TImage *imgHistCumulativa;
   TButton *btReconheceProxima;
+  TButton *Button1;
   void __fastcall btAtualizaClick(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall ZoomImagem(TObject *Sender);
@@ -69,6 +70,7 @@ __published:	// IDE-managed Components
   void __fastcall btHistogramaClick(TObject *Sender);
   void __fastcall btReconheceProximaClick(TObject *Sender);
   void __fastcall flb1Click(TObject *Sender);
+  void __fastcall Button1Click(TObject *Sender);
 private:
   double PeriodoContador;
   void __fastcall Zoom2(_Bitmap *Bitmap);

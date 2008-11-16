@@ -64,6 +64,12 @@ public class UTioPatinhas {
         return Mediana;
     }
 
+    
+    /**
+     * Varre a imagem verticalmente detectando grande variação de contraste entre
+     * os pixels. Estas variações são marcadas superiormente com uma faixa vermelha
+     * e inferiormente com uma faixa verde.
+     */
     static void MostraLimiteTarja(TParamsMLT ParamsMLT) {
 
         int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
@@ -161,8 +167,11 @@ public class UTioPatinhas {
         }
     }
 
+    /**
+     * Analiza os limites vermelhos e verdes de cada uma das tarjas, marcando
+     * a faixa amarela na distancia média entre as mesmas.
+     */
     static void AnalizaBordasTarja(TParamsABT ParamsABT) {
-
 
         int x,
                 n;
@@ -198,6 +207,11 @@ public class UTioPatinhas {
         }
     }
 
+    
+    /**
+     * Descarta as tarjas que estao fora dos limites de largura e com a altura
+     * variando muito (analizando os desvios padrão calculados em preparaSelecionaTarja)
+     */
     static void SelecionaTarja(TParamsABT ParamsABT) {
 
         int n, nMenorX, m, LargTarjaCandidata;
@@ -258,6 +272,9 @@ public class UTioPatinhas {
         }
     }
 
+    /**
+     * Calcula os desvios padrões das alturas de cada coluna das tarjas detectadas.
+     */
     static void PreparaSelecionaTarja(TParamsABT ParamsABT) {
         int x;
 
@@ -310,10 +327,16 @@ public class UTioPatinhas {
     }
 //---------------------------------------------------------------------------
 
-//MatrizGrupos é um quadrado com dimensões definidas por ARect. É onde são retornados
-// os grupos conexos do identificador
+    /**
+     * Processa a imagem na região marcada pelo ARect agrupando os grupos conexos de pixels escuros.
+     * O ARect guarda a regiao detectada como o identificador na cedula.
+     * 
+     * entradas de dados: CTonsCinza tcImgSrc, TRect ARect, int limiar
+     * saidas de dados: int[][] MatrizGrupos, TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos
+     */
     static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
+        
         int x, y, i, j, n;
         boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
         boolean AchouGrupoEncima;
@@ -389,6 +412,10 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
+    /**
+     * Corta fora dos grupos conexos os grupos cujas alturas sejam muito pequenas
+     * em comparação com a altura da faixa preta de referencia detectada.
+     */
     static void SelecionaGruposIdentificador(TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo,
             char[] VetGruposValidos, int AltMin, int[] PonteiroGrupos, int yFim, int DifMinEmb) {
         int altura, DifEmb;
@@ -400,7 +427,8 @@ public class UTioPatinhas {
 
             //ifdef DEBUG
             //  if (altura)
-            System.out.println("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
+            if (altura>0)
+                System.out.println("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
             //endif
             if (altura >= AltMin && DifEmb < DifMinEmb) {
                 VetGruposValidos[n] = (char) PIXEL_ACEITO;
@@ -442,6 +470,8 @@ public class UTioPatinhas {
 //---------------------------------------------------------------------------
     static float RetornaRelacaoMedianasLargurasEncEmb(int[] VetorLarguras, int comeco, int fim,
             int[] MediaLarguras) {
+        if (fim==-1)
+            return 0;
         int alt = fim - comeco;
         int[] vetor = new int[alt + 1];
         int MetadeAltura = alt / 2;
@@ -450,14 +480,14 @@ public class UTioPatinhas {
         for (int n = 0; n < 2; n++) {
             System.arraycopy(VetorLarguras, comeco + n * MetadeAltura, vetor, 0, MetadeAltura);
             COrdenacao.OrdenaInt(vetor, MetadeAltura);
-            Larguras[n]=vetor[QuartoAltura];
-            //Vector a=new Vector();
-            //for (int u=0; u<MetadeAltura; u++)
-            //    a.addElement(new Integer(vetor[u]));
-            //java.util.Collections.sort(a);
-            //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
-            // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
-            //Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
+            Larguras[n] = vetor[QuartoAltura];
+        //Vector a=new Vector();
+        //for (int u=0; u<MetadeAltura; u++)
+        //    a.addElement(new Integer(vetor[u]));
+        //java.util.Collections.sort(a);
+        //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
+        // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
+        //Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
         }
         //delete [] vetor;
         //ifdef DEBUG
@@ -473,94 +503,103 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
     
+    /**
+     * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
+     * sobre qual identificador foi detectado.
+     */
  static void Identifica(TParamsAI ParamsAI)
-{
-  //ifdef DEBUG
-     System.out.println("Inclinação identificador: "+String.valueOf(ParamsAI.Inclinacao));
-     System.out.println("Altura identificador: "+String.valueOf(ParamsAI.Alt));
-     System.out.println("Relação larguras identificador: "+String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
-    if (ParamsAI.RelacaoMedianasLargurasEncEmb>0)
-      System.out.println("Relação inversa larguras identificador: "+String.valueOf(1.0/ParamsAI.RelacaoMedianasLargurasEncEmb));
-    System.out.println("Relação Altura/Largura: "+String.valueOf(ParamsAI.RelacaoLargAlt));
-    System.out.println("Número médio de colunas: "+String.valueOf(ParamsAI.NumMedColunas));
-  //endif
+ {
+        //ifdef DEBUG
+        System.out.println("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
+        System.out.println("Altura identificador: " + String.valueOf(ParamsAI.Alt));
+        System.out.println("Relação larguras identificador: " + String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
+        if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
+            System.out.println("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
+        }
+        System.out.println("Relação Altura/Largura: " + String.valueOf(ParamsAI.RelacaoLargAlt));
+        System.out.println("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
+        //endif
   if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
   {                       
-    //ifdef DEBUG
-      System.out.println("Inclinação maior que o limite, pode ser \tR$2\tR$20");
-    ///endif
+            //ifdef DEBUG
+            System.out.println("Inclinação maior que o limite, pode ser \tR$2\tR$20");
+            ///endif
     if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
     {
-      //ifdef DEBUG
-      System.out.println("Relação Altura/Largura maior que o limite, é R$2");
-      //endif
-      ParamsAI.ValorCedula=2;
+                //ifdef DEBUG
+                System.out.println("Relação Altura/Largura maior que o limite, é R$2");
+                //endif
+                ParamsAI.ValorCedula = 2;
     }
     else
     {
-      //ifdef DEBUG
-        System.out.println("Relação Altura/Largura menor que o limite, é R$20");
-      //endif
-      ParamsAI.ValorCedula=20;
-    }
+                //ifdef DEBUG
+                System.out.println("Relação Altura/Largura menor que o limite, é R$20");
+                //endif
+                ParamsAI.ValorCedula = 20;
+            }
   }
   else
   {
-    //ifdef DEBUG
-      System.out.println("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
-    //endif
+            //ifdef DEBUG
+            System.out.println("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
+            //endif
     if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
     {
-      //ifdef DEBUG
-        System.out.println("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
-      //endif
+                //ifdef DEBUG
+                System.out.println("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
+                //endif
       if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
       {
-        //ifdef DEBUG
-        System.out.println("Relação medianas larguras maior que o limite, é R$50");
-        //endif
-        ParamsAI.ValorCedula=50;
+                    //ifdef DEBUG
+                    System.out.println("Relação medianas larguras maior que o limite, é R$50");
+                    //endif
+                    ParamsAI.ValorCedula = 50;
       }
       else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
       {
-        //ifdef DEBUG
-        System.out.println("Relação inversa medianas larguras maior que o limite, é R$100");
-        //endif
-        ParamsAI.ValorCedula=100;
+                    //ifdef DEBUG
+                    System.out.println("Relação inversa medianas larguras maior que o limite, é R$100");
+                    //endif
+                    ParamsAI.ValorCedula = 100;
       }
       else
       {
-        //ifdef DEBUG
-        System.out.println("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
-        //endif
+                    //ifdef DEBUG
+                    System.out.println("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
+                    //endif
         if (ParamsAI.NumMedColunas<ParamsAI.LimiarNumMedColunas)
         {
-          //ifdef DEBUG
-            System.out.println("Número médio de colunas menor que o limite, é R$1");
-          //endif
-          ParamsAI.ValorCedula=1;
+                        //ifdef DEBUG
+                        System.out.println("Número médio de colunas menor que o limite, é R$1");
+                        //endif
+                        ParamsAI.ValorCedula = 1;
         }
         else
         {
-          //ifdef DEBUG
-            System.out.println("Número médio de colunas maior que o limite, é R$5");
-          //endif
-          ParamsAI.ValorCedula=5;
-        }
-      }
+                        //ifdef DEBUG
+                        System.out.println("Número médio de colunas maior que o limite, é R$5");
+                        //endif
+                        ParamsAI.ValorCedula = 5;
+                    }
+                }
     }
     else
     {
-      //ifdef DEBUG
-            System.out.println("Altura menor que o limite, é R$10");
-      //endif
-      ParamsAI.ValorCedula=10;
+                //ifdef DEBUG
+                System.out.println("Altura menor que o limite, é R$10");
+                //endif
+                ParamsAI.ValorCedula = 10;
+            }
+        }
     }
-  }
-}
 //---------------------------------------------------------------------------
     
+ /**
+  * Analiza o identificador para detectar o valor das notas.
+  */
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
+        
         int NADA = 0, IDENTIFICADOR = 1, FUNDO = 2;
         int TAM_HIST = 200;
         int EstadoUltPixel;
@@ -596,6 +635,7 @@ public class UTioPatinhas {
             VetorLimitesVerticaisGrupo[s] = new TLimitesVerticaisGrupo();
         }
         ARect = new TRect(xIni, yIni, xFim, yFim);
+        COutros.LimitaTRect(ARect);
         MatrizGruposConexos(ParamsAI.TCImgSrc, ARect,
                 MatrizGrupos.Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
         SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
@@ -696,7 +736,7 @@ public class UTioPatinhas {
             ParamsAI.Inclinacao = -100;
         }
         ParamsAI.MaiorLargLinha = MaiorLargLinha;
-    Identifica(ParamsAI);
+        Identifica(ParamsAI);
     //delete [] VetorLarguras;
     //delete ARect;
     //delete MatrizGrupos;
