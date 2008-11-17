@@ -12,14 +12,14 @@ import java.util.Vector;
  *
  * @author Administrator
  */
-class CImagensCorEPB {
+class CNota {
 
-    CTonsCinza TonsCinza;
-    CBitmap Bitmap;
+    public String arquivo;
+    public Image imagem;
 
-    public CImagensCorEPB(CTonsCinza tonsCinza, CBitmap bitmap) {
-        TonsCinza = tonsCinza;
-        Bitmap = bitmap;
+    public CNota(String Arquivo, Image Imagem) {
+        arquivo=Arquivo;
+        imagem=Imagem;
     }
 }
 
@@ -40,13 +40,13 @@ class CImagensNota extends Vector {
                 ImageProcessor imgProc = new ImageProcessor();
                 Image image2 = imgProc.loadbitmap("", sarq);
                 Image image = ImageProcessor.toBufferedImage(image2);
-                addElement(image);
+                addElement(new CNota(children[i], image));
             }
         }
     }
 
-    public Image Imagens(int indice) {
-        return (Image) elementAt(indice);
+    public CNota Imagens(int indice) {
+        return (CNota) elementAt(indice);
     }
 }
 
@@ -75,27 +75,36 @@ public class CTestes {
 
     public static String ExecutaTestes() {
         long tempo1=System.currentTimeMillis();
+        CDesktopFuncs.WriteOutput("teste");
         String retorno = "";
         String PastaBase = "P:\\TioPatinhas\\dinheiro\\testes\\";
         CArquivosEmMemoria ArquivosEmMemoria = new CArquivosEmMemoria(PastaBase);
         long tempo2=System.currentTimeMillis();
         int TotalNotas, Acertos;
         INIFile objINI=new INIFile("p:\\TioPatinhas\\ParamsTP.ini");
+        CNota NotaTemp;
         for (int n = 0; n < ArquivosEmMemoria.NumNotas(); n++) {
             CImagensNota ImagensNota = ArquivosEmMemoria.ImagensNota(n);
             TotalNotas = 0;
             Acertos = 0;
             for (int i = 0; i < ImagensNota.size(); i++) {
+                NotaTemp=ImagensNota.Imagens(i);
                 TParamsRC ParamsRC = new TParamsRC(objINI,
-                            new CTonsCinza(ImagensNota.Imagens(i)),
-                            new CBitmap(ImagensNota.Imagens(i)));
-                //ParamsRC.setTonsCinza(new CTonsCinza(ImagensNota.Imagens(i)));
-                //ParamsRC.setBitmap(new CBitmap(ImagensNota.Imagens(i)));
+                            new CTonsCinza(NotaTemp.imagem),
+                            new CBitmap(NotaTemp.imagem));
                 UTioPatinhas.ReconheceCedula(ParamsRC);
                 TotalNotas++;
 
                 if (ImagensNota.nota == ParamsRC.ParamsAI.ValorCedula) {
                     Acertos++;
+                }
+                else
+                {
+                    BMPFile bmpFile=new BMPFile();
+                    bmpFile.saveBitmap(
+                              "P:\\TioPatinhas\\dinheiro\\testes\\erradas\\"+
+                              System.currentTimeMillis()+NotaTemp.arquivo, 
+                              ParamsRC.ParamsMLT.BImgDest.SaveImage(), 320, 240);
                 }
             }
 

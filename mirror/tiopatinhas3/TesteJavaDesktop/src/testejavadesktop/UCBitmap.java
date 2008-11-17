@@ -18,7 +18,7 @@ public class UCBitmap {
 
 class CTonsCinza {
 
-    int[][] TonsCinza;
+    short[][] TonsCinza;
     public int Larg,  Alt;
     int pixel, azul, verde, vermelho;
     
@@ -33,7 +33,7 @@ class CTonsCinza {
         Alt = img.getHeight(null);
         BufferedImage bi = ImageProcessor.toBufferedImage(img);
 
-        TonsCinza = new int[Alt][Larg];
+        TonsCinza = new short[Alt][Larg];
 
         for (int y = 0; y < Alt; y++) {
             for (int x = 0; x < Larg; x++) {
@@ -43,7 +43,8 @@ class CTonsCinza {
                 vermelho=(pixel & 0xFF0000) >> 16;
                 pixel=azul*11+verde*59+vermelho*30;
                 pixel*=0.01;
-                TonsCinza[y][x] = pixel;
+                //pixel=azul;
+                TonsCinza[y][x] = (byte)pixel;
             }
         }
     }
@@ -66,16 +67,16 @@ class CTonsCinza {
 
 class Cor {
 
-    int Azul, Verde, Vermelho;
+    short Azul, Verde, Vermelho;
     
     Cor(int pixel) {
-        Azul=pixel & 0xFF;
-        Verde=(pixel & 0xFF00) >> 8;
-        Vermelho=(pixel & 0xFF00000) >> 16;
+        Azul=(short)(pixel & 0xFF);
+        Verde=(short)((pixel & 0xFF00) >> 8);
+        Vermelho=(short)((pixel & 0xFF00000) >> 16);
     }
 
     void SetAzul() {
-        Azul = 0xFF;
+        Azul = (short)(0xFF);
         Verde = 0;
         Vermelho = 0;
     }
@@ -83,34 +84,34 @@ class Cor {
     void SetVermelho() {
         Azul = 0;
         Verde = 0;
-        Vermelho = 0xFF;
+        Vermelho = (short)(0xFF);
     }
 
     void SetVerde() {
         Azul = 0;
-        Verde = 0xFF;
+        Verde = (short)(0xFF);
         Vermelho = 0;
     }
 
     void SetAmarelo() {
         Azul = 0;
-        Verde = 0xFF;
-        Vermelho = 0xFF;
+        Verde = (short)(0xFF);
+        Vermelho = (short)(0xFF);
     }
 
     void SetMagenta() {
-        Azul = 0xFF;
+        Azul = (short)(0xFF);
         Verde = 0;
-        Vermelho = 0xFF;
+        Vermelho = (short)(0xFF);
     }
 
     void SetCyan() {
-        Azul = 0xFF;
-        Verde = 0xFF;
-        Vermelho = 0;
+        Azul = (short)(0xFF);
+        Verde = (short)(0xFF);
+        Vermelho = (short)(0);
     }
 
-    void SetRGB(byte R, byte G, byte B) {
+    void SetRGB(short R, short G, short B) {
         Azul = B;
         Verde = G;
         Vermelho = R;
