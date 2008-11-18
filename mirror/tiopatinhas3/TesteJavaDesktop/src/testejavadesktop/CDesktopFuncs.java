@@ -23,7 +23,7 @@ public class CDesktopFuncs {
         Image image2 = imgProc.loadbitmap("", arquivo);
         Image image = ImageProcessor.toBufferedImage(image2);
 
-        TParamsRC ParamsRC = new TParamsRC(new INIFile("p:\\TioPatinhas\\ParamsTP.ini"),
+        TParamsRC ParamsRC = new TParamsRC(new TParamsIni("p:\\TioPatinhas\\ParamsTP.ini"),
                 new CTonsCinza(image), new CBitmap(image));
         UTioPatinhas.ReconheceCedula(ParamsRC);
         System.out.println("Valor cédula: " +
@@ -55,7 +55,7 @@ public class CDesktopFuncs {
  
     public static void WriteOutput(String str)
     {
-        System.out.println(str);
+        //System.out.println(str);
     }
     
     public static void InicializaWriteOutput(String NomeArq)

@@ -18,7 +18,7 @@ public class UCBitmap {
 
 class CTonsCinza {
 
-    short[][] TonsCinza;
+    public short[][] TonsCinza;
     public int Larg,  Alt;
     int pixel, azul, verde, vermelho;
     
@@ -44,7 +44,7 @@ class CTonsCinza {
                 pixel=azul*11+verde*59+vermelho*30;
                 pixel*=0.01;
                 //pixel=azul;
-                TonsCinza[y][x] = (byte)pixel;
+                TonsCinza[y][x] = (short)pixel;
             }
         }
     }
