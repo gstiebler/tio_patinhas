@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package testejavadesktop;
 
 import java.awt.Image;
@@ -11,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -30,36 +31,71 @@ public class CDesktopFuncs {
                 String.valueOf(ParamsRC.ParamsAI.ValorCedula));
         return ParamsRC.ParamsAI.ValorCedula;
     }
-    
-    public static void copyFile(String file_in, String file_out) 
-        throws IOException 
-    {
-        File in=new File(file_in);
-        File out=new File(file_out);
-        FileChannel inChannel = new
-            FileInputStream(in).getChannel();
-        FileChannel outChannel = new
-            FileOutputStream(out).getChannel();
+
+    public static void copyFile(String file_in, String file_out)
+            throws IOException {
+        File in = new File(file_in);
+        File out = new File(file_out);
+        FileChannel inChannel = new FileInputStream(in).getChannel();
+        FileChannel outChannel = new FileOutputStream(out).getChannel();
         try {
             inChannel.transferTo(0, inChannel.size(),
                     outChannel);
-        } 
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        finally {
-            if (inChannel != null) inChannel.close();
-            if (outChannel != null) outChannel.close();
+        } finally {
+            if (inChannel != null) {
+                inChannel.close();
+            }
+            if (outChannel != null) {
+                outChannel.close();
+            }
         }
     }
- 
-    public static void WriteOutput(String str)
-    {
+
+    public static void WriteOutput(String str) {
         //System.out.println(str);
     }
+
+    public static void InicializaWriteOutput(String NomeArq) {
+    }
+}
+
+class DateUtils {
+
+    public static final String DATE_FORMAT_NOW = "dd/MM/yyyy HH:mm:ss";
+
+    public static String now() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+        return sdf.format(cal.getTime());
+    }
     
-    public static void InicializaWriteOutput(String NomeArq)
+        public static String nowCurto() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        return sdf.format(cal.getTime());
+    }
+}
+
+class TParamsDir{
+    INIFile objINI;
+    private String DirBase;
+    private String DirImagens;
+    public TParamsDir(String NomeArquivo)
     {
-        
+        objINI = new INIFile(NomeArquivo);
+        DirBase=objINI.getStringProperty("Geral", "DiretorioBase");
+        DirImagens=objINI.getStringProperty("Geral", "DiretorioImagens");
+    }
+    
+    public String getDirBase()
+    {
+        return DirBase;
+    }
+    
+    public String getDirImagens()
+    {
+        return DirImagens;
     }
 }
