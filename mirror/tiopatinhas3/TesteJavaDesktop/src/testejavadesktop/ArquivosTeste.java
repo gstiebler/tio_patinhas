@@ -24,6 +24,12 @@ class CNota {
         arquivo = Arquivo;
         imagem = Imagem;
     }
+    
+    public static int NotaPorIndice(int indice)
+    {
+        int[] notas = {1, 2, 5, 10, 20, 50, 100};
+        return notas[indice];
+    }
 }
 
 interface CBaseCImagensNota {

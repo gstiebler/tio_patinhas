@@ -16,8 +16,7 @@ public class UTioPatinhas {
     static int TAM_VETOR_LIMITES_VERTICAIS_GRUPOS = 300;
     static int PIXEL_ACEITO = 1;
     static int PIXEL_NAO_ACEITO = 2;
-    static int DELTA_Y_HISTOGRAM = 5,
-               DELTA_X_HISTOGRAM = 5;
+    static int DELTA_Y_HISTOGRAM = 5,  DELTA_X_HISTOGRAM = 5;
 
     UTioPatinhas() {
     }
@@ -46,8 +45,8 @@ public class UTioPatinhas {
         int MetadeTotal;
         int Mediana;
         short[][] ImgSrc = TCImgSrc.TonsCinza;
-        for (y = 0; y < TCImgSrc.Alt; y+=DELTA_Y_HISTOGRAM) {
-            for (x = 0; x < TCImgSrc.Larg; x+=DELTA_X_HISTOGRAM) {
+        for (y = 0; y < TCImgSrc.Alt; y += DELTA_Y_HISTOGRAM) {
+            for (x = 0; x < TCImgSrc.Larg; x += DELTA_X_HISTOGRAM) {
                 vetor[ImgSrc[y][x]]++;
             }
         }
@@ -66,7 +65,6 @@ public class UTioPatinhas {
         return Mediana;
     }
 
-    
     /**
      * Varre a imagem verticalmente detectando grande variação de contraste entre
      * os pixels. Estas variações são marcadas superiormente com uma faixa vermelha
@@ -84,7 +82,10 @@ public class UTioPatinhas {
         int MaisEscuroAtual, MaisClaroAtual, MaisClaroAnterior, MaisEscuroAnterior;
         int lum;
         short[][] ImgSrc = ParamsMLT.TCImgSrc.TonsCinza;
-        Cor[][] ImgDest = ParamsMLT.BImgDest.PMCor;
+        Cor[][] ImgDest = null;
+        if (ParamsMLT.BImgDest != null) {
+            ImgDest = ParamsMLT.BImgDest.PMCor;
+        }
         int YIni = (int) (ParamsMLT.TCImgSrc.Alt * ParamsMLT.PropYIni);
         int XFim = (int) (ParamsMLT.TCImgSrc.Larg * ParamsMLT.PropXFim);
         TBorda BordaTemp;
@@ -135,7 +136,9 @@ public class UTioPatinhas {
                 } else {
                     if (y == (UltYBordaCE + 1)) {
                         yBorda = MaiorBorda.y - ALT_COLUNA;
-                        ImgDest[yBorda][x].SetVermelho();
+                        if (ImgDest != null) {
+                            ImgDest[yBorda][x].SetVermelho();
+                        }
                         BordaTemp = new TBorda();
                         BordaTemp.Y = yBorda;
                         BordaTemp.TipoBorda = BORDA_CLARO_ESCURO;
@@ -156,7 +159,9 @@ public class UTioPatinhas {
                 } else {
                     if (y == (UltYBordaEC + 1)) {
                         yBorda = MaiorBorda.y - ALT_COLUNA;
-                        ImgDest[yBorda][x].SetVerde();
+                        if (ImgDest != null) {
+                            ImgDest[yBorda][x].SetVerde();
+                        }
                         BordaTemp = new TBorda();
                         BordaTemp.Y = yBorda;
                         BordaTemp.TipoBorda = BORDA_ESCURO_CLARO;
@@ -183,7 +188,10 @@ public class UTioPatinhas {
         TVectorBorda BordasTemp;
         TBorda BordaEnc, BordaEmb;
         TMeioBordas MeioBordasTemp;//= new TMeioBordas();
-        Cor[][] ImgDest = ParamsABT.BImgDest.PMCor;
+        Cor[][] ImgDest = null;
+        if (ParamsABT.BImgDest != null) {
+            ImgDest = ParamsABT.BImgDest.PMCor;
+        }
         for (x = 0; x < NumColunas; x++) {
             BordasTemp = ParamsABT.BordasColunas.Bordas[x];
             //percorre todas as bordas da coluna
@@ -196,20 +204,23 @@ public class UTioPatinhas {
                         (dif >= ParamsABT.AltMinTarja) && (dif <= ParamsABT.AltMaxTarja)) {
                     MeioBordasTemp = new TMeioBordas(BordaEnc.Y, BordaEmb.Y);
                     ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].addElement(MeioBordasTemp);
-                    ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
+                    if (ImgDest != null) {
+                        ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
+                    }
                 }
             }
         }
         SelecionaTarja(ParamsABT);
         if (ParamsABT.AchouTarja) {
-            ImgDest[ParamsABT.RefTarja.y][ParamsABT.RefTarja.x].SetMagenta();
-            ImgDest[ParamsABT.RefTarja.y + 1][ParamsABT.RefTarja.x].SetMagenta();
-            ImgDest[ParamsABT.RefTarja.y][ParamsABT.RefTarja.x + 1].SetMagenta();
-            ImgDest[ParamsABT.RefTarja.y + 1][ParamsABT.RefTarja.x + 1].SetMagenta();
+            if (ImgDest != null) {
+                ImgDest[ParamsABT.RefTarja.y][ParamsABT.RefTarja.x].SetMagenta();
+                ImgDest[ParamsABT.RefTarja.y + 1][ParamsABT.RefTarja.x].SetMagenta();
+                ImgDest[ParamsABT.RefTarja.y][ParamsABT.RefTarja.x + 1].SetMagenta();
+                ImgDest[ParamsABT.RefTarja.y + 1][ParamsABT.RefTarja.x + 1].SetMagenta();
+            }
         }
     }
 
-    
     /**
      * Descarta as tarjas que estao fora dos limites de largura e com a altura
      * variando muito (analizando os desvios padrão calculados em preparaSelecionaTarja)
@@ -314,21 +325,25 @@ public class UTioPatinhas {
     static int MediaFaixa(TParamsAI ParamsAI) {
         int x, y, xIni, xFim, soma;
         short[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
-        Cor[][] ImgDest = ParamsAI.BImgDest.PMCor;
+        Cor[][] ImgDest = null;
+        if (ParamsAI.BImgDest != null) {
+            ImgDest = ParamsAI.BImgDest.PMCor;
+        }
         xIni = ParamsAI.RefTarja.x;
         xFim = xIni + ParamsAI.LargFaixaRef;
         y = ParamsAI.RefTarja.y - ParamsAI.DistFaixaRef;
         soma = 0;
         for (x = xIni; x < xFim; x++) {
             soma += ImgSrc[y][x];
-            ImgDest[y][x].SetCyan();
+            if (ImgDest != null) {
+                ImgDest[y][x].SetCyan();
+            }
         }
         double retorno1 = (soma * 1.0 / ParamsAI.LargFaixaRef);
         int retorno = (int) MathUtils.round(retorno1);
         return retorno;
     }
 //---------------------------------------------------------------------------
-
     /**
      * Processa a imagem na região marcada pelo ARect agrupando os grupos conexos de pixels escuros.
      * O ARect guarda a regiao detectada como o identificador na cedula.
@@ -338,7 +353,7 @@ public class UTioPatinhas {
      */
     static void MatrizGruposConexos(CTonsCinza tcImgSrc, TRect ARect, int[][] MatrizGrupos, int limiar,
             TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo, int[] PonteiroGrupos) {
-        
+
         int x, y, i, j, n;
         boolean AnteriorDentroGrupo;//informa se o pixel anteriormente processado na linha possuía um grupo
         boolean AchouGrupoEncima;
@@ -429,9 +444,10 @@ public class UTioPatinhas {
 
             //ifdef DEBUG
             //  if (altura)
-            if (altura>0)
+            if (altura > 0) {
                 CDesktopFuncs.WriteOutput("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
             //endif
+            }
             if (altura >= AltMin && DifEmb < DifMinEmb) {
                 VetGruposValidos[n] = (char) PIXEL_ACEITO;
             } else {
@@ -472,8 +488,9 @@ public class UTioPatinhas {
 //---------------------------------------------------------------------------
     static float RetornaRelacaoMedianasLargurasEncEmb(int[] VetorLarguras, int comeco, int fim,
             int[] MediaLarguras) {
-        if (fim==-1)
+        if (fim == -1) {
             return 0;
+        }
         int alt = fim - comeco;
         int[] vetor = new int[alt + 1];
         int MetadeAltura = alt / 2;
@@ -504,13 +521,11 @@ public class UTioPatinhas {
         }
     }
     //---------------------------------------------------------------------------
-    
     /**
      * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
      * sobre qual identificador foi detectado.
      */
- static void Identifica(TParamsAI ParamsAI)
- {
+    static void Identifica(TParamsAI ParamsAI) {
         //ifdef DEBUG
         CDesktopFuncs.WriteOutput("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
         CDesktopFuncs.WriteOutput("Altura identificador: " + String.valueOf(ParamsAI.Alt));
@@ -521,73 +536,56 @@ public class UTioPatinhas {
         CDesktopFuncs.WriteOutput("Relação Altura/Largura: " + String.valueOf(ParamsAI.RelacaoLargAlt));
         CDesktopFuncs.WriteOutput("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
         //endif
-  if (ParamsAI.Inclinacao>ParamsAI.LimiarInclinacaoidentificador)
-  {                       
+        if (ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) {
             //ifdef DEBUG
             CDesktopFuncs.WriteOutput("Inclinação maior que o limite, pode ser \tR$2\tR$20");
             ///endif
-    if (ParamsAI.RelacaoLargAlt>ParamsAI.LimiarRelacaoLargAlt)
-    {
+            if (ParamsAI.RelacaoLargAlt > ParamsAI.LimiarRelacaoLargAlt) {
                 //ifdef DEBUG
                 CDesktopFuncs.WriteOutput("Relação Altura/Largura maior que o limite, é R$2");
                 //endif
                 ParamsAI.ValorCedula = 2;
-    }
-    else
-    {
+            } else {
                 //ifdef DEBUG
                 CDesktopFuncs.WriteOutput("Relação Altura/Largura menor que o limite, é R$20");
                 //endif
                 ParamsAI.ValorCedula = 20;
             }
-  }
-  else
-  {
+        } else {
             //ifdef DEBUG
             CDesktopFuncs.WriteOutput("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
             //endif
-    if (ParamsAI.Alt>ParamsAI.LimiarAlturaIdentificador)
-    {
+            if (ParamsAI.Alt > ParamsAI.LimiarAlturaIdentificador) {
                 //ifdef DEBUG
                 CDesktopFuncs.WriteOutput("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
                 //endif
-      if (ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
-      {
+                if (ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
                     //ifdef DEBUG
                     CDesktopFuncs.WriteOutput("Relação medianas larguras maior que o limite, é R$50");
                     //endif
                     ParamsAI.ValorCedula = 50;
-      }
-      else if (1.0/ParamsAI.RelacaoMedianasLargurasEncEmb>ParamsAI.LimiarLargLinhasIdentificador)
-      {
+                } else if (1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
                     //ifdef DEBUG
                     CDesktopFuncs.WriteOutput("Relação inversa medianas larguras maior que o limite, é R$100");
                     //endif
                     ParamsAI.ValorCedula = 100;
-      }
-      else
-      {
+                } else {
                     //ifdef DEBUG
                     CDesktopFuncs.WriteOutput("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
                     //endif
-        if (ParamsAI.NumMedColunas<ParamsAI.LimiarNumMedColunas)
-        {
+                    if (ParamsAI.NumMedColunas < ParamsAI.LimiarNumMedColunas) {
                         //ifdef DEBUG
                         CDesktopFuncs.WriteOutput("Número médio de colunas menor que o limite, é R$1");
                         //endif
                         ParamsAI.ValorCedula = 1;
-        }
-        else
-        {
+                    } else {
                         //ifdef DEBUG
                         CDesktopFuncs.WriteOutput("Número médio de colunas maior que o limite, é R$5");
                         //endif
                         ParamsAI.ValorCedula = 5;
                     }
                 }
-    }
-    else
-    {
+            } else {
                 //ifdef DEBUG
                 CDesktopFuncs.WriteOutput("Altura menor que o limite, é R$10");
                 //endif
@@ -596,12 +594,11 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
-    
- /**
-  * Analiza o identificador para detectar o valor das notas.
-  */
+    /**
+     * Analiza o identificador para detectar o valor das notas.
+     */
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
-        
+
         int NADA = 0, IDENTIFICADOR = 1, FUNDO = 2;
         int TAM_HIST = 200;
         int EstadoUltPixel;
@@ -644,7 +641,8 @@ public class UTioPatinhas {
                 ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect.Height(),
                 ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
         CopiaGruposValidos(MatrizGrupos.Matriz, ARect, VetGruposValidos);
-        PintaIdentificador(ParamsAI.BImgDest, ARect, MatrizGrupos.Matriz);
+        if (ParamsAI.BImgDest!=null)
+            PintaIdentificador(ParamsAI.BImgDest, ARect, MatrizGrupos.Matriz);
 
         YEnc = 0;
         YEmb = -1;
