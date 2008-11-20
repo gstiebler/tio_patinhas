@@ -359,14 +359,197 @@ class TParamsIni {
     int LimiarRelacaoLargAlt;
     int LimiarNumMedColunas;
     int DifMinEmbGrupoEmbRegiaoIdentificador;
+    public String[] ListaParametros = {"PropYIni",
+        "PropXFim",
+        "AltMinTarja",
+        "AltMaxTarja",
+        "DistMaxTarjas",
+        "LargMinTarja",
+        "LargMaxTarja",
+        "DesvioMax",
+        "DistFaixaRef",
+        "LargFaixaRef",
+        "DifMinMediaFaixaRef",
+        "LargIdentificador",
+        "AltIdentificador",
+        "XIniParaRefTarja",
+        "YIniParaRefTarja",
+        "LimiarAlturaIdentificador",
+        "LimiarInclinacaoidentificador",
+        "MaiorDistSemPixelsIdentificador",
+        "NumMinPixelsIdentificador",
+        "AltMinGrupoConexoIdentificador",
+        "LimiarLargLinhasIdentificador",
+        "LimiarRelacaoLargAlt",
+        "LimiarNumMedColunas",
+        "DifMinEmbGrupoEmbRegiaoIdentificador"
+    };
+
+    public void EscreveParametro(String nome, int valor) {
+        if (nome.equals("PropYIni")) {
+            PropYIni = valor;
+        }
+        if (nome.equals("PropXFim")) {
+            PropXFim = valor;
+        }
+        if (nome.equals("AltMinTarja")) {
+            AltMinTarja = valor;
+        }
+        if (nome.equals("AltMaxTarja")) {
+            AltMaxTarja = valor;
+        }
+        if (nome.equals("DistMaxTarjas")) {
+            DistMaxTarjas = valor;
+        }
+        if (nome.equals("LargMinTarja")) {
+            LargMinTarja = valor;
+        }
+        if (nome.equals("LargMaxTarja")) {
+            LargMaxTarja = valor;
+        }
+        if (nome.equals("DesvioMax")) {
+            DesvioMax = valor;
+        }
+        if (nome.equals("DistFaixaRef")) {
+            PropXFim = valor;
+        }
+        if (nome.equals("DistFaixaRef")) {
+            PropXFim = valor;
+        }
+        if (nome.equals("LargFaixaRef")) {
+            LargFaixaRef = valor;
+        }
+        if (nome.equals("DifMinMediaFaixaRef")) {
+            DifMinMediaFaixaRef = valor;
+        }
+        if (nome.equals("LargIdentificador")) {
+            LargIdentificador = valor;
+        }
+        if (nome.equals("AltIdentificador")) {
+            AltIdentificador = valor;
+        }
+        if (nome.equals("XIniParaRefTarja")) {
+            XIniParaRefTarja = valor;
+        }
+        if (nome.equals("YIniParaRefTarja")) {
+            YIniParaRefTarja = valor;
+        }
+        if (nome.equals("LimiarAlturaIdentificador")) {
+            LimiarAlturaIdentificador = valor;
+        }
+        if (nome.equals("LimiarInclinacaoidentificador")) {
+            LimiarInclinacaoidentificador = valor;
+        }
+        if (nome.equals("MaiorDistSemPixelsIdentificador")) {
+            MaiorDistSemPixelsIdentificador = valor;
+        }
+        if (nome.equals("NumMinPixelsIdentificador")) {
+            NumMinPixelsIdentificador = valor;
+        }
+        if (nome.equals("AltMinGrupoConexoIdentificador")) {
+            AltMinGrupoConexoIdentificador = valor;
+        }
+        if (nome.equals("LimiarLargLinhasIdentificador")) {
+            LimiarLargLinhasIdentificador = valor;
+        }
+        if (nome.equals("LimiarRelacaoLargAlt")) {
+            LimiarRelacaoLargAlt = valor;
+        }
+        if (nome.equals("LimiarNumMedColunas")) {
+            LimiarNumMedColunas = valor;
+        }
+        if (nome.equals("DifMinEmbGrupoEmbRegiaoIdentificador")) {
+            DifMinEmbGrupoEmbRegiaoIdentificador = valor;
+        }
+    }
+
+    public int LeParametro(String nome) {
+        if (nome.equals("PropYIni")) {
+            return PropYIni;
+        }
+        if (nome.equals("PropXFim")) {
+            return PropXFim;
+        }
+        if (nome.equals("AltMinTarja")) {
+            return AltMinTarja;
+        }
+        if (nome.equals("AltMaxTarja")) {
+            return AltMaxTarja;
+        }
+        if (nome.equals("DistMaxTarjas")) {
+            return DistMaxTarjas;
+        }
+        if (nome.equals("LargMinTarja")) {
+            return LargMinTarja;
+        }
+        if (nome.equals("LargMaxTarja")) {
+            return LargMaxTarja;
+        }
+        if (nome.equals("DesvioMax")) {
+            return DesvioMax;
+        }
+        if (nome.equals("DistFaixaRef")) {
+            return PropXFim;
+        }
+        if (nome.equals("DistFaixaRef")) {
+            return PropXFim;
+        }
+        if (nome.equals("LargFaixaRef")) {
+            return LargFaixaRef;
+        }
+        if (nome.equals("DifMinMediaFaixaRef")) {
+            return DifMinMediaFaixaRef;
+        }
+        if (nome.equals("LargIdentificador")) {
+            return LargIdentificador;
+        }
+        if (nome.equals("AltIdentificador")) {
+            return AltIdentificador;
+        }
+        if (nome.equals("XIniParaRefTarja")) {
+            return XIniParaRefTarja;
+        }
+        if (nome.equals("YIniParaRefTarja")) {
+            return YIniParaRefTarja;
+        }
+        if (nome.equals("LimiarAlturaIdentificador")) {
+            return LimiarAlturaIdentificador;
+        }
+        if (nome.equals("LimiarInclinacaoidentificador")) {
+            return LimiarInclinacaoidentificador;
+        }
+        if (nome.equals("MaiorDistSemPixelsIdentificador")) {
+            return MaiorDistSemPixelsIdentificador;
+        }
+        if (nome.equals("NumMinPixelsIdentificador")) {
+            return NumMinPixelsIdentificador;
+        }
+        if (nome.equals("AltMinGrupoConexoIdentificador")) {
+            return AltMinGrupoConexoIdentificador;
+        }
+        if (nome.equals("LimiarLargLinhasIdentificador")) {
+            return LimiarLargLinhasIdentificador;
+        }
+        if (nome.equals("LimiarRelacaoLargAlt")) {
+            return LimiarRelacaoLargAlt;
+        }
+        if (nome.equals("LimiarNumMedColunas")) {
+            return LimiarNumMedColunas;
+        }
+        if (nome.equals("DifMinEmbGrupoEmbRegiaoIdentificador")) {
+            return DifMinEmbGrupoEmbRegiaoIdentificador;
+        }
+        else
+            return -1;
+    }
 
     public TParamsIni() {
     }
-    
+
     public TParamsIni(TParamsIni outro) {
         copia(outro);
     }
-    
+
     public void copia(TParamsIni outro) {
         PropYIni = outro.PropYIni;
         PropXFim = outro.PropXFim;
@@ -393,8 +576,8 @@ class TParamsIni {
         LimiarLargLinhasIdentificador = outro.LimiarLargLinhasIdentificador;
         LimiarRelacaoLargAlt = outro.LimiarRelacaoLargAlt;
         LimiarNumMedColunas = outro.LimiarNumMedColunas;
-        DifMinEmbGrupoEmbRegiaoIdentificador = outro.DifMinEmbGrupoEmbRegiaoIdentificador;  
-    }    
+        DifMinEmbGrupoEmbRegiaoIdentificador = outro.DifMinEmbGrupoEmbRegiaoIdentificador;
+    }
 
     public TParamsIni(String NomeArquivo) {
         INIFile objINI = new INIFile(NomeArquivo);
@@ -427,7 +610,12 @@ class TParamsIni {
     }
 
     public String dump() {
-        return "";
+        String retorno="";
+        for (int k = 0; k < ListaParametros.length; k++) {
+            String parametro=ListaParametros[k];
+            retorno+=parametro+" = "+LeParametro(parametro)+"\n";
+        }
+        return retorno;
     }
 }
 

@@ -40,8 +40,7 @@ public class CTestes {
             for (int i = 0; i < ImagensNota.NumElementos(); i++) {
                 NotaTemp = ImagensNota.Imagens(i);
                 TParamsRC ParamsRC = new TParamsRC(ParamsIni,
-                        new CTonsCinza(NotaTemp.imagem),
-                        new CBitmap(NotaTemp.imagem));
+                        new CTonsCinza(NotaTemp.imagem), null);
                 UTioPatinhas.ReconheceCedula(ParamsRC);
                 TotalNotas++;
 
