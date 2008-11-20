@@ -359,8 +359,8 @@ class TParamsIni {
     int LimiarRelacaoLargAlt;
     int LimiarNumMedColunas;
     int DifMinEmbGrupoEmbRegiaoIdentificador;
-    public String[] ListaParametros = {"PropYIni",
-        "PropXFim",
+    public String[] ListaParametros = {//"PropYIni",
+        //"PropXFim",
         "AltMinTarja",
         "AltMaxTarja",
         "DistMaxTarjas",
