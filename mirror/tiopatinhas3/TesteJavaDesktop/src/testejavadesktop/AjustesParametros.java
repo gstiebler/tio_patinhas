@@ -62,7 +62,8 @@ public class AjustesParametros {
                 for (int n = 0; n < PASSO; n++) {
                     Valor = ParamsInf.LeParametro(parametro) + MathUtils.round(n * (intervalo * 1.0 / PASSO));
                     ParamsIni.EscreveParametro(parametro, Valor);
-                    CTestes.CalculaAcertos(ParamsIni, ArquivosTeste, Acertos);
+                    StringMatrizConfusao MatrizConfusao=new StringMatrizConfusao();
+                    CTestes.CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, false);
                     Avaliacao = AvaliaAcertosMedia(Acertos);
                     if (Avaliacao > MelhorAvaliacao) {
                         MelhorAvaliacao = Avaliacao;
