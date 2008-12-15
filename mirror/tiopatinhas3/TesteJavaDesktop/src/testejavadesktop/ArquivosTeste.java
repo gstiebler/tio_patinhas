@@ -15,6 +15,7 @@ import java.util.Vector;
 public class ArquivosTeste {
 }
 
+//Armazena a imagem e a string com o nome do arquivo
 class CNota {
 
     public String arquivo;
@@ -32,14 +33,16 @@ class CNota {
     }
 }
 
+//interface para a classe que disponibiliza todas as imagens de um determinado
+//valor de nota
 interface CBaseCImagensNota {
     
     public CNota Imagens(int indice);
     public int NumElementos();
 }
 
-abstract class CImagensNota extends Vector implements CBaseCImagensNota{
 
+abstract class CImagensNota extends Vector implements CBaseCImagensNota{
     public int nota;
 }
 

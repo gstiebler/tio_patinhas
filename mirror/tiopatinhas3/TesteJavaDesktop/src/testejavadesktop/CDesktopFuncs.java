@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -51,6 +52,12 @@ public class CDesktopFuncs {
                 outChannel.close();
             }
         }
+    }
+
+    public static String FormataPorcentagem(double valor)
+    {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        return df.format(valor*100.0);
     }
 
     public static void WriteOutput(String str) {
