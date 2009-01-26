@@ -14,10 +14,11 @@ public class CTestes {
         long tempo1 = System.currentTimeMillis();
         CDesktopFuncs.WriteOutput("teste");
         String retorno = "";
-        long tempo2 = System.currentTimeMillis();
-        TParamsIni ParamsIni = new TParamsIni("C:\\Guilherme\\projetos\\TioPatinhas\\ParamsTPOTM.ini");
+        long tempo2 = System.currentTimeMillis(); 
+        TParamsDir ParamsDir=new TParamsDir();
+        TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase()+"ParamsTPOTM.ini");
         double[] Acertos = new double[7];
-        String PastaBase = "C:\\Guilherme\\projetos\\TioPatinhas\\ImagensDinheiro\\Selecionadas\\";
+        String PastaBase = ParamsDir.getDir("Selecionadas");
         CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, false);
         StringMatrizConfusao MatrizConfusao = new StringMatrizConfusao();
         CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, true);
@@ -39,6 +40,7 @@ public class CTestes {
             CArquivosTeste ArquivosTeste, double[] AcertosNota, StringMatrizConfusao MatrizConfusao,
             boolean SalvaErradas) {
 
+        TParamsDir ParamsDir=new TParamsDir();
         int TotalNotas, Acertos;
         CNota NotaTemp;
         for (int n = 0; n < ArquivosTeste.NumNotas(); n++) {
@@ -71,7 +73,7 @@ public class CTestes {
                     {
                         BMPFile bmpFile = new BMPFile();
                         bmpFile.saveBitmap(
-                            "C:\\Guilherme\\projetos\\TioPatinhas\\ImagensDinheiro\\Erradas\\" +
+                            ParamsDir.getDirBase()+"Erradas/" +
                             ImagensNota.nota+"_" +
                             ParamsRC.ParamsAI.ValorCedula + "_" + System.currentTimeMillis() +
                             "_" + NotaTemp.arquivo,

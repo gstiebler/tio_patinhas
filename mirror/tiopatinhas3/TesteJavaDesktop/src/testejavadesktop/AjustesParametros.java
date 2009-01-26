@@ -34,7 +34,7 @@ public class AjustesParametros {
         double intervalo, MelhorAvaliacaoGeral, MelhorAvaliacaoGeralAnterior;
         int Valor, MelhorValor;
         DecimalFormat df = new DecimalFormat("#,###.00");
-        TParamsDir ParamsDir=new TParamsDir("c:\\ParamsDir.ini");
+        TParamsDir ParamsDir=new TParamsDir();
         WriteText log = new WriteText(ParamsDir.getDirBase()+DateUtils.nowCurto()+" log.txt");
         CArquivosTeste ArquivosTeste = new CArquivosTeste(ParamsDir.getDirImagens(), true);
         TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase()+"ParamsTP.ini");

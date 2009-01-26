@@ -89,25 +89,21 @@ public class TesteJavaDesktopView extends FrameView {
         TesteJavaDesktopApp.getApplication().show(aboutBox);
     }
 
-    
     @Action
     public void AjustaParametros() {
         AjustesParametros.AjustaParametros();
     }
-    
+
     @Action
     public void NovaFunc() {
-
         try {
-
-
             JPanel cp = new JPanel(new GridLayout(0, 1));
-
             ImageProcessor imgProc = new ImageProcessor();
-            Image image2 = imgProc.loadbitmap("p:\\TioPatinhas\\", "002.bmp");
+            TParamsDir ParamsDir = new TParamsDir();
+            Image image2 = imgProc.loadbitmap(ParamsDir.getDirBase(), "002.bmp");
             Image image = ImageProcessor.toBufferedImage(image2);
 
-            TParamsRC ParamsRC = new TParamsRC(new TParamsIni("p:\\TioPatinhas\\ParamsTP.ini"),
+            TParamsRC ParamsRC = new TParamsRC(new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini"),
                     new CTonsCinza(image), new CBitmap(image));
             UTioPatinhas.ReconheceCedula(ParamsRC);
             System.out.println("Valor cédula: " +
@@ -133,8 +129,6 @@ public class TesteJavaDesktopView extends FrameView {
         }
 
     }
-    
-
 
     @Action
     public void ExecutaTestes() {
@@ -192,7 +186,7 @@ public class TesteJavaDesktopView extends FrameView {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 268, Short.MAX_VALUE)
+            .addGap(0, 263, Short.MAX_VALUE)
         );
 
         jButton2.setAction(actionMap.get("ExecutaTestes")); // NOI18N
@@ -208,17 +202,16 @@ public class TesteJavaDesktopView extends FrameView {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(57, 57, 57)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(89, 89, 89)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(315, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,12 +226,12 @@ public class TesteJavaDesktopView extends FrameView {
                         .addContainerGap()
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                 .addGap(23, 23, 23))
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(119, 119, 119)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(139, 139, 139))
         );
 
         jButton1.getAccessibleContext().setAccessibleName(resourceMap.getString("jButton1.AccessibleContext.accessibleName")); // NOI18N
