@@ -24,8 +24,9 @@ public class CDesktopFuncs {
         ImageProcessor imgProc = new ImageProcessor();
         Image image2 = imgProc.loadbitmap("", arquivo);
         Image image = ImageProcessor.toBufferedImage(image2);
-
-        TParamsRC ParamsRC = new TParamsRC(new TParamsIni("p:\\TioPatinhas\\ParamsTP.ini"),
+        TParamsDir ParamsDir=new TParamsDir();
+        
+        TParamsRC ParamsRC = new TParamsRC(new TParamsIni("ParamsTP.ini"),
                 new CTonsCinza(image), new CBitmap(image));
         UTioPatinhas.ReconheceCedula(ParamsRC);
         System.out.println("Valor cédula: " +
@@ -89,11 +90,16 @@ class TParamsDir{
     INIFile objINI;
     private String DirBase;
     private String DirImagens;
-    public TParamsDir(String NomeArquivo)
+    public TParamsDir()
     {
-        objINI = new INIFile(NomeArquivo);
+        objINI = new INIFile("/home/guilherme/Projetos/TioPatinhas/ParamsDir.ini");
         DirBase=objINI.getStringProperty("Geral", "DiretorioBase");
         DirImagens=objINI.getStringProperty("Geral", "DiretorioImagens");
+    }
+    
+    public  String getDir(String Property)
+    {
+        return objINI.getStringProperty("Geral", Property);
     }
     
     public String getDirBase()
