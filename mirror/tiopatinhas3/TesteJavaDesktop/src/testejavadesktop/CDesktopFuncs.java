@@ -8,11 +8,15 @@ import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,10 +66,42 @@ public class CDesktopFuncs {
     }
 
     public static void WriteOutput(String str) {
-        //System.out.println(str);
+        System.out.println(str);
     }
 
     public static void InicializaWriteOutput(String NomeArq) {
+    }
+}
+
+class COutputDebug
+{
+    static PrintWriter out;
+    static String StrLog;
+    static boolean GravaEmArquivo=false;
+    public static void InicializaArquivo()
+    {
+        GravaEmArquivo=true;
+        StrLog=new String();
+    }
+
+    public static void FechaArquivo(String caminho_arq){
+        FileWriter outFile;
+        try {
+            outFile = new FileWriter(caminho_arq);
+            out = new PrintWriter(outFile);
+            out.println(StrLog);
+            out.close();
+        } catch (IOException ex) {
+            System.out.println("Erro ao abrir o arquivo "+caminho_arq);
+        }
+        GravaEmArquivo=false;
+    }
+
+    public static void WriteOutput(String str) {
+        if (GravaEmArquivo)
+            StrLog+=str+"\n";
+        else
+            System.out.println(str);
     }
 }
 
@@ -92,7 +128,7 @@ class TParamsDir{
     private String DirImagens;
     public TParamsDir()
     {
-        objINI = new INIFile("/home/guilherme/Projetos/TioPatinhas/ParamsDir.ini");
+        objINI = new INIFile("D:\\Projetos\\TioPatinhas\\ParamsDir.ini");
         DirBase=objINI.getStringProperty("Geral", "DiretorioBase");
         DirImagens=objINI.getStringProperty("Geral", "DiretorioImagens");
     }

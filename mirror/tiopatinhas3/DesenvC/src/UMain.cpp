@@ -37,7 +37,7 @@ void __fastcall TMain::FormCreate(TObject *Sender)
   AcertaEstiloComponentes();
   PreparaContadorTempo();
   WindowState=wsMaximized;
-  dlb1->Directory=CaminhoExecutavel()+"..\\..\\dinheiro\\";
+  dlb1->Directory=CaminhoExecutavel()+"..\\..\\Imagens\\Erradas";
   AbriuCaptura=false;
 }
 //---------------------------------------------------------------------------
@@ -399,9 +399,13 @@ void __fastcall TMain::btReconheceProximaClick(TObject *Sender)
 void TMain::CarregaImagens()
 {
   _Bitmap *Bitmap=new _Bitmap;
-  Bitmap->LoadFromFile(flb1->FileName);
+  AnsiString NomeArq=flb1->FileName;
+  Bitmap->LoadFromFile(NomeArq);
   imgProcessada->Picture->Bitmap->Assign(Bitmap);
   imgTemp->Picture->Bitmap->Assign(Bitmap);
+  AnsiString caminho_txt=NomeArq.SubString(1, NomeArq.Length()-4)+".txt";
+  if (FileExists(caminho_txt))
+    mmLog->Lines->LoadFromFile(caminho_txt);
   delete Bitmap;
 }     
 //---------------------------------------------------------------------------

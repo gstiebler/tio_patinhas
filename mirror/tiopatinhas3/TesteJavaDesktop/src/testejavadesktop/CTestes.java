@@ -12,16 +12,15 @@ public class CTestes {
 
     public static String ExecutaTestes() {
         long tempo1 = System.currentTimeMillis();
-        CDesktopFuncs.WriteOutput("teste");
         String retorno = "";
-        long tempo2 = System.currentTimeMillis(); 
-        TParamsDir ParamsDir=new TParamsDir();
-        TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase()+"ParamsTPOTM.ini");
+        long tempo2 = System.currentTimeMillis();
+        TParamsDir ParamsDir = new TParamsDir();
+        TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase() + "ParamsTPOTM.ini");
         double[] Acertos = new double[7];
-        String PastaBase = ParamsDir.getDir("Selecionadas");
-        CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, false);
+        String PastaBase = ParamsDir.getDir("DiretorioSelecionadas");
+        CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, true/*carrega arquivos antes*/);
         StringMatrizConfusao MatrizConfusao = new StringMatrizConfusao();
-        CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, true);
+        CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, true/*salva erradas*/);
         for (int n = 0; n < 7; n++) {
             retorno += n + ": " + Acertos[n] * 100.0 + "\n";
         }
@@ -40,7 +39,7 @@ public class CTestes {
             CArquivosTeste ArquivosTeste, double[] AcertosNota, StringMatrizConfusao MatrizConfusao,
             boolean SalvaErradas) {
 
-        TParamsDir ParamsDir=new TParamsDir();
+        TParamsDir ParamsDir = new TParamsDir();
         int TotalNotas, Acertos;
         CNota NotaTemp;
         for (int n = 0; n < ArquivosTeste.NumNotas(); n++) {
@@ -51,13 +50,12 @@ public class CTestes {
             for (int i = 0; i < ImagensNota.NumElementos(); i++) {
                 NotaTemp = ImagensNota.Imagens(i);
                 TParamsRC ParamsRC;
-                if (SalvaErradas)
-                {
-                   ParamsRC = new TParamsRC(ParamsIni,
+                if (SalvaErradas) {
+                    //inicializa uma imagem de debug que vai ser salva no diretório especificado
+                    ParamsRC = new TParamsRC(ParamsIni,
                             new CTonsCinza(NotaTemp.imagem), new CBitmap(NotaTemp.imagem));
-                }
-                else
-                {
+                    COutputDebug.InicializaArquivo();
+                } else {
                     ParamsRC = new TParamsRC(ParamsIni,
                             new CTonsCinza(NotaTemp.imagem), null);
                 }
@@ -69,15 +67,17 @@ public class CTestes {
                 if (ImagensNota.nota == ParamsRC.ParamsAI.ValorCedula) {
                     Acertos++;
                 } else {
-                    if (SalvaErradas)
-                    {
+                    if (SalvaErradas) {
                         BMPFile bmpFile = new BMPFile();
-                        bmpFile.saveBitmap(
-                            ParamsDir.getDirBase()+"Erradas/" +
-                            ImagensNota.nota+"_" +
-                            ParamsRC.ParamsAI.ValorCedula + "_" + System.currentTimeMillis() +
-                            "_" + NotaTemp.arquivo,
-                            ParamsRC.ParamsMLT.BImgDest.SaveImage(), 320, 240);
+                        String nome_arq_destino=
+                                ParamsDir.getDir("DiretorioErradas")+
+                                ImagensNota.nota + "_" +
+                                ParamsRC.ParamsAI.ValorCedula + "_" + System.currentTimeMillis() +
+                                "_" + NotaTemp.arquivo;
+                        bmpFile.saveBitmap(nome_arq_destino,
+                                ParamsRC.ParamsMLT.BImgDest.SaveImage(), 320, 240);
+                        nome_arq_destino=nome_arq_destino.substring(0, nome_arq_destino.length()-4);
+                        COutputDebug.FechaArquivo(nome_arq_destino+".txt");
                     }
                 }
 

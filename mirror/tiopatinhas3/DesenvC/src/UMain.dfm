@@ -1,8 +1,8 @@
 object Main: TMain
-  Left = 55
-  Top = 36
-  Width = 1280
-  Height = 766
+  Left = 99
+  Top = 91
+  Width = 1084
+  Height = 628
   HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
   AlphaBlendValue = 0
@@ -89,7 +89,7 @@ object Main: TMain
   object StatusBar1: TStatusBar
     Left = 0
     Top = 713
-    Width = 1272
+    Width = 1265
     Height = 19
     Panels = <
       item
@@ -107,12 +107,12 @@ object Main: TMain
     SimplePanel = False
   end
   object PageControl1: TPageControl
-    Left = 544
+    Left = 688
     Top = 8
-    Width = 665
-    Height = 441
-    ActivePage = tsHistograma
-    TabIndex = 2
+    Width = 577
+    Height = 697
+    ActivePage = tsTioPatinhas
+    TabIndex = 0
     TabOrder = 7
     object tsTioPatinhas: TTabSheet
       Caption = 'TioPatinhas'
@@ -124,8 +124,8 @@ object Main: TMain
       object mmLog: TMemo
         Left = 0
         Top = 0
-        Width = 881
-        Height = 413
+        Width = 569
+        Height = 669
         Align = alClient
         ScrollBars = ssVertical
         TabOrder = 0
@@ -160,8 +160,8 @@ object Main: TMain
     end
   end
   object btReconheceCedula: TButton
-    Left = 688
-    Top = 460
+    Left = 560
+    Top = 52
     Width = 113
     Height = 25
     Caption = 'Reconhece Cedula'
@@ -203,16 +203,16 @@ object Main: TMain
     OnClick = btCapturarClick
   end
   object cbTocaSom: TCheckBox
-    Left = 688
-    Top = 528
+    Left = 560
+    Top = 144
     Width = 97
     Height = 17
     Caption = 'toca som'
     TabOrder = 13
   end
   object MediaPlayer: TMediaPlayer
-    Left = 1064
-    Top = 472
+    Left = 552
+    Top = 168
     Width = 29
     Height = 30
     VisibleButtons = [btPlay]
@@ -237,8 +237,8 @@ object Main: TMain
     TabOrder = 16
   end
   object btReconheceProxima: TButton
-    Left = 688
-    Top = 496
+    Left = 560
+    Top = 80
     Width = 113
     Height = 25
     Caption = 'Reconhece Proxima'
@@ -246,8 +246,8 @@ object Main: TMain
     OnClick = btReconheceProximaClick
   end
   object Button1: TButton
-    Left = 720
-    Top = 592
+    Left = 560
+    Top = 112
     Width = 75
     Height = 25
     Caption = 'Button1'
