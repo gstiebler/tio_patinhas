@@ -223,6 +223,20 @@ class COrdenacao {
     }
 }
 
+
+//---------------------------------------------------------------------------
+class COutros {
+
+    static void LimitaTRect(TRect ARect) {
+        if (ARect.left <= 0) {
+            ARect.left = 0;
+        }
+        if (ARect.top <= 0) {
+            ARect.top = 0;
+        }
+    }
+}
+
 class TParamsMLT {
 
     CTonsCinza TCImgSrc;
