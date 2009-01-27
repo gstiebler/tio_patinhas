@@ -34,12 +34,11 @@ public class TioPatinhasMIDlet
     mMainForm.addCommand(mExitCommand);
     String supports = System.getProperty("video.snapshot.encodings");
     if (supports != null && supports.length() > 0) {
-      mMainForm.append("Ready to take pictures.");
+      mMainForm.append("Clique para capturar imagem da cédula.");
       mMainForm.addCommand(mCameraCommand);
     }
     else
-      mMainForm.append("Snapper cannot use this " +
-          "device to take pictures.");
+      mMainForm.append("Tio Patinhas não conseguiu usar a câmera deste dispositivo.");
     mMainForm.setCommandListener(this);
   }
   
@@ -112,6 +111,8 @@ public class TioPatinhasMIDlet
       // Place it in the main form.
       if (mMainForm.size() > 0 && mMainForm.get(0) instanceof StringItem)
         mMainForm.delete(0);
+      
+      mMainForm.deleteAll();
       mMainForm.append(thumb);
       
       mMainForm.append(new StringItem("Valor: ", String.valueOf(ParamsRC.ParamsAI.ValorCedula)));
