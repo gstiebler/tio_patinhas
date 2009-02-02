@@ -10,23 +10,28 @@ package testejavadesktop;
  */
 public class CTestes {
 
-    public static String ExecutaTestes() {
+    public static String ExecutaTestes(boolean CarregaArquivos, boolean SalvaErradas) {
         long tempo1 = System.currentTimeMillis();
         String retorno = "";
         long tempo2 = System.currentTimeMillis();
         TParamsDir ParamsDir = new TParamsDir();
-        TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase() + "ParamsTPOTM.ini");
+        TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini");
         double[] Acertos = new double[7];
         String PastaBase = ParamsDir.getDir("DiretorioSelecionadas");
-        CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, true/*carrega arquivos antes*/);
+        CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, CarregaArquivos);
         StringMatrizConfusao MatrizConfusao = new StringMatrizConfusao();
-        CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, true/*salva erradas*/);
+        CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, SalvaErradas);
+        for (int n = 0; n < 7; n++) 
+            retorno += CNota.NotaPorIndice(n) + ": " + Acertos[n] * 100.0 + "\n";
+        retorno+="\n";
         for (int n = 0; n < 7; n++) {
-            retorno += n + ": " + Acertos[n] * 100.0 + "\n";
+            retorno+=CNota.NotaPorIndice(n)+"\t";
         }
+        retorno+="\n";
         for (int n = 0; n < 7; n++) {
             retorno += MatrizConfusao.RetornaString(n) + "\n";
         }
+        retorno+="\n";
         for (int n = 0; n < 7; n++) {
             retorno += MatrizConfusao.RetornaStringPorcentagem(n) + "\n";
         }
@@ -38,7 +43,6 @@ public class CTestes {
     public static void CalculaAcertos(TParamsIni ParamsIni,
             CArquivosTeste ArquivosTeste, double[] AcertosNota, StringMatrizConfusao MatrizConfusao,
             boolean SalvaErradas) {
-
         TParamsDir ParamsDir = new TParamsDir();
         int TotalNotas, Acertos;
         CNota NotaTemp;
@@ -77,6 +81,7 @@ public class CTestes {
                         bmpFile.saveBitmap(nome_arq_destino,
                                 ParamsRC.ParamsMLT.BImgDest.SaveImage(), 320, 240);
                         nome_arq_destino=nome_arq_destino.substring(0, nome_arq_destino.length()-4);
+                        COutputDebug.WriteOutput("\n"+ParamsRC.dump());
                         COutputDebug.FechaArquivo(nome_arq_destino+".txt");
                     }
                 }

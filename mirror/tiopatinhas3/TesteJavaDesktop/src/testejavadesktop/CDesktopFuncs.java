@@ -26,7 +26,7 @@ public class CDesktopFuncs {
 
     public static int Reconhece(String arquivo) {
         ImageProcessor imgProc = new ImageProcessor();
-        Image image2 = imgProc.loadbitmap("", arquivo);
+        Image image2 = imgProc.loadbitmap(arquivo);
         Image image = ImageProcessor.toBufferedImage(image2);
         TParamsDir ParamsDir=new TParamsDir();
         
@@ -75,9 +75,9 @@ public class CDesktopFuncs {
 
 class COutputDebug
 {
-    static PrintWriter out;
-    static String StrLog;
-    static boolean GravaEmArquivo=false;
+    static private PrintWriter out;
+    static private String StrLog;
+    static private boolean GravaEmArquivo=false;
     public static void InicializaArquivo()
     {
         GravaEmArquivo=true;
@@ -100,8 +100,8 @@ class COutputDebug
     public static void WriteOutput(String str) {
         if (GravaEmArquivo)
             StrLog+=str+"\n";
-        else
-            System.out.println(str);
+        //else
+        //    System.out.println(str);
     }
 }
 

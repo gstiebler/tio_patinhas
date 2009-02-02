@@ -140,6 +140,7 @@ class TConjuntoMeioBordas {
     }
 }
 //---------------------------------------------------------------------------
+
 class TVectorInt extends Vector {
 
     TVectorInt() {
@@ -198,6 +199,15 @@ class TVectorBorda extends Vector {
 
     TBorda retornaTBorda(int indice) {
         return (TBorda) (elementAt(indice));
+    }
+}
+
+class ComparaInteiro implements java.util.Comparator {
+
+    public int compare(Object o1, Object o2) {
+        int primeiro = ((Integer)o1).intValue();
+        int segundo = ((Integer)o2).intValue();
+        return segundo-primeiro;
     }
 }
 
@@ -309,6 +319,8 @@ class TParamsAI {
     //define a altura mínima para que um grupo conexo de pixels possivelmente de identificador
     //seja considerado de fato do identificador
     int AltMinGrupoConexoIdentificador;
+    //utilizado para diferenciar 5 de 1
+    int ProfundezaValeMin;
     //Limiar que define se um identificador tem 1 ou 2 "andares"
     int LimiarAlturaIdentificador;
     //Limiar que define se um identificador é inclinado ou não
@@ -327,6 +339,8 @@ class TParamsAI {
     int MaiorLargLinha;
     float RelacaoMedianasLargurasEncEmb;
     float RelacaoLargAlt;
+    //usado para diferenciar 5 de 1
+    int ProfundezaVale;
     //número médio de vezes que percorrendo-se da esquerda para direita a região do identificador
     //ocorre do pixel anterior não ser de identificador, e o corrente ser de identificador
     float NumMedColunas;
@@ -355,6 +369,7 @@ class TParamsIni {
     int MaiorDistSemPixelsIdentificador;
     int NumMinPixelsIdentificador;
     int AltMinGrupoConexoIdentificador;
+    int ProfundezaValeMin;
     int LimiarLargLinhasIdentificador;
     int LimiarRelacaoLargAlt;
     int LimiarNumMedColunas;
@@ -379,6 +394,7 @@ class TParamsIni {
         "MaiorDistSemPixelsIdentificador",
         "NumMinPixelsIdentificador",
         "AltMinGrupoConexoIdentificador",
+        "ProfundezaValeMin",
         "LimiarLargLinhasIdentificador",
         "LimiarRelacaoLargAlt",
         "LimiarNumMedColunas",
@@ -448,6 +464,9 @@ class TParamsIni {
         }
         if (nome.equals("AltMinGrupoConexoIdentificador")) {
             AltMinGrupoConexoIdentificador = valor;
+        }
+        if (nome.equals("ProfundezaValeMin")) {
+            ProfundezaValeMin = valor;
         }
         if (nome.equals("LimiarLargLinhasIdentificador")) {
             LimiarLargLinhasIdentificador = valor;
@@ -527,6 +546,9 @@ class TParamsIni {
         if (nome.equals("AltMinGrupoConexoIdentificador")) {
             return AltMinGrupoConexoIdentificador;
         }
+        if (nome.equals("ProfundezaValeMin")) {
+            return ProfundezaValeMin;
+        }
         if (nome.equals("LimiarLargLinhasIdentificador")) {
             return LimiarLargLinhasIdentificador;
         }
@@ -538,9 +560,9 @@ class TParamsIni {
         }
         if (nome.equals("DifMinEmbGrupoEmbRegiaoIdentificador")) {
             return DifMinEmbGrupoEmbRegiaoIdentificador;
-        }
-        else
+        } else {
             return -1;
+        }
     }
 
     public TParamsIni() {
@@ -573,6 +595,7 @@ class TParamsIni {
         MaiorDistSemPixelsIdentificador = outro.MaiorDistSemPixelsIdentificador;
         NumMinPixelsIdentificador = outro.NumMinPixelsIdentificador;
         AltMinGrupoConexoIdentificador = outro.AltMinGrupoConexoIdentificador;
+        ProfundezaValeMin = outro.ProfundezaValeMin;
         LimiarLargLinhasIdentificador = outro.LimiarLargLinhasIdentificador;
         LimiarRelacaoLargAlt = outro.LimiarRelacaoLargAlt;
         LimiarNumMedColunas = outro.LimiarNumMedColunas;
@@ -603,6 +626,7 @@ class TParamsIni {
         MaiorDistSemPixelsIdentificador = objINI.getIntegerProperty("Geral", "MaiorDistSemPixelsIdentificador");
         NumMinPixelsIdentificador = objINI.getIntegerProperty("Geral", "NumMinPixelsIdentificador");
         AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
+        ProfundezaValeMin = objINI.getIntegerProperty("Geral", "ProfundezaValeMin");
         LimiarLargLinhasIdentificador = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador");
         LimiarRelacaoLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt");
         LimiarNumMedColunas = objINI.getIntegerProperty("Geral", "LimiarNumMedColunas");
@@ -610,10 +634,10 @@ class TParamsIni {
     }
 
     public String dump() {
-        String retorno="";
+        String retorno = "";
         for (int k = 0; k < ListaParametros.length; k++) {
-            String parametro=ListaParametros[k];
-            retorno+=parametro+" = "+LeParametro(parametro)+"\n";
+            String parametro = ListaParametros[k];
+            retorno += parametro + " = " + LeParametro(parametro) + "\n";
         }
         return retorno;
     }
@@ -660,11 +684,48 @@ class TParamsRC {
         ParamsAI.MaiorDistSemPixelsIdentificador = ParamsIni.MaiorDistSemPixelsIdentificador;
         ParamsAI.NumMinPixelsIdentificador = ParamsIni.NumMinPixelsIdentificador;
         ParamsAI.AltMinGrupoConexoIdentificador = ParamsIni.AltMinGrupoConexoIdentificador;
+        ParamsAI.ProfundezaValeMin = ParamsIni.ProfundezaValeMin;
         ParamsAI.LimiarLargLinhasIdentificador = (float) (ParamsIni.LimiarLargLinhasIdentificador / 1000.0);
         ParamsAI.LimiarRelacaoLargAlt = (float) (ParamsIni.LimiarRelacaoLargAlt / 1000.0);
         ParamsAI.LimiarNumMedColunas = (float) (ParamsIni.LimiarNumMedColunas / 1000.0);
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = ParamsIni.DifMinEmbGrupoEmbRegiaoIdentificador;
     }
+
+    ///retorna em uma string os valores dos parâmetros
+    public String dump() {
+        String retorno = "";
+
+        retorno += "PropYIni = " + ParamsMLT.PropYIni + "\n";
+        retorno += "PropXFim = " + ParamsMLT.PropXFim + "\n";
+
+        retorno += "AltMinTarja = " + ParamsABT.AltMinTarja + "\n";
+        retorno += "AltMaxTarja = " + ParamsABT.AltMaxTarja + "\n";
+        retorno += "DistMaxTarjas = " + ParamsABT.DistMaxTarjas + "\n";
+        retorno += "LargMinTarja = " + ParamsABT.LargMinTarja + "\n";
+        retorno += "LargMaxTarja = " + ParamsABT.LargMaxTarja + "\n";
+        retorno += "ParamsDesvioMax = " + ParamsABT.DesvioMax + "\n";
+
+        retorno += "DistFaixaRef = " + ParamsAI.DistFaixaRef + "\n";
+        retorno += "LargFaixaRef = " + ParamsAI.LargFaixaRef + "\n";
+        retorno += "DifMinMediaFaixaRef = " + ParamsAI.DifMinMediaFaixaRef + "\n";
+        retorno += "LargIdentificador = " + ParamsAI.LargIdentificador + "\n";
+        retorno += "AltIdentificador = " + ParamsAI.AltIdentificador + "\n";
+        retorno += "XIniParaRefTarja = " + ParamsAI.XIniParaRefTarja + "\n";
+        retorno += "YIniParaRefTarja = " + ParamsAI.YIniParaRefTarja + "\n";
+        retorno += "LimiarAlturaIdentificador = " + ParamsAI.LimiarAlturaIdentificador + "\n";
+        retorno += "LimiarInclinacaoidentificador = " + ParamsAI.LimiarInclinacaoidentificador + "\n";
+        retorno += "MaiorDistSemPixelsIdentificador = " + ParamsAI.MaiorDistSemPixelsIdentificador + "\n";
+        retorno += "NumMinPixelsIdentificador = " + ParamsAI.NumMinPixelsIdentificador + "\n";
+        retorno += "AltMinGrupoConexoIdentificador = " + ParamsAI.AltMinGrupoConexoIdentificador + "\n";
+        retorno += "ProfundezaValeMin = " + ParamsAI.ProfundezaValeMin + "\n";
+        retorno += "LimiarLargLinhasIdentificador = " + ParamsAI.LimiarLargLinhasIdentificador + "\n";
+        retorno += "LimiarRelacaoLargAlt = " + ParamsAI.LimiarRelacaoLargAlt + "\n";
+        retorno += "LimiarNumMedColunas = " + ParamsAI.LimiarNumMedColunas + "\n";
+        retorno += "DifMinEmbGrupoEmbRegiaoIdentificador = " + ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador + "\n";
+
+        return retorno;
+    }
+
     //pega os fatores e multiplica para pegar valores absolutos
     public void ConverteParametrosDependentesLargura() {
         ParamsABT.AltMinTarja = (int) MathUtils.round((ParamsABT.AltMinTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
@@ -674,6 +735,7 @@ class TParamsRC {
         ParamsABT.LargMaxTarja = (int) MathUtils.round((ParamsABT.LargMaxTarja / 1000.0) * ParamsMLT.TCImgSrc.Larg);
     }
     //pega os fatores e multiplica para pegar valores absolutos
+
     public void ConverteParametrosDependentesAlturaFaixa() {
         ParamsAI.DistFaixaRef = (int) MathUtils.round((ParamsAI.DistFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
         ParamsAI.LargFaixaRef = (int) MathUtils.round((ParamsAI.LargFaixaRef / 1000.0) * ParamsABT.MediaAlturaTarja);
@@ -688,8 +750,10 @@ class TParamsRC {
         ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador = (int) MathUtils.round((ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador / 1000.0) * ParamsABT.MediaAlturaTarja);
     }
     //pega os fatores e multiplica para pegar valores absolutos
+
     public void ConverteParametrosDependentesLumMediana() {
         ParamsAI.DifMinMediaFaixaRef = (int) MathUtils.round((ParamsAI.DifMinMediaFaixaRef / 1000.0) * LumMedianaImagem);
+        ParamsAI.ProfundezaValeMin = (int) MathUtils.round((ParamsAI.ProfundezaValeMin / 1000.0) * LumMedianaImagem);
     }
 };
 //---------------------------------------------------------------------------

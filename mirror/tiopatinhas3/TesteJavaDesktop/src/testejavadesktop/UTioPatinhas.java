@@ -4,7 +4,8 @@
  */
 package testejavadesktop;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Vector;
 
 /**
  *
@@ -226,7 +227,6 @@ public class UTioPatinhas {
      * variando muito (analizando os desvios padrão calculados em preparaSelecionaTarja)
      */
     static void SelecionaTarja(TParamsABT ParamsABT) {
-
         int n, nMenorX, m, LargTarjaCandidata;
         TTarja TarjaCandidata;
         int MenorX, AlturaTarjaMColunaN;
@@ -244,7 +244,7 @@ public class UTioPatinhas {
                     "\tX:\t" + String.valueOf(TarjaCandidata.X) +
                     "\tY:\t" + String.valueOf(TarjaCandidata.PriYEnc));
             //endif
-
+            //continua se a tarja possui a largura dentro dos limites
             if ((LargTarjaCandidata <= ParamsABT.LargMaxTarja) &&
                     (LargTarjaCandidata >= ParamsABT.LargMinTarja)) {
                 soma = 0;
@@ -322,6 +322,7 @@ public class UTioPatinhas {
     }
 //Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
 //do identificador, e retorna a luminosidade média dos pixels da faixa
+
     static int MediaFaixa(TParamsAI ParamsAI) {
         int x, y, xIni, xFim, soma;
         short[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
@@ -344,6 +345,7 @@ public class UTioPatinhas {
         return retorno;
     }
 //---------------------------------------------------------------------------
+
     /**
      * Processa a imagem na região marcada pelo ARect agrupando os grupos conexos de pixels escuros.
      * O ARect guarda a regiao detectada como o identificador na cedula.
@@ -429,6 +431,7 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
+
     /**
      * Corta fora dos grupos conexos os grupos cujas alturas sejam muito pequenas
      * em comparação com a altura da faixa preta de referencia detectada.
@@ -457,6 +460,7 @@ public class UTioPatinhas {
     }
 //---------------------------------------------------------------------------
 //MatrizGrupos é variável de entrada e de saída
+
     static void CopiaGruposValidos(int[][] MatrizGrupos, TRect ARect, char[] VetGruposValidos) {
         int x, y;
         int larg, alt;
@@ -469,6 +473,7 @@ public class UTioPatinhas {
         }
     }
     //---------------------------------------------------------------------------
+
     static void PintaIdentificador(CBitmap BImgDest, TRect ARect, int[][] MatrizGrupos) {
         int x, y;
         int larg, alt;
@@ -486,6 +491,7 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
+
     static float RetornaRelacaoMedianasLargurasEncEmb(int[] VetorLarguras, int comeco, int fim,
             int[] MediaLarguras) {
         if (fim == -1) {
@@ -500,19 +506,9 @@ public class UTioPatinhas {
             System.arraycopy(VetorLarguras, comeco + n * MetadeAltura, vetor, 0, MetadeAltura);
             COrdenacao.OrdenaInt(vetor, MetadeAltura);
             Larguras[n] = vetor[QuartoAltura];
-        //Vector a=new Vector();
-        //for (int u=0; u<MetadeAltura; u++)
-        //    a.addElement(new Integer(vetor[u]));
-        //java.util.Collections.sort(a);
-        //memcpy(vetor, VetorLarguras + comeco + n * MetadeAltura, MetadeAltura * sizeof(int));
-        // qsort(vetor, MetadeAltura, sizeof(int), ComparaInteiro);
-        //Larguras[n] = ((Integer)a.elementAt(QuartoAltura)).intValue();
         }
-        //delete [] vetor;
-        //ifdef DEBUG
         COutputDebug.WriteOutput("Largura encima: " + String.valueOf(Larguras[0]));
         COutputDebug.WriteOutput("Largura embaixo: " + String.valueOf(Larguras[1]));
-        //endif
         MediaLarguras[0] = (Larguras[0] + Larguras[1]) / 2;
         if (Larguras[1] > 0) {
             return (float) (Larguras[0] * 1.0 / Larguras[1]);
@@ -521,6 +517,7 @@ public class UTioPatinhas {
         }
     }
     //---------------------------------------------------------------------------
+
     /**
      * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
      * sobre qual identificador foi detectado.
@@ -573,7 +570,7 @@ public class UTioPatinhas {
                     //ifdef DEBUG
                     COutputDebug.WriteOutput("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
                     //endif
-                    if (ParamsAI.NumMedColunas < ParamsAI.LimiarNumMedColunas) {
+                    if (ParamsAI.ProfundezaVale < ParamsAI.ProfundezaValeMin) {
                         //ifdef DEBUG
                         COutputDebug.WriteOutput("Número médio de colunas menor que o limite, é R$1");
                         //endif
@@ -594,6 +591,7 @@ public class UTioPatinhas {
         }
     }
 //---------------------------------------------------------------------------
+
     /**
      * Analiza o identificador para detectar o valor das notas.
      */
@@ -605,8 +603,24 @@ public class UTioPatinhas {
         int x, y;
         int xIni, xFim, yIni, yFim;
         int YEnc, YEmb, LargLinha, MaiorLargLinha, NumBordasPixelLinha;
-        int XEsq, XDir, UltXEnc = 0, UltXEmb = 0, MaiorUltXEnc;
+        //usadas para guardar os limites laterais de uma linha
+        int XEsq, XDir;
+        int UltXEnc = 0, UltXEmb = 0, MaiorUltXEnc;
         int NumLinha, UltYComLinha, NumPixelsIdentificador;
+        short[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
+        //vetores que armazenam em cada posição, qual o pixel mais escuro até o momento,
+        //processando ea esquerda para a direita e da direita para a esquerda.
+        //usados para diferenciar 5 de 1
+        int[] VetorMaisEscuroEsqDir, VetorMaisEscuroDirEsq;
+        //variável que armazena em cada linha o ponto mais claro entre dois pontos escuros.
+        //Usada para diferenciar 5 de 1
+        int PontoMaisFundoVale;
+        //Usada para diferenciar 5 de 1
+        int MaisEscuroAteAgora;
+        //Usada para diferenciar 5 de 1. Cada ponto representa o valor do ponto mais
+        //fundo do vale de cada linha
+        Vector PontosMaisFundosVale = new Vector();
+        int yImagemOriginal;
         int[] VetorLarguras;
         char[] VetGruposValidos = new char[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
         //usado para indicar grupos conexos que fazem parte de outros grupos
@@ -620,11 +634,8 @@ public class UTioPatinhas {
         yIni = yFim - ParamsAI.AltIdentificador;
         int TamVetLarguras = yFim - yIni + 1;
         VetorLarguras = new int[TamVetLarguras];
-        //memset(VetorLarguras, 0, TamVetLarguras*sizeof(int));
         int Media = MediaFaixa(ParamsAI);
-        //ifdef DEBUG
         COutputDebug.WriteOutput("Luminosidade média faixa: " + String.valueOf(Media));
-        //endif         
         int Limiar = Media - ParamsAI.DifMinMediaFaixaRef;
 
         CMatrizInteiro MatrizGrupos = new CMatrizInteiro(xFim - xIni + 1, yFim - yIni + 1);
@@ -635,14 +646,17 @@ public class UTioPatinhas {
         }
         ARect = new TRect(xIni, yIni, xFim, yFim);
         COutros.LimitaTRect(ARect);
+        VetorMaisEscuroEsqDir = new int[ARect.Width()];
+        VetorMaisEscuroDirEsq = new int[ARect.Width()];
         MatrizGruposConexos(ParamsAI.TCImgSrc, ARect,
                 MatrizGrupos.Matriz, Limiar, VetorLimitesVerticaisGrupo, PonteiroGrupos);
         SelecionaGruposIdentificador(VetorLimitesVerticaisGrupo, VetGruposValidos,
                 ParamsAI.AltMinGrupoConexoIdentificador, PonteiroGrupos, ARect.Height(),
                 ParamsAI.DifMinEmbGrupoEmbRegiaoIdentificador);
         CopiaGruposValidos(MatrizGrupos.Matriz, ARect, VetGruposValidos);
-        if (ParamsAI.BImgDest!=null)
+        if (ParamsAI.BImgDest != null) {
             PintaIdentificador(ParamsAI.BImgDest, ARect, MatrizGrupos.Matriz);
+        }
 
         YEnc = 0;
         YEmb = -1;
@@ -651,17 +665,17 @@ public class UTioPatinhas {
         MaiorUltXEnc = 0;
         NumPixelsIdentificador = 0;
         UltYComLinha = -1;
-        //ifdef DEBUG
-
         COutputDebug.WriteOutput("Área do identificador: X: (" + String.valueOf(xIni) + ", " +
                 String.valueOf(xFim) + " Y: (" + String.valueOf(yIni) + ", " + String.valueOf(yFim) + ")");
-        //endif
+        //percorre a imagem de baixo até encima
         for (y = ARect.Height(); y > 0; y--) {
             XEsq = -1;
             XDir = 0;
             AchouLinha = false;
             NumBordasPixelLinha = 0;
             EstadoUltPixel = NADA;
+            //percorre a linha para determinar os lites da linha e contar pixels
+            //do identificador
             for (x = 0; x < ARect.Width(); x++) {
                 if (MatrizGrupos.Matriz[y][x] == PIXEL_ACEITO) {
                     if (YEmb == -1) {
@@ -688,6 +702,49 @@ public class UTioPatinhas {
                     EstadoUltPixel = FUNDO;
                 }
             }
+
+            int LarguraLinha=XDir-XEsq+1;
+            if (LarguraLinha>1)
+            {
+            yImagemOriginal = y + yIni;
+            MaisEscuroAteAgora = 255;
+            int contador = 0;
+            for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
+                if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
+                    MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
+                }
+                VetorMaisEscuroEsqDir[contador++] = MaisEscuroAteAgora;
+            }
+
+            MaisEscuroAteAgora = 255;
+            contador = XDir - XEsq;
+            for (x = xIni + XDir; x >= (xIni + XEsq); x--) {
+                if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
+                    MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
+                }
+                VetorMaisEscuroDirEsq[contador--] = MaisEscuroAteAgora;
+            }
+
+            int MaisClaro;
+            int ProfundidadeVale;
+            contador = 0;
+            int MaiorProfundidadeVale = 0;
+            for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
+                MaisClaro = VetorMaisEscuroDirEsq[contador];
+                if (MaisClaro < VetorMaisEscuroEsqDir[contador]) {
+                    MaisClaro = VetorMaisEscuroEsqDir[contador];
+                }
+                ProfundidadeVale = ImgSrc[yImagemOriginal][x] - MaisClaro;
+                if (ProfundidadeVale > MaiorProfundidadeVale) {
+                    MaiorProfundidadeVale = ProfundidadeVale;
+                }
+                contador++;
+            }
+            if ((XDir - XEsq) > 1) {
+                PontosMaisFundosVale.addElement(new Integer(MaiorProfundidadeVale));
+            }
+            
+
             LargLinha = XDir - XEsq;
             VetorLarguras[y] = LargLinha;
             if (LargLinha > MaiorLargLinha) {
@@ -707,6 +764,15 @@ public class UTioPatinhas {
                     break;
                 }
             }
+        }//for (y = ARect.Height(); y > 0; y--) {
+        if (PontosMaisFundosVale.size() > 0) {
+            Collections.sort(PontosMaisFundosVale, new ComparaInteiro());
+            int IndiceVetor = (int) Math.round(PontosMaisFundosVale.size() * 0.15);
+            ParamsAI.ProfundezaVale =
+                    ((Integer) PontosMaisFundosVale.elementAt(IndiceVetor)).intValue();
+        }
+        else
+            ParamsAI.ProfundezaVale=0;
         }
         int soma = 0;
         for (int w = 0; w < TAM_HIST; w++) {

@@ -40,7 +40,7 @@ object Main: TMain
     Left = 342
     Top = 237
     Width = 195
-    Height = 204
+    Height = 188
     ItemHeight = 16
     Mask = '*.tif;*.bmp'
     ShowGlyphs = True
@@ -48,8 +48,8 @@ object Main: TMain
     OnClick = flb1Click
   end
   object Panel: TPanel
-    Left = 348
-    Top = 460
+    Left = 340
+    Top = 436
     Width = 333
     Height = 253
     TabOrder = 3
@@ -88,7 +88,7 @@ object Main: TMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 713
+    Top = 717
     Width = 1265
     Height = 19
     Panels = <
@@ -110,7 +110,7 @@ object Main: TMain
     Left = 688
     Top = 8
     Width = 577
-    Height = 697
+    Height = 681
     ActivePage = tsTioPatinhas
     TabIndex = 0
     TabOrder = 7
@@ -253,5 +253,13 @@ object Main: TMain
     Caption = 'Button1'
     TabOrder = 18
     OnClick = Button1Click
+  end
+  object edCaminho: TEdit
+    Left = 8
+    Top = 696
+    Width = 1233
+    Height = 21
+    TabOrder = 19
+    Text = 'edCaminho'
   end
 end

@@ -95,12 +95,13 @@ public class TesteJavaDesktopView extends FrameView {
     }
 
     @Action
-    public void NovaFunc() {
+    public void ExecutarUma() {
         try {
             JPanel cp = new JPanel(new GridLayout(0, 1));
             ImageProcessor imgProc = new ImageProcessor();
             TParamsDir ParamsDir = new TParamsDir();
-            Image image2 = imgProc.loadbitmap(ParamsDir.getDirBase(), "002.bmp");
+            //Image image2 = imgProc.loadbitmap(ParamsDir.getDir("DiretorioSelecionadas")+"\\1\\img839.bmp");
+            Image image2 = imgProc.loadbitmap(jTextField1.getText());
             Image image = ImageProcessor.toBufferedImage(image2);
 
             TParamsRC ParamsRC = new TParamsRC(new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini"),
@@ -132,7 +133,7 @@ public class TesteJavaDesktopView extends FrameView {
 
     @Action
     public void ExecutaTestes() {
-        jTextArea1.append(CTestes.ExecutaTestes());
+        jTextArea1.append(CTestes.ExecutaTestes(jCheckBox1.isSelected(), jCheckBox2.isSelected()));
     }
 
     static void addImage(JPanel cp, Image img) throws MalformedURLException {
@@ -155,6 +156,9 @@ public class TesteJavaDesktopView extends FrameView {
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -164,7 +168,7 @@ public class TesteJavaDesktopView extends FrameView {
         mainPanel.setName("mainPanel"); // NOI18N
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(testejavadesktop.TesteJavaDesktopApp.class).getContext().getActionMap(TesteJavaDesktopView.class, this);
-        jButton1.setAction(actionMap.get("NovaFunc")); // NOI18N
+        jButton1.setAction(actionMap.get("ExecutarUma")); // NOI18N
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(testejavadesktop.TesteJavaDesktopApp.class).getContext().getResourceMap(TesteJavaDesktopView.class);
         jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
         jButton1.setName("jButton1"); // NOI18N
@@ -186,7 +190,7 @@ public class TesteJavaDesktopView extends FrameView {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 248, Short.MAX_VALUE)
+            .addGap(0, 163, Short.MAX_VALUE)
         );
 
         jButton2.setAction(actionMap.get("ExecutaTestes")); // NOI18N
@@ -197,6 +201,15 @@ public class TesteJavaDesktopView extends FrameView {
         jButton3.setText(resourceMap.getString("jButton3.text")); // NOI18N
         jButton3.setName("jButton3"); // NOI18N
 
+        jTextField1.setText(resourceMap.getString("jTextField1.text")); // NOI18N
+        jTextField1.setName("jTextField1"); // NOI18N
+
+        jCheckBox1.setText(resourceMap.getString("cbCarregaImagens.text")); // NOI18N
+        jCheckBox1.setName("cbCarregaImagens"); // NOI18N
+
+        jCheckBox2.setText(resourceMap.getString("cbSalvaErradas.text")); // NOI18N
+        jCheckBox2.setName("cbSalvaErradas"); // NOI18N
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -204,16 +217,21 @@ public class TesteJavaDesktopView extends FrameView {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(55, 55, 55)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(45, 45, 45)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(45, 45, 45)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jCheckBox2)
+                            .addComponent(jCheckBox1))
+                        .addGap(172, 172, 172)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,13 +242,19 @@ public class TesteJavaDesktopView extends FrameView {
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                .addGap(24, 24, 24))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox2)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(139, 139, 139))
+                .addGap(267, 267, 267))
         );
 
         jButton1.getAccessibleContext().setAccessibleName(resourceMap.getString("jButton1.AccessibleContext.accessibleName")); // NOI18N
@@ -263,9 +287,12 @@ public class TesteJavaDesktopView extends FrameView {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     // End of variables declaration//GEN-END:variables
