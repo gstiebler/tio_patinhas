@@ -39,6 +39,8 @@ void __fastcall TMain::FormCreate(TObject *Sender)
   WindowState=wsMaximized;
   dlb1->Directory=CaminhoExecutavel()+"..\\..\\Imagens\\Erradas";
   AbriuCaptura=false;
+  TIniFile *IniFile=new TIniFile("..\\..\\ParamsDir.ini");
+  CaminhoSelecionadas=IniFile->ReadString("Geral", "DiretorioSelecionadas", "");
 }
 //---------------------------------------------------------------------------
 
@@ -399,6 +401,7 @@ void __fastcall TMain::btReconheceProximaClick(TObject *Sender)
 void TMain::CarregaImagens()
 {
   _Bitmap *Bitmap=new _Bitmap;
+  AnsiString CaminhoImagemOriginal;
   AnsiString NomeArq=flb1->FileName;
   Bitmap->LoadFromFile(NomeArq);
   imgProcessada->Picture->Bitmap->Assign(Bitmap);
@@ -406,6 +409,21 @@ void TMain::CarregaImagens()
   AnsiString caminho_txt=NomeArq.SubString(1, NomeArq.Length()-4)+".txt";
   if (FileExists(caminho_txt))
     mmLog->Lines->LoadFromFile(caminho_txt);
+  //AnsiString diretorio=ExtractFilePath(NomeArq);
+  AnsiString Arquivo=ExtractFileName(NomeArq);
+  int pos=Arquivo.LastDelimiter("_");
+
+  //pega valor da nota
+  AnsiString nota;
+  int pos2=Arquivo.AnsiPos("_");
+  nota=Arquivo.SubString(1, pos2-1);
+
+  Arquivo=Arquivo.SubString(pos+1, Arquivo.Length()-pos);
+  CaminhoImagemOriginal=CaminhoSelecionadas+nota+"\\"+Arquivo;
+  edCaminho->Text=CaminhoImagemOriginal;
+  _Bitmap *BitOriginal=new _Bitmap;
+  BitOriginal->LoadFromFile(CaminhoImagemOriginal);
+  imgTemp->Picture->Bitmap->Assign(BitOriginal);
   delete Bitmap;
 }     
 //---------------------------------------------------------------------------

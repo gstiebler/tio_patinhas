@@ -59,7 +59,7 @@ class CImagensNotaEmMemoria extends CImagensNota {
                 // Get filename of file or directory
                 String sarq = Pasta + "/" + children[i];
                 ImageProcessor imgProc = new ImageProcessor();
-                Image image2 = imgProc.loadbitmap("", sarq);
+                Image image2 = imgProc.loadbitmap(sarq);
                 Image image = ImageProcessor.toBufferedImage(image2);
                 addElement(new CNota(children[i], image));
             }
@@ -93,7 +93,7 @@ class CImagensNotaEmArquivo extends CImagensNota {
         if (children != null) {
             String sarq = pasta + "/" + children[indice];
             ImageProcessor imgProc = new ImageProcessor();
-            Image image2 = imgProc.loadbitmap("", sarq);
+            Image image2 = imgProc.loadbitmap(sarq);
             Image image = ImageProcessor.toBufferedImage(image2);
             return new CNota(children[indice], image);
         }

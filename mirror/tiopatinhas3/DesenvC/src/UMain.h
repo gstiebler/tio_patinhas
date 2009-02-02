@@ -59,6 +59,7 @@ __published:	// IDE-managed Components
   TImage *imgHistCumulativa;
   TButton *btReconheceProxima;
   TButton *Button1;
+  TEdit *edCaminho;
   void __fastcall btAtualizaClick(TObject *Sender);
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall ZoomImagem(TObject *Sender);
@@ -95,6 +96,7 @@ private:
   _Bitmap * CapturaBitmap();
   void ReconheceCedulaForm();
   void CarregaImagens();
+  String CaminhoSelecionadas;
 public:		// User declarations
   bool AbriuCaptura;
   __fastcall TMain(TComponent* Owner);
