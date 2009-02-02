@@ -518,81 +518,7 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
 
-    /**
-     * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
-     * sobre qual identificador foi detectado.
-     */
-    static void Identifica(TParamsAI ParamsAI) {
-        //ifdef DEBUG
-        COutputDebug.WriteOutput("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
-        COutputDebug.WriteOutput("Altura identificador: " + String.valueOf(ParamsAI.Alt));
-        COutputDebug.WriteOutput("Relação larguras identificador: " + String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
-        if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
-            COutputDebug.WriteOutput("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
-        }
-        COutputDebug.WriteOutput("Relação Altura/Largura: " + String.valueOf(ParamsAI.RelacaoLargAlt));
-        COutputDebug.WriteOutput("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
-        //endif
-        if (ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) {
-            //ifdef DEBUG
-            COutputDebug.WriteOutput("Inclinação maior que o limite, pode ser \tR$2\tR$20");
-            ///endif
-            if (ParamsAI.RelacaoLargAlt > ParamsAI.LimiarRelacaoLargAlt) {
-                //ifdef DEBUG
-                COutputDebug.WriteOutput("Relação Altura/Largura maior que o limite, é R$2");
-                //endif
-                ParamsAI.ValorCedula = 2;
-            } else {
-                //ifdef DEBUG
-                COutputDebug.WriteOutput("Relação Altura/Largura menor que o limite, é R$20");
-                //endif
-                ParamsAI.ValorCedula = 20;
-            }
-        } else {
-            //ifdef DEBUG
-            COutputDebug.WriteOutput("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
-            //endif
-            if (ParamsAI.Alt > ParamsAI.LimiarAlturaIdentificador) {
-                //ifdef DEBUG
-                COutputDebug.WriteOutput("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
-                //endif
-                if (ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
-                    //ifdef DEBUG
-                    COutputDebug.WriteOutput("Relação medianas larguras maior que o limite, é R$50");
-                    //endif
-                    ParamsAI.ValorCedula = 50;
-                } else if (1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
-                    //ifdef DEBUG
-                    COutputDebug.WriteOutput("Relação inversa medianas larguras maior que o limite, é R$100");
-                    //endif
-                    ParamsAI.ValorCedula = 100;
-                } else {
-                    //ifdef DEBUG
-                    COutputDebug.WriteOutput("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
-                    //endif
-                    if (ParamsAI.ProfundezaVale < ParamsAI.ProfundezaValeMin) {
-                        //ifdef DEBUG
-                        COutputDebug.WriteOutput("Número médio de colunas menor que o limite, é R$1");
-                        //endif
-                        ParamsAI.ValorCedula = 1;
-                    } else {
-                        //ifdef DEBUG
-                        COutputDebug.WriteOutput("Número médio de colunas maior que o limite, é R$5");
-                        //endif
-                        ParamsAI.ValorCedula = 5;
-                    }
-                }
-            } else {
-                //ifdef DEBUG
-                COutputDebug.WriteOutput("Altura menor que o limite, é R$10");
-                //endif
-                ParamsAI.ValorCedula = 10;
-            }
-        }
-    }
-//---------------------------------------------------------------------------
-
-    /**
+  /**
      * Analiza o identificador para detectar o valor das notas.
      */
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
@@ -668,6 +594,7 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Área do identificador: X: (" + String.valueOf(xIni) + ", " +
                 String.valueOf(xFim) + " Y: (" + String.valueOf(yIni) + ", " + String.valueOf(yFim) + ")");
         //percorre a imagem de baixo até encima
+
         for (y = ARect.Height(); y > 0; y--) {
             XEsq = -1;
             XDir = 0;
@@ -703,49 +630,48 @@ public class UTioPatinhas {
                 }
             }
 
-            int LarguraLinha=XDir-XEsq+1;
-            if (LarguraLinha>1)
-            {
-            yImagemOriginal = y + yIni;
-            MaisEscuroAteAgora = 255;
-            int contador = 0;
-            for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
-                if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
-                    MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
-                }
-                VetorMaisEscuroEsqDir[contador++] = MaisEscuroAteAgora;
-            }
-
-            MaisEscuroAteAgora = 255;
-            contador = XDir - XEsq;
-            for (x = xIni + XDir; x >= (xIni + XEsq); x--) {
-                if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
-                    MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
-                }
-                VetorMaisEscuroDirEsq[contador--] = MaisEscuroAteAgora;
-            }
-
-            int MaisClaro;
-            int ProfundidadeVale;
-            contador = 0;
-            int MaiorProfundidadeVale = 0;
-            for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
-                MaisClaro = VetorMaisEscuroDirEsq[contador];
-                if (MaisClaro < VetorMaisEscuroEsqDir[contador]) {
-                    MaisClaro = VetorMaisEscuroEsqDir[contador];
-                }
-                ProfundidadeVale = ImgSrc[yImagemOriginal][x] - MaisClaro;
-                if (ProfundidadeVale > MaiorProfundidadeVale) {
-                    MaiorProfundidadeVale = ProfundidadeVale;
-                }
-                contador++;
-            }
-            if ((XDir - XEsq) > 1) {
-                PontosMaisFundosVale.addElement(new Integer(MaiorProfundidadeVale));
-            }
-            
-
             LargLinha = XDir - XEsq;
+            if ((LargLinha > 0) && (xIni>0) && (XEsq>0)) {
+                //preenche vetor VetorMaisEscuroEsqDir
+                yImagemOriginal = y + yIni;
+                MaisEscuroAteAgora = 255;
+                int contador = 0;
+                for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
+                    if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
+                        MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
+                    }
+                    VetorMaisEscuroEsqDir[contador++] = MaisEscuroAteAgora;
+                }
+
+                //preenche vetor VetorMaisEscuroDirEsq
+                MaisEscuroAteAgora = 255;
+                contador = XDir - XEsq;
+                for (x = xIni + XDir; x >= (xIni + XEsq); x--) {
+                    if (ImgSrc[yImagemOriginal][x] < MaisEscuroAteAgora) {
+                        MaisEscuroAteAgora = ImgSrc[yImagemOriginal][x];
+                    }
+                    VetorMaisEscuroDirEsq[contador--] = MaisEscuroAteAgora;
+                }
+
+                //calcula PontoMaisFundoVale
+                int MaisClaro;
+                int ProfundidadeVale;
+                contador = 0;
+                int MaiorProfundidadeVale = 0;
+                for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
+                    MaisClaro = VetorMaisEscuroDirEsq[contador];
+                    if (MaisClaro < VetorMaisEscuroEsqDir[contador]) {
+                        MaisClaro = VetorMaisEscuroEsqDir[contador];
+                    }
+                    ProfundidadeVale = ImgSrc[yImagemOriginal][x] - MaisClaro;
+                    if (ProfundidadeVale > MaiorProfundidadeVale) {
+                        MaiorProfundidadeVale = ProfundidadeVale;
+                    }
+                    contador++;
+                }
+                PontosMaisFundosVale.addElement(new Integer(MaiorProfundidadeVale));
+            }//if ((LargLinha > 0) && (xIni>0) && (XEsq>0)) {
+
             VetorLarguras[y] = LargLinha;
             if (LargLinha > MaiorLargLinha) {
                 MaiorLargLinha = LargLinha;
@@ -767,12 +693,11 @@ public class UTioPatinhas {
         }//for (y = ARect.Height(); y > 0; y--) {
         if (PontosMaisFundosVale.size() > 0) {
             Collections.sort(PontosMaisFundosVale, new ComparaInteiro());
-            int IndiceVetor = (int) Math.round(PontosMaisFundosVale.size() * 0.15);
+            int IndiceVetor = 1;//(int) Math.round(PontosMaisFundosVale.size() * 0.15);
             ParamsAI.ProfundezaVale =
                     ((Integer) PontosMaisFundosVale.elementAt(IndiceVetor)).intValue();
-        }
-        else
-            ParamsAI.ProfundezaVale=0;
+        } else {
+            ParamsAI.ProfundezaVale = 0;
         }
         int soma = 0;
         for (int w = 0; w < TAM_HIST; w++) {
@@ -807,6 +732,80 @@ public class UTioPatinhas {
     //delete ARect;
     //delete MatrizGrupos;
     }
-//--------------------------------------------------------------------------- 
+
+    /**
+     * Pega as informacoes estraidas da imagem pelas outras funcoes e faz a decisao
+     * sobre qual identificador foi detectado.
+     */
+    static void Identifica(TParamsAI ParamsAI) {
+        //ifdef DEBUG
+        COutputDebug.WriteOutput("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
+        COutputDebug.WriteOutput("Altura identificador: " + String.valueOf(ParamsAI.Alt));
+        COutputDebug.WriteOutput("Relação larguras identificador: " + String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
+        COutputDebug.WriteOutput("Profundeza vale: "+String.valueOf(ParamsAI.ProfundezaVale));
+        if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
+            COutputDebug.WriteOutput("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
+        }
+        COutputDebug.WriteOutput("Relação Altura/Largura: " + String.valueOf(ParamsAI.RelacaoLargAlt));
+        COutputDebug.WriteOutput("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
+        //endif
+        if (ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) {
+            //ifdef DEBUG
+            COutputDebug.WriteOutput("Inclinação maior que o limite, pode ser \tR$2\tR$20");
+            ///endif
+            if (ParamsAI.RelacaoLargAlt > ParamsAI.LimiarRelacaoLargAlt) {
+                //ifdef DEBUG
+                COutputDebug.WriteOutput("Relação Altura/Largura maior que o limite, é R$2");
+                //endif
+                ParamsAI.ValorCedula = 2;
+            } else {
+                //ifdef DEBUG
+                COutputDebug.WriteOutput("Relação Altura/Largura menor que o limite, é R$20");
+                //endif
+                ParamsAI.ValorCedula = 20;
+            }
+        } else {
+            //ifdef DEBUG
+            COutputDebug.WriteOutput("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
+            //endif
+            if (ParamsAI.Alt > ParamsAI.LimiarAlturaIdentificador) {
+                //ifdef DEBUG
+                COutputDebug.WriteOutput("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
+                //endif
+                if (ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
+                    //ifdef DEBUG
+                    COutputDebug.WriteOutput("Relação medianas larguras maior que o limite, é R$50");
+                    //endif
+                    ParamsAI.ValorCedula = 50;
+                } else if (1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
+                    //ifdef DEBUG
+                    COutputDebug.WriteOutput("Relação inversa medianas larguras maior que o limite, é R$100");
+                    //endif
+                    ParamsAI.ValorCedula = 100;
+                } else {
+                    //ifdef DEBUG
+                    COutputDebug.WriteOutput("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
+                    //endif
+                    if (ParamsAI.ProfundezaVale < ParamsAI.ProfundezaValeMin) {
+                        //ifdef DEBUG
+                        COutputDebug.WriteOutput("Número médio de colunas menor que o limite, é R$1");
+                        //endif
+                        ParamsAI.ValorCedula = 1;
+                    } else {
+                        //ifdef DEBUG
+                        COutputDebug.WriteOutput("Número médio de colunas maior que o limite, é R$5");
+                        //endif
+                        ParamsAI.ValorCedula = 5;
+                    }
+                }
+            } else {
+                //ifdef DEBUG
+                COutputDebug.WriteOutput("Altura menor que o limite, é R$10");
+                //endif
+                ParamsAI.ValorCedula = 10;
+            }
+        }
+    }
+//---------------------------------------------------------------------------
 }
     
