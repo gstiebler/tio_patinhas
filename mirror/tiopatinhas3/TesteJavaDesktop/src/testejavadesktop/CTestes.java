@@ -4,39 +4,67 @@
  */
 package testejavadesktop;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+
 /**
  *
  * @author Administrator
  */
 public class CTestes {
 
-    public static String ExecutaTestes(boolean CarregaArquivos, boolean SalvaErradas) {
-        long tempo1 = System.currentTimeMillis();
+    public static String ExecutaTestes(boolean CarregaArquivos, boolean SalvaErradas,
+            boolean UsaServidorImagens) throws IOException {
         String retorno = "";
-        long tempo2 = System.currentTimeMillis();
         TParamsDir ParamsDir = new TParamsDir();
         TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini");
         double[] Acertos = new double[7];
         String PastaBase = ParamsDir.getDir("DiretorioSelecionadas");
-        CArquivosTeste ArquivosTeste = new CArquivosTeste(PastaBase, CarregaArquivos);
+        long tempo1 = System.currentTimeMillis();
+        CArquivosTeste ArquivosTeste;
+        if (UsaServidorImagens) {
+            ArquivosTeste = new CClienteSocket().RecebeArquivosTeste();
+        } else {
+            ArquivosTeste = new CArquivosTeste(PastaBase, CarregaArquivos);
+        }
+        long tempo2 = System.currentTimeMillis();
         StringMatrizConfusao MatrizConfusao = new StringMatrizConfusao();
         CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, SalvaErradas);
-        for (int n = 0; n < 7; n++) 
-            retorno += CNota.NotaPorIndice(n) + ": " + Acertos[n] * 100.0 + "\n";
-        retorno+="\n";
         for (int n = 0; n < 7; n++) {
-            retorno+=CNota.NotaPorIndice(n)+"\t";
+            retorno += CNota.NotaPorIndice(n) + ": " + Acertos[n] * 100.0 + "\n";
         }
-        retorno+="\n";
+        retorno += "\n";
+        for (int n = 0; n < 7; n++) {
+            retorno += CNota.NotaPorIndice(n) + "\t";
+        }
+        retorno += "\n";
         for (int n = 0; n < 7; n++) {
             retorno += MatrizConfusao.RetornaString(n) + "\n";
         }
-        retorno+="\n";
+        retorno += "\n";
         for (int n = 0; n < 7; n++) {
             retorno += MatrizConfusao.RetornaStringPorcentagem(n) + "\n";
         }
         retorno += "Carga arquivos: " + new Double((tempo2 - tempo1) / 1000.0).toString() + "\n";
         retorno += "Reconhecimentos: " + new Double((System.currentTimeMillis() - tempo2) / 1000.0).toString() + "\n";
+
+        FileWriter outFile;
+        PrintWriter out;
+        int ano=Calendar.getInstance().get(Calendar.YEAR);
+        int mes=Calendar.getInstance().get(Calendar.MONTH);
+        int dia=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        String caminho_arq=ParamsDir.getDir("DiretorioLogs")+ano+"-"+mes+"-"+dia+".txt";
+        try {
+            outFile = new FileWriter(caminho_arq);
+            out = new PrintWriter(outFile);
+            out.println(retorno);
+            out.close();
+        } catch (IOException ex) {
+            COutputDebug.WriteOutput("Erro ao abrir o arquivo " + caminho_arq);
+        }
+
         return retorno;
     }
 
@@ -73,16 +101,16 @@ public class CTestes {
                 } else {
                     if (SalvaErradas) {
                         BMPFile bmpFile = new BMPFile();
-                        String nome_arq_destino=
-                                ParamsDir.getDir("DiretorioErradas")+
+                        String nome_arq_destino =
+                                ParamsDir.getDir("DiretorioErradas") +
                                 ImagensNota.nota + "_" +
                                 ParamsRC.ParamsAI.ValorCedula + "_" + System.currentTimeMillis() +
                                 "_" + NotaTemp.arquivo;
                         bmpFile.saveBitmap(nome_arq_destino,
                                 ParamsRC.ParamsMLT.BImgDest.SaveImage(), 320, 240);
-                        nome_arq_destino=nome_arq_destino.substring(0, nome_arq_destino.length()-4);
-                        COutputDebug.WriteOutput("\n"+ParamsRC.dump());
-                        COutputDebug.FechaArquivo(nome_arq_destino+".txt");
+                        nome_arq_destino = nome_arq_destino.substring(0, nome_arq_destino.length() - 4);
+                        COutputDebug.WriteOutput("\n" + ParamsRC.dump());
+                        COutputDebug.FechaArquivo(nome_arq_destino + ".txt");
                     }
                 }
 

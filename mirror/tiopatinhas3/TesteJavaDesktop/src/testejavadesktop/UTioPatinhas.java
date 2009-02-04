@@ -493,7 +493,7 @@ public class UTioPatinhas {
 //---------------------------------------------------------------------------
 
     static float RetornaRelacaoMedianasLargurasEncEmb(int[] VetorLarguras, int comeco, int fim,
-            int[] MediaLarguras) {
+            int[] MediaLarguras, int[] MenorLargura) {
         if (fim == -1) {
             return 0;
         }
@@ -510,6 +510,10 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Largura encima: " + String.valueOf(Larguras[0]));
         COutputDebug.WriteOutput("Largura embaixo: " + String.valueOf(Larguras[1]));
         MediaLarguras[0] = (Larguras[0] + Larguras[1]) / 2;
+        MenorLargura[0]=Larguras[0];
+        if (Larguras[1]<MenorLargura[0])
+            MenorLargura[0]=Larguras[1];
+
         if (Larguras[1] > 0) {
             return (float) (Larguras[0] * 1.0 / Larguras[1]);
         } else {
@@ -709,18 +713,23 @@ public class UTioPatinhas {
             ParamsAI.NumMedColunas = -100;
         }
         int[] MediaLarguras = new int[1];
+        int[] MenorLargura = new int[1];
         ParamsAI.RelacaoMedianasLargurasEncEmb =
-                RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, MediaLarguras);
+                RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, 
+                            MediaLarguras, MenorLargura);
         ParamsAI.Alt = YEmb - YEnc;
         if (MediaLarguras[0] > 0) {
             ParamsAI.RelacaoLargAlt = (float) (ParamsAI.Alt * 1.0 / MediaLarguras[0]);
         } else {
             ParamsAI.RelacaoLargAlt = 0;
-            //ifdef DEBUG
-            COutputDebug.WriteOutput("UltXEnc: " + String.valueOf(MaiorUltXEnc) + "\tUltXEmb: " + String.valueOf(UltXEmb));
-            COutputDebug.WriteOutput("YEmb: " + String.valueOf(YEmb) + "\t\tYEnc: " + String.valueOf(YEnc));
-        //endif
         }
+        if (MenorLargura[0] > 0) {
+            ParamsAI.RelacaoMenorLargAlt = (float) (ParamsAI.Alt * 1.0 / MenorLargura[0]);
+        } else {
+            ParamsAI.RelacaoMenorLargAlt = 0;
+        }
+        COutputDebug.WriteOutput("UltXEnc: " + String.valueOf(MaiorUltXEnc) + "\tUltXEmb: " + String.valueOf(UltXEmb));
+        COutputDebug.WriteOutput("YEmb: " + String.valueOf(YEmb) + "\t\tYEnc: " + String.valueOf(YEnc));
         if (ParamsAI.Alt > 0) {
             ParamsAI.Inclinacao = (float) ((MaiorUltXEnc - UltXEmb) * 1.0 / ParamsAI.Alt);
         } else {
@@ -747,6 +756,7 @@ public class UTioPatinhas {
             COutputDebug.WriteOutput("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
         }
         COutputDebug.WriteOutput("Relação Altura/Largura: " + String.valueOf(ParamsAI.RelacaoLargAlt));
+        COutputDebug.WriteOutput("Relação Altura/Menor Largura: " + String.valueOf(ParamsAI.RelacaoMenorLargAlt));
         COutputDebug.WriteOutput("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
         //endif
         if (ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) {

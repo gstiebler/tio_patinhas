@@ -100,8 +100,8 @@ class COutputDebug
     public static void WriteOutput(String str) {
         if (GravaEmArquivo)
             StrLog+=str+"\n";
-        else
-            System.out.println(str);
+        //else
+        //    System.out.println(str);
     }
 }
 
