@@ -78,30 +78,30 @@ class CImagensNotaEmMemoria extends CImagensNota {
 
 class CImagensNotaEmArquivo extends CImagensNota {
 
-    String[] children;
+    String[] ListaArquivos;
     String pasta;
 
     public CImagensNotaEmArquivo(int Nota, String Pasta) {
         nota = Nota;
         pasta = Pasta;
         File dir = new File(Pasta);
-        children = dir.list();
+        ListaArquivos = dir.list();
     }
 
     @Override
     public CNota Imagens(int indice) {
-        if (children != null) {
-            String sarq = pasta + "/" + children[indice];
+        if (ListaArquivos != null) {
+            String sarq = pasta + "/" + ListaArquivos[indice];
             ImageProcessor imgProc = new ImageProcessor();
             Image image2 = imgProc.loadbitmap(sarq);
             Image image = ImageProcessor.toBufferedImage(image2);
-            return new CNota(children[indice], image);
+            return new CNota(ListaArquivos[indice], image);
         }
         return null;
     }
 
     public int NumElementos() {
-        return children.length;
+        return ListaArquivos.length;
     }
 }
 class CArquivosTeste {

@@ -5,6 +5,8 @@ package testejavadesktop;
 
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -100,8 +102,7 @@ public class TesteJavaDesktopView extends FrameView {
             JPanel cp = new JPanel(new GridLayout(0, 1));
             ImageProcessor imgProc = new ImageProcessor();
             TParamsDir ParamsDir = new TParamsDir();
-            //Image image2 = imgProc.loadbitmap(ParamsDir.getDir("DiretorioSelecionadas")+"\\1\\img839.bmp");
-            Image image2 = imgProc.loadbitmap(jTextField1.getText());
+            Image image2 = imgProc.loadbitmap(txCaminhoArquivo.getText());
             Image image = ImageProcessor.toBufferedImage(image2);
 
             TParamsRC ParamsRC = new TParamsRC(new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini"),
@@ -133,7 +134,11 @@ public class TesteJavaDesktopView extends FrameView {
 
     @Action
     public void ExecutaTestes() {
-        jTextArea1.append(CTestes.ExecutaTestes(jCheckBox1.isSelected(), jCheckBox2.isSelected()));
+        try {
+            jTextArea1.append(CTestes.ExecutaTestes(cbCarregaImagens.isSelected(), cbSalvaErradas.isSelected(), cbServidorImagens.isSelected()));
+        } catch (IOException ex) {
+            Logger.getLogger(TesteJavaDesktopView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Action
@@ -162,10 +167,11 @@ public class TesteJavaDesktopView extends FrameView {
         jPanel1 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
+        txCaminhoArquivo = new javax.swing.JTextField();
+        cbCarregaImagens = new javax.swing.JCheckBox();
+        cbSalvaErradas = new javax.swing.JCheckBox();
         jButton4 = new javax.swing.JButton();
+        cbServidorImagens = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -197,7 +203,7 @@ public class TesteJavaDesktopView extends FrameView {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 161, Short.MAX_VALUE)
+            .addGap(0, 214, Short.MAX_VALUE)
         );
 
         jButton2.setAction(actionMap.get("ExecutaTestes")); // NOI18N
@@ -208,17 +214,26 @@ public class TesteJavaDesktopView extends FrameView {
         jButton3.setText(resourceMap.getString("jButton3.text")); // NOI18N
         jButton3.setName("jButton3"); // NOI18N
 
-        jTextField1.setText(resourceMap.getString("jTextField1.text")); // NOI18N
-        jTextField1.setName("jTextField1"); // NOI18N
+        txCaminhoArquivo.setText(resourceMap.getString("txCaminhoArquivo.text")); // NOI18N
+        txCaminhoArquivo.setName("txCaminhoArquivo"); // NOI18N
 
-        jCheckBox1.setText(resourceMap.getString("cbCarregaImagens.text")); // NOI18N
-        jCheckBox1.setName("cbCarregaImagens"); // NOI18N
+        cbCarregaImagens.setText(resourceMap.getString("cbCarregaImagens.text")); // NOI18N
+        cbCarregaImagens.setName("cbCarregaImagens"); // NOI18N
 
-        jCheckBox2.setText(resourceMap.getString("cbSalvaErradas.text")); // NOI18N
-        jCheckBox2.setName("cbSalvaErradas"); // NOI18N
+        cbSalvaErradas.setText(resourceMap.getString("cbSalvaErradas.text")); // NOI18N
+        cbSalvaErradas.setName("cbSalvaErradas"); // NOI18N
 
-        jButton4.setText(resourceMap.getString("jButton4.text")); // NOI18N
+        jButton4.setAction(actionMap.get("ConectaSocket")); // NOI18N
+        jButton4.setLabel(resourceMap.getString("jButton4.label")); // NOI18N
         jButton4.setName("jButton4"); // NOI18N
+
+        cbServidorImagens.setLabel(resourceMap.getString("cbServidorImagens.label")); // NOI18N
+        cbServidorImagens.setName("cbServidorImagens"); // NOI18N
+        cbServidorImagens.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                MudouServidorImagens(evt);
+            }
+        });
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -228,20 +243,23 @@ public class TesteJavaDesktopView extends FrameView {
                 .addGap(30, 30, 30)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txCaminhoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(55, 55, 55)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(45, 45, 45)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jCheckBox2)
-                            .addComponent(jCheckBox1))
-                        .addGap(39, 39, 39)
-                        .addComponent(jButton4)
-                        .addGap(60, 60, 60)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(45, 45, 45)
+                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(cbSalvaErradas)
+                                    .addComponent(cbCarregaImagens))
+                                .addGap(39, 39, 39)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbServidorImagens))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -249,22 +267,22 @@ public class TesteJavaDesktopView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox2))
-                    .addComponent(jButton4))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbCarregaImagens)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbSalvaErradas)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbServidorImagens)
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txCaminhoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
@@ -298,19 +316,24 @@ public class TesteJavaDesktopView extends FrameView {
         setMenuBar(menuBar);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void MudouServidorImagens(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_MudouServidorImagens
+        cbCarregaImagens.setEnabled(!cbServidorImagens.isSelected());
+    }//GEN-LAST:event_MudouServidorImagens
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox cbCarregaImagens;
+    private javax.swing.JCheckBox cbSalvaErradas;
+    private javax.swing.JCheckBox cbServidorImagens;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JTextField txCaminhoArquivo;
     // End of variables declaration//GEN-END:variables
     private final Timer messageTimer;
     private final Timer busyIconTimer;
