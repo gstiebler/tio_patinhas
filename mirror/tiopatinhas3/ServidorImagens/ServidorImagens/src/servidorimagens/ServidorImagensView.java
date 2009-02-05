@@ -95,7 +95,15 @@ public class ServidorImagensView extends FrameView {
     @Action
     public void IniciaSocket() throws IOException
     {
-        CServidorImagens servidor=new CServidorImagens();
+        long tempo1 = System.currentTimeMillis();
+        String Pasta="D:\\Projetos\\TioPatinhas\\Imagens\\Selecionadas\\";
+        CArquivosTeste ArquivosTeste = new CArquivosTeste(Pasta, true);
+        long tempo2 = System.currentTimeMillis();
+        String texto = "Imagens carregadas em ";
+        texto+= new Double((tempo2 - tempo1) / 1000.0).toString() + " segundos.";
+        jLabel1.setText(texto);
+        CServidorImagens servidor=new CServidorImagens(ArquivosTeste);
+        servidor.start();
     }
 
     /** This method is called from within the constructor to
@@ -109,6 +117,7 @@ public class ServidorImagensView extends FrameView {
 
         mainPanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -128,13 +137,18 @@ public class ServidorImagensView extends FrameView {
         jButton1.setLabel(resourceMap.getString("jButton1.label")); // NOI18N
         jButton1.setName("jButton1"); // NOI18N
 
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(389, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
@@ -142,7 +156,9 @@ public class ServidorImagensView extends FrameView {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -209,6 +225,7 @@ public class ServidorImagensView extends FrameView {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;
