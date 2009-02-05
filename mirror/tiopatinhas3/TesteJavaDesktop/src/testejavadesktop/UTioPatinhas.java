@@ -25,8 +25,10 @@ public class UTioPatinhas {
     static void ReconheceCedula(TParamsRC ParamsRC) {
         ParamsRC.LumMedianaImagem = Histograma(ParamsRC.ParamsMLT.TCImgSrc);
         ParamsRC.ConverteParametrosDependentesLumMediana();
+        ParamsRC.ParamsMLT.DifMinLum=ParamsRC.ParamsABT.DifMinLum;
         MostraLimiteTarja(ParamsRC.ParamsMLT);
         ParamsRC.ParamsABT.BImgDest = ParamsRC.ParamsMLT.BImgDest;
+        ParamsRC.ParamsABT.TCImgSrc=ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
@@ -36,7 +38,7 @@ public class UTioPatinhas {
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
             AnalizaIdentificador(ParamsRC.ParamsAI);
         }
-    //EscreveParametros(ParamsRC);
+        //EscreveParametros(ParamsRC);
     }
 
     static int Histograma(CTonsCinza TCImgSrc) {
@@ -73,7 +75,7 @@ public class UTioPatinhas {
      */
     static void MostraLimiteTarja(TParamsMLT ParamsMLT) {
 
-        int ALT_COLUNA = 3, DY = 2, DIF_MIN_LUM = 15;
+        int ALT_COLUNA = 3, DY = 2;
 
         int x, y, j;
         int yBorda;
@@ -128,7 +130,7 @@ public class UTioPatinhas {
 
                 //borda claro encima, escuro embaixo
                 DifLum = MaisEscuroAnterior - MaisClaroAtual;
-                if (DifLum > DIF_MIN_LUM) {
+                if (DifLum > ParamsMLT.DifMinLum) {
                     if (DifLum > MaiorBorda.DifLum) {
                         MaiorBorda.DifLum = DifLum;
                         MaiorBorda.y = y;
@@ -151,7 +153,7 @@ public class UTioPatinhas {
 
                 //borda escuro encima, claro embaixo
                 DifLum = MaisEscuroAtual - MaisClaroAnterior;
-                if (DifLum > DIF_MIN_LUM) {
+                if (DifLum > ParamsMLT.DifMinLum) {
                     if (DifLum > MaiorBorda.DifLum) {
                         MaiorBorda.DifLum = DifLum;
                         MaiorBorda.y = y;
@@ -256,20 +258,22 @@ public class UTioPatinhas {
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    AlturaTarjaMColunaN = ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
+                    AlturaTarjaMColunaN = 
+                            ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                     soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
-                // ifdef DEBUG
                 COutputDebug.WriteOutput("desvio padrão alturas: " + String.valueOf(desvio));
-                //endif
 
                 if (desvio < ParamsABT.DesvioMax) {
-                    //ifdef DEBUG
+                    boolean TemContrasteSuficienteNoLadoEsquerdo;
                     COutputDebug.WriteOutput("menor do que o limite de : " + String.valueOf(ParamsABT.DesvioMax));
-                    //endif
-                    //pode ser substituído por um código que pega o primeiro. mantido para debug
-                    if (ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
+                    TemContrasteSuficienteNoLadoEsquerdo=
+                               GeraContrasteLadoEsquerdoTarja(ParamsABT, (int) media,
+                                        new TPonto(TarjaCandidata.X, TarjaCandidata.PriYEnc),
+                                        ParamsABT.DifMinLum);
+                    if (TemContrasteSuficienteNoLadoEsquerdo
+                                && ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
                         nMenorX = n;
                         MediaTarjaSelecionada = media;
@@ -294,6 +298,7 @@ public class UTioPatinhas {
         int n, m;
         boolean Adicionou;
         TMeioBordas MeioBordasTemp;
+        //percorre todas as colunas
         for (x = 0; x < ParamsABT.ConjuntoMeioBordas.NumColunas; x++) {
             //percorre todos os meio de bordas da coluna (pixels amarelos)
             for (m = 0; m < ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].size(); m++) {
@@ -320,9 +325,42 @@ public class UTioPatinhas {
             }
         }
     }
+
+    static boolean GeraContrasteLadoEsquerdoTarja(TParamsABT ParamsABT,
+            int AltTarja, TPonto OrigemTarja, int LimiarDifLum) {
+        int DX = 2;
+        int LargRegiaoContrasteD2=
+                (int) (ParamsABT.LargRegiaoContrasteLadoEsqTarja * AltTarja);
+        short[][] ImgSrc = ParamsABT.TCImgSrc.TonsCinza;
+        Cor[][] ImgDest = null;
+        if (ParamsABT.BImgDest != null) {
+            ImgDest = ParamsABT.BImgDest.PMCor;
+        }
+        short dif;
+        int XIni, XFim, YIni, YFim;
+        int NumPontosContraste=0;
+        YIni = OrigemTarja.y;
+        YFim = OrigemTarja.y + AltTarja;
+        XIni = OrigemTarja.x - LargRegiaoContrasteD2;
+        XFim = OrigemTarja.x + LargRegiaoContrasteD2;
+        if (XIni < 0) {
+            XIni = 0;
+        }
+        for (int y = YIni; y < YFim; y++) {
+            for (int x = XIni; x <= XFim; x++) {
+                dif = (short) (ImgSrc[y][x] - ImgSrc[y][x + DX]);
+                if (dif > LimiarDifLum) {
+                    NumPontosContraste++;
+                    if (ImgDest!=null)
+                        ImgDest[y][x+1].SetCyan();
+                }
+            }
+        }
+        return NumPontosContraste>(ParamsABT.NumMinLinhasComContraste*AltTarja);
+    }
+
 //Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
 //do identificador, e retorna a luminosidade média dos pixels da faixa
-
     static int MediaFaixa(TParamsAI ParamsAI) {
         int x, y, xIni, xFim, soma;
         short[][] ImgSrc = ParamsAI.TCImgSrc.TonsCinza;
@@ -448,7 +486,8 @@ public class UTioPatinhas {
             //ifdef DEBUG
             //  if (altura)
             if (altura > 0) {
-                COutputDebug.WriteOutput("Região candidata altura: " + String.valueOf(altura) + " DifEmb: " + String.valueOf(DifEmb));
+                COutputDebug.WriteOutput("Região candidata altura: " + String.valueOf(altura) +
+                        " DifEmb: " + String.valueOf(DifEmb));
             //endif
             }
             if (altura >= AltMin && DifEmb < DifMinEmb) {
@@ -510,9 +549,10 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Largura encima: " + String.valueOf(Larguras[0]));
         COutputDebug.WriteOutput("Largura embaixo: " + String.valueOf(Larguras[1]));
         MediaLarguras[0] = (Larguras[0] + Larguras[1]) / 2;
-        MenorLargura[0]=Larguras[0];
-        if (Larguras[1]<MenorLargura[0])
-            MenorLargura[0]=Larguras[1];
+        MenorLargura[0] = Larguras[0];
+        if (Larguras[1] < MenorLargura[0]) {
+            MenorLargura[0] = Larguras[1];
+        }
 
         if (Larguras[1] > 0) {
             return (float) (Larguras[0] * 1.0 / Larguras[1]);
@@ -522,7 +562,7 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
 
-  /**
+    /**
      * Analiza o identificador para detectar o valor das notas.
      */
     static void AnalizaIdentificador(TParamsAI ParamsAI) {
@@ -635,7 +675,7 @@ public class UTioPatinhas {
             }
 
             LargLinha = XDir - XEsq;
-            if ((LargLinha > 0) && (xIni>0) && (XEsq>0)) {
+            if ((LargLinha > 0) && (xIni > 0) && (XEsq > 0)) {
                 //preenche vetor VetorMaisEscuroEsqDir
                 yImagemOriginal = y + yIni;
                 MaisEscuroAteAgora = 255;
@@ -697,6 +737,10 @@ public class UTioPatinhas {
         }//for (y = ARect.Height(); y > 0; y--) {
         if (PontosMaisFundosVale.size() > 0) {
             Collections.sort(PontosMaisFundosVale, new ComparaInteiro());
+            for (int k = 0; k < PontosMaisFundosVale.size(); k++) {
+                COutputDebug.WriteOutput("Profundeza vale " + k + ": " +
+                        ((Integer) PontosMaisFundosVale.elementAt(k)).intValue());
+            }
             int IndiceVetor = 1;//(int) Math.round(PontosMaisFundosVale.size() * 0.15);
             ParamsAI.ProfundezaVale =
                     ((Integer) PontosMaisFundosVale.elementAt(IndiceVetor)).intValue();
@@ -715,8 +759,8 @@ public class UTioPatinhas {
         int[] MediaLarguras = new int[1];
         int[] MenorLargura = new int[1];
         ParamsAI.RelacaoMedianasLargurasEncEmb =
-                RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb, 
-                            MediaLarguras, MenorLargura);
+                RetornaRelacaoMedianasLargurasEncEmb(VetorLarguras, YEnc, YEmb,
+                MediaLarguras, MenorLargura);
         ParamsAI.Alt = YEmb - YEnc;
         if (MediaLarguras[0] > 0) {
             ParamsAI.RelacaoLargAlt = (float) (ParamsAI.Alt * 1.0 / MediaLarguras[0]);
@@ -728,7 +772,8 @@ public class UTioPatinhas {
         } else {
             ParamsAI.RelacaoMenorLargAlt = 0;
         }
-        COutputDebug.WriteOutput("UltXEnc: " + String.valueOf(MaiorUltXEnc) + "\tUltXEmb: " + String.valueOf(UltXEmb));
+        COutputDebug.WriteOutput("UltXEnc: " + String.valueOf(MaiorUltXEnc) +
+                "\tUltXEmb: " + String.valueOf(UltXEmb));
         COutputDebug.WriteOutput("YEmb: " + String.valueOf(YEmb) + "\t\tYEnc: " + String.valueOf(YEnc));
         if (ParamsAI.Alt > 0) {
             ParamsAI.Inclinacao = (float) ((MaiorUltXEnc - UltXEmb) * 1.0 / ParamsAI.Alt);
@@ -751,7 +796,7 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
         COutputDebug.WriteOutput("Altura identificador: " + String.valueOf(ParamsAI.Alt));
         COutputDebug.WriteOutput("Relação larguras identificador: " + String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
-        COutputDebug.WriteOutput("Profundeza vale: "+String.valueOf(ParamsAI.ProfundezaVale));
+        COutputDebug.WriteOutput("Profundeza vale: " + String.valueOf(ParamsAI.ProfundezaVale));
         if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
             COutputDebug.WriteOutput("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
         }
@@ -778,7 +823,7 @@ public class UTioPatinhas {
             //ifdef DEBUG
             COutputDebug.WriteOutput("Inclinação menor que o limite, pode ser \tR$1\tR$5\tR$10\tR$50\tR$100");
             //endif
-            if (ParamsAI.Alt > ParamsAI.LimiarAlturaIdentificador) {
+            if (ParamsAI.RelacaoMenorLargAlt > ParamsAI.LimiarRelacaoMenorLargAlt) {
                 //ifdef DEBUG
                 COutputDebug.WriteOutput("Altura maior que o limite, pode ser \tR$1\tR$5\tR$50\tR$100");
                 //endif

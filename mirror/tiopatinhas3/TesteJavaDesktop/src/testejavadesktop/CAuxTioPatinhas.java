@@ -43,6 +43,17 @@ class TPonto {
 
     int x;
     int y;
+
+    public TPonto()
+    {
+        
+    }
+
+    public TPonto(int X, int Y)
+    {
+        x=X;
+        y=Y;
+    }
 };
 
 class CMatrizInteiro {
@@ -234,6 +245,8 @@ class TParamsMLT {
 
     CTonsCinza TCImgSrc;
     CBitmap BImgDest;
+    //diferença mínima de luminosidade
+    int DifMinLum;
     //Fator que define a região de busca da tarja. Multiplica-se a largura da imagem por este fator
     float PropYIni;
     float PropXFim;
@@ -244,6 +257,14 @@ class TParamsMLT {
 class TParamsABT {
 
     CBitmap BImgDest;
+    CTonsCinza TCImgSrc;
+    //diferença mínima de luminosidade
+    int DifMinLum;
+    //largura da região do contraste do lado esquerdo da tarja
+    double LargRegiaoContrasteLadoEsqTarja;
+    //limiar para o número mínimo de linhas que possuem contraste em relação ao total
+    //de linhas analizadas
+    double NumMinLinhasComContraste;
     //Altura mínima que uma faixa escura pode ter para ser considerada tarja
     int AltMinTarja;
     //Altura máxima que uma faixa escura pode ter para ser considerada tarja
@@ -354,6 +375,9 @@ class TParamsIni {
 
     int PropYIni;
     int PropXFim;
+    int DifMinLum;
+    int LargRegiaoContrasteLadoEsqTarja;
+    int NumMinLinhasComContraste;
     int AltMinTarja;
     int AltMaxTarja;
     int DistMaxTarjas;
@@ -380,6 +404,9 @@ class TParamsIni {
     int DifMinEmbGrupoEmbRegiaoIdentificador;
     public String[] ListaParametros = {//"PropYIni",
         //"PropXFim",
+        "DifMinLum",
+        "LargRegiaoContrasteLadoEsqTarja",
+        "NumMinLinhasComContraste",
         "AltMinTarja",
         "AltMaxTarja",
         "DistMaxTarjas",
@@ -412,6 +439,15 @@ class TParamsIni {
         }
         if (nome.equals("PropXFim")) {
             PropXFim = valor;
+        }
+        if (nome.equals("DifMinLum")) {
+            DifMinLum = valor;
+        }
+        if (nome.equals("LargRegiaoContrasteLadoEsqTarja")) {
+            LargRegiaoContrasteLadoEsqTarja = valor;
+        }
+        if (nome.equals("NumMinLinhasComContraste")) {
+            NumMinLinhasComContraste = valor;
         }
         if (nome.equals("AltMinTarja")) {
             AltMinTarja = valor;
@@ -496,6 +532,15 @@ class TParamsIni {
         }
         if (nome.equals("PropXFim")) {
             return PropXFim;
+        }
+        if (nome.equals("DifMinLum")) {
+            return DifMinLum;
+        }
+        if (nome.equals("LargRegiaoContrasteLadoEsqTarja")) {
+            return LargRegiaoContrasteLadoEsqTarja;
+        }
+        if (nome.equals("NumMinLinhasComContraste")) {
+            return NumMinLinhasComContraste;
         }
         if (nome.equals("AltMinTarja")) {
             return AltMinTarja;
@@ -586,7 +631,9 @@ class TParamsIni {
     public void copia(TParamsIni outro) {
         PropYIni = outro.PropYIni;
         PropXFim = outro.PropXFim;
-
+        DifMinLum = outro.DifMinLum;
+        LargRegiaoContrasteLadoEsqTarja = outro.LargRegiaoContrasteLadoEsqTarja;
+        NumMinLinhasComContraste = outro.NumMinLinhasComContraste;
         AltMinTarja = outro.AltMinTarja;
         AltMaxTarja = outro.AltMaxTarja;
         DistMaxTarjas = outro.DistMaxTarjas;
@@ -619,6 +666,9 @@ class TParamsIni {
         PropYIni = objINI.getIntegerProperty("Geral", "PropYIni");
         PropXFim = objINI.getIntegerProperty("Geral", "PropXFim");
 
+        DifMinLum = objINI.getIntegerProperty("Geral", "DifMinLum");
+        LargRegiaoContrasteLadoEsqTarja = objINI.getIntegerProperty("Geral", "LargRegiaoContrasteLadoEsqTarja");
+        NumMinLinhasComContraste = objINI.getIntegerProperty("Geral", "NumMinLinhasComContraste");
         AltMinTarja = objINI.getIntegerProperty("Geral", "AltMinTarja");
         AltMaxTarja = objINI.getIntegerProperty("Geral", "AltMaxTarja");
         DistMaxTarjas = objINI.getIntegerProperty("Geral", "DistMaxTarjas");
@@ -678,6 +728,9 @@ class TParamsRC {
         ParamsMLT.PropYIni = (float) (ParamsIni.PropYIni / 1000.0);
         ParamsMLT.PropXFim = (float) (ParamsIni.PropXFim / 1000.0);
 
+        ParamsABT.DifMinLum = ParamsIni.DifMinLum;
+        ParamsABT.LargRegiaoContrasteLadoEsqTarja = (float) (ParamsIni.LargRegiaoContrasteLadoEsqTarja / 1000.0);
+        ParamsABT.NumMinLinhasComContraste = (float) (ParamsIni.NumMinLinhasComContraste / 1000.0);
         ParamsABT.AltMinTarja = ParamsIni.AltMinTarja;
         ParamsABT.AltMaxTarja = ParamsIni.AltMaxTarja;
         ParamsABT.DistMaxTarjas = ParamsIni.DistMaxTarjas;
@@ -712,7 +765,9 @@ class TParamsRC {
         retorno += "PropYIni = " + ParamsMLT.PropYIni + "\n";
         retorno += "PropXFim = " + ParamsMLT.PropXFim + "\n";
 
-        retorno += "AltMinTarja = " + ParamsABT.AltMinTarja + "\n";
+        retorno += "DifMinLum = " + ParamsABT.DifMinLum + "\n";
+        retorno += "LargRegiaoContrasteLadoEsqTarja = " + ParamsABT.LargRegiaoContrasteLadoEsqTarja + "\n";
+        retorno += "NumMinLinhasComContraste = " + ParamsABT.NumMinLinhasComContraste + "\n";
         retorno += "AltMaxTarja = " + ParamsABT.AltMaxTarja + "\n";
         retorno += "DistMaxTarjas = " + ParamsABT.DistMaxTarjas + "\n";
         retorno += "LargMinTarja = " + ParamsABT.LargMinTarja + "\n";

@@ -55,7 +55,11 @@ public class CTestes {
         int ano=Calendar.getInstance().get(Calendar.YEAR);
         int mes=Calendar.getInstance().get(Calendar.MONTH);
         int dia=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        String caminho_arq=ParamsDir.getDir("DiretorioLogs")+ano+"-"+mes+"-"+dia+".txt";
+        int hora=Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minuto=Calendar.getInstance().get(Calendar.MINUTE);
+        int segundo=Calendar.getInstance().get(Calendar.SECOND);
+        String caminho_arq=ParamsDir.getDir("DiretorioLogs")+
+                    ano+"-"+mes+"-"+dia+"_"+hora+"-"+minuto+"-"+segundo+".txt";
         try {
             outFile = new FileWriter(caminho_arq);
             out = new PrintWriter(outFile);
