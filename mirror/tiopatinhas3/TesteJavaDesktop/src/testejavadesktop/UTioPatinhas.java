@@ -346,6 +346,9 @@ public class UTioPatinhas {
         if (XIni < 0) {
             XIni = 0;
         }
+        COutputDebug.WriteOutput("XIni busca contraste: "+XIni);
+        COutputDebug.WriteOutput("XFim busca contraste: "+XFim);
+
         for (int y = YIni; y < YFim; y++) {
             for (int x = XIni; x <= XFim; x++) {
                 dif = (short) (ImgSrc[y][x] - ImgSrc[y][x + DX]);
@@ -353,9 +356,12 @@ public class UTioPatinhas {
                     NumPontosContraste++;
                     if (ImgDest!=null)
                         ImgDest[y][x+1].SetCyan();
+                    break;
                 }
             }
         }
+        COutputDebug.WriteOutput("Num pontos contraste: "
+                        +NumPontosContraste*100.0/AltTarja+"%");
         return NumPontosContraste>(ParamsABT.NumMinLinhasComContraste*AltTarja);
     }
 
