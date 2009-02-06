@@ -314,7 +314,11 @@ class TParamsAI {
 
     CTonsCinza TCImgSrc;
     CBitmap BImgDest;
+    CBitmap ImagemCores;
     TPonto RefTarja;
+    //Diferença mínima de cor entre vermelho e verde, usado para diferenciar 5 de 1
+    int DifVermelhoVerdeMin;
+    int AltTarja;
     //Distância da parte de cima da tarja para uma faixa de referência de um pixel de altura,
     //que é usada para ver a média da luminosidade logo acima da tarja
     int DistFaixaRef;
@@ -374,6 +378,8 @@ class TParamsAI {
     //número médio de vezes que percorrendo-se da esquerda para direita a região do identificador
     //ocorre do pixel anterior não ser de identificador, e o corrente ser de identificador
     float NumMedColunas;
+    //usado para diferenciar 1 de 5
+    boolean MaisVerdeDoQueVermelho;
     int ValorCedula;
 };
 //---------------------------------------------------------------------------
@@ -392,6 +398,7 @@ class TParamsIni {
     int LargMaxTarja;
     int DesvioMax;
     int DistFaixaRef;
+    int DifVermelhoVerdeMin;
     int LargFaixaRef;
     int DifMinMediaFaixaRef;
     int LargIdentificador;
@@ -422,6 +429,7 @@ class TParamsIni {
         "LargMaxTarja",
         "DesvioMax",
         "DistFaixaRef",
+        "DifVermelhoVerdeMin",
         "LargFaixaRef",
         "DifMinMediaFaixaRef",
         "LargIdentificador",
@@ -483,6 +491,9 @@ class TParamsIni {
         }
         if (nome.equals("DistFaixaRef")) {
             PropXFim = valor;
+        }
+        if (nome.equals("DifVermelhoVerdeMin")) {
+            DifVermelhoVerdeMin = valor;
         }
         if (nome.equals("LargFaixaRef")) {
             LargFaixaRef = valor;
@@ -580,6 +591,9 @@ class TParamsIni {
         if (nome.equals("DistFaixaRef")) {
             return PropXFim;
         }
+        if (nome.equals("DifVermelhoVerdeMin")) {
+            return DifVermelhoVerdeMin;
+        }
         if (nome.equals("LargFaixaRef")) {
             return LargFaixaRef;
         }
@@ -657,6 +671,7 @@ class TParamsIni {
         DesvioMax = outro.DesvioMax;
 
         DistFaixaRef = outro.DistFaixaRef;
+        DifVermelhoVerdeMin = outro.DifVermelhoVerdeMin;
         LargFaixaRef = outro.LargFaixaRef;
         DifMinMediaFaixaRef = outro.DifMinMediaFaixaRef;
         LargIdentificador = outro.LargIdentificador;
@@ -693,6 +708,7 @@ class TParamsIni {
         DesvioMax = objINI.getIntegerProperty("Geral", "DesvioMax");
 
         DistFaixaRef = objINI.getIntegerProperty("Geral", "DistFaixaRef");
+        DifVermelhoVerdeMin = objINI.getIntegerProperty("Geral", "DifVermelhoVerdeMin");
         LargFaixaRef = objINI.getIntegerProperty("Geral", "LargFaixaRef");
         DifMinMediaFaixaRef = objINI.getIntegerProperty("Geral", "DifMinMediaFaixaRef");
         LargIdentificador = objINI.getIntegerProperty("Geral", "LargIdentificador");
@@ -729,13 +745,14 @@ class TParamsRC {
     TParamsAI ParamsAI;
     int LumMedianaImagem;
 
-    TParamsRC(TParamsIni ParamsIni, CTonsCinza TonsCinza, CBitmap Bitmap) {
+    TParamsRC(TParamsIni ParamsIni, CTonsCinza TonsCinza, CBitmap Bitmap, CBitmap ImagemCores) {
         ParamsMLT = new TParamsMLT();
         ParamsABT = new TParamsABT();
         ParamsAI = new TParamsAI();
         CarregaParametros(ParamsIni);
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
+        ParamsAI.ImagemCores=ImagemCores;
 
         ConverteParametrosDependentesLargura();
     }
@@ -756,6 +773,7 @@ class TParamsRC {
         ParamsABT.DesvioMax = (float) (ParamsIni.DesvioMax / 1000.0);
 
         ParamsAI.DistFaixaRef = ParamsIni.DistFaixaRef;
+        ParamsAI.DifVermelhoVerdeMin = ParamsIni.DifVermelhoVerdeMin;
         ParamsAI.LargFaixaRef = ParamsIni.LargFaixaRef;
         ParamsAI.DifMinMediaFaixaRef = ParamsIni.DifMinMediaFaixaRef;
         ParamsAI.LargIdentificador = ParamsIni.LargIdentificador;
@@ -793,6 +811,7 @@ class TParamsRC {
         retorno += "ParamsDesvioMax = " + ParamsABT.DesvioMax + "\n";
 
         retorno += "DistFaixaRef = " + ParamsAI.DistFaixaRef + "\n";
+        retorno += "DifVermelhoVerdeMin = " + ParamsAI.DifVermelhoVerdeMin + "\n";
         retorno += "LargFaixaRef = " + ParamsAI.LargFaixaRef + "\n";
         retorno += "DifMinMediaFaixaRef = " + ParamsAI.DifMinMediaFaixaRef + "\n";
         retorno += "LargIdentificador = " + ParamsAI.LargIdentificador + "\n";
