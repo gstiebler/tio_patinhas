@@ -15,8 +15,6 @@ import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,7 +29,7 @@ public class CDesktopFuncs {
         TParamsDir ParamsDir=new TParamsDir();
         
         TParamsRC ParamsRC = new TParamsRC(new TParamsIni("ParamsTP.ini"),
-                new CTonsCinza(image), new CBitmap(image));
+                new CTonsCinza(image), new CBitmap(image), new CBitmap(image));
         UTioPatinhas.ReconheceCedula(ParamsRC);
         System.out.println("Valor cédula: " +
                 String.valueOf(ParamsRC.ParamsAI.ValorCedula));

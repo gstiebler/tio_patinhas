@@ -89,11 +89,14 @@ public class CTestes {
                 if (SalvaErradas) {
                     //inicializa uma imagem de debug que vai ser salva no diretório especificado
                     ParamsRC = new TParamsRC(ParamsIni,
-                            new CTonsCinza(NotaTemp.imagem), new CBitmap(NotaTemp.imagem));
+                            new CTonsCinza(NotaTemp.imagem), 
+                            new CBitmap(NotaTemp.imagem),
+                            new CBitmap(NotaTemp.imagem));
                     COutputDebug.InicializaArquivo();
                 } else {
                     ParamsRC = new TParamsRC(ParamsIni,
-                            new CTonsCinza(NotaTemp.imagem), null);
+                            new CTonsCinza(NotaTemp.imagem), null,
+                            new CBitmap(NotaTemp.imagem));
                 }
                 UTioPatinhas.ReconheceCedula(ParamsRC);
                 TotalNotas++;

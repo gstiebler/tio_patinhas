@@ -4,9 +4,6 @@
  */
 package testejavadesktop;
 
-import java.util.Collections;
-import java.util.Vector;
-
 /**
  *
  * @author Administrator
@@ -31,11 +28,13 @@ public class UTioPatinhas {
         ParamsRC.ParamsABT.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
+        ParamsRC.ParamsAI.AltTarja=(int) ParamsRC.ParamsABT.MediaAlturaTarja;
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
         if (ParamsRC.ParamsABT.AchouTarja) {
             ParamsRC.ParamsAI.RefTarja = ParamsRC.ParamsABT.RefTarja;
             ParamsRC.ParamsAI.BImgDest = ParamsRC.ParamsABT.BImgDest;
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
+            VerificaSeTemMaisVerdeDoQueVermelho(ParamsRC.ParamsAI);
             AnalizaIdentificador(ParamsRC.ParamsAI);
         }
     //EscreveParametros(ParamsRC);
@@ -237,7 +236,7 @@ public class UTioPatinhas {
         int n, nMenorX, m, LargTarjaCandidata;
         TTarja TarjaCandidata;
         int MenorX, AlturaTarjaMColunaN;
-        double soma, desvio, media, MediaTarjaSelecionada = 0;
+        double soma, desvio, AlturaMedia, MediaTarjaSelecionada = 0;
         PreparaSelecionaTarja(ParamsABT);
         MenorX = 0xFFFFFF;
         nMenorX = -1;
@@ -259,13 +258,13 @@ public class UTioPatinhas {
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                 }
-                media = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
+                AlturaMedia = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
                     AlturaTarjaMColunaN =
                             ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
-                    soma = Math.abs(media - AlturaTarjaMColunaN);
+                    soma = Math.abs(AlturaMedia - AlturaTarjaMColunaN);
                 }
                 desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
                 COutputDebug.WriteOutput("desvio padrão alturas: " + String.valueOf(desvio));
@@ -274,13 +273,13 @@ public class UTioPatinhas {
                     boolean TemContrasteSuficienteNoLadoEsquerdo;
                     COutputDebug.WriteOutput("menor do que o limite de : " + String.valueOf(ParamsABT.DesvioMax));
                     TemContrasteSuficienteNoLadoEsquerdo =
-                            GeraContrasteLadoEsquerdoTarja(ParamsABT, (int) media,
+                            GeraContrasteLadoEsquerdoTarja(ParamsABT, (int) AlturaMedia,
                             new TPonto(TarjaCandidata.X, TarjaCandidata.PriYEnc),
                             ParamsABT.DifMinLum);
                     if (TemContrasteSuficienteNoLadoEsquerdo && ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
                         nMenorX = n;
-                        MediaTarjaSelecionada = media;
+                        MediaTarjaSelecionada = AlturaMedia;
                     }
                 }
             }
@@ -580,6 +579,33 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
 
+    static void VerificaSeTemMaisVerdeDoQueVermelho(TParamsAI ParamsAI)
+    {
+        Cor[][] ImgOriginal = ParamsAI.ImagemCores.PMCor;
+        Cor Pixel;
+        int QuartoAltura=(int) (ParamsAI.AltTarja * 0.25);
+        int xIni, xFim, yIni, yFim, x, y;
+        xIni=ParamsAI.RefTarja.x + QuartoAltura;
+        xFim=ParamsAI.RefTarja.x+ParamsAI.AltTarja-QuartoAltura;
+        yIni=ParamsAI.RefTarja.y+QuartoAltura;
+        yFim=ParamsAI.RefTarja.y+ParamsAI.AltTarja-QuartoAltura;
+        int NumVerde=0, NumVermelho=0;
+        for (y=yIni; y<yFim; y+=2)
+        {
+            for (x=xIni; x<xFim; x+=2)
+            {
+                Pixel=ImgOriginal[y][x];
+                if (((Pixel.Vermelho % 255)-Pixel.Verde)>ParamsAI.DifVermelhoVerdeMin)
+                    NumVermelho++;
+                else
+                    NumVerde++;
+            }
+        }
+        COutputDebug.WriteOutput("NumVerde: "+NumVerde);
+        COutputDebug.WriteOutput("NumVermelho: "+NumVermelho);
+        ParamsAI.MaisVerdeDoQueVermelho=(NumVerde>NumVermelho);
+    }
+
     /**
      * Analiza o identificador para detectar o valor das notas.
      */
@@ -600,14 +626,8 @@ public class UTioPatinhas {
         //processando ea esquerda para a direita e da direita para a esquerda.
         //usados para diferenciar 5 de 1
         int[] VetorMaisEscuroEsqDir, VetorMaisEscuroDirEsq;
-        //variável que armazena em cada linha o ponto mais claro entre dois pontos escuros.
-        //Usada para diferenciar 5 de 1
-        int PontoMaisFundoVale;
         //Usada para diferenciar 5 de 1
         int MaisEscuroAteAgora;
-        //Usada para diferenciar 5 de 1. Cada ponto representa o valor do ponto mais
-        //fundo do vale de cada linha
-        Vector PontosMaisFundosVale = new Vector();
         int yImagemOriginal;
         int[] VetorLarguras;
         char[] VetGruposValidos = new char[TAM_VETOR_LIMITES_VERTICAIS_GRUPOS];
@@ -714,24 +734,6 @@ public class UTioPatinhas {
                     }
                     VetorMaisEscuroDirEsq[contador--] = MaisEscuroAteAgora;
                 }
-
-                //calcula PontoMaisFundoVale
-                int MaisClaro;
-                int ProfundidadeVale;
-                contador = 0;
-                int MaiorProfundidadeVale = 0;
-                for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
-                    MaisClaro = VetorMaisEscuroDirEsq[contador];
-                    if (MaisClaro < VetorMaisEscuroEsqDir[contador]) {
-                        MaisClaro = VetorMaisEscuroEsqDir[contador];
-                    }
-                    ProfundidadeVale = ImgSrc[yImagemOriginal][x] - MaisClaro;
-                    if (ProfundidadeVale > MaiorProfundidadeVale) {
-                        MaiorProfundidadeVale = ProfundidadeVale;
-                    }
-                    contador++;
-                }
-                PontosMaisFundosVale.addElement(new Integer(MaiorProfundidadeVale));
             }//if ((LargLinha > 0) && (xIni>0) && (XEsq>0)) {
 
             VetorLarguras[y] = LargLinha;
@@ -752,18 +754,6 @@ public class UTioPatinhas {
                     break;
                 }
             }
-        }//for (y = ARect.Height(); y > 0; y--) {
-        if (PontosMaisFundosVale.size() > 0) {
-            Collections.sort(PontosMaisFundosVale, new ComparaInteiro());
-            for (int k = 0; k < PontosMaisFundosVale.size(); k++) {
-                COutputDebug.WriteOutput("Profundeza vale " + k + ": " +
-                        ((Integer) PontosMaisFundosVale.elementAt(k)).intValue());
-            }
-            int IndiceVetor = 1;//(int) Math.round(PontosMaisFundosVale.size() * 0.15);
-            ParamsAI.ProfundezaVale =
-                    ((Integer) PontosMaisFundosVale.elementAt(IndiceVetor)).intValue();
-        } else {
-            ParamsAI.ProfundezaVale = 0;
         }
         int soma = 0;
         for (int w = 0; w < TAM_HIST; w++) {
@@ -814,7 +804,6 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Inclinação identificador: " + String.valueOf(ParamsAI.Inclinacao));
         COutputDebug.WriteOutput("Altura identificador: " + String.valueOf(ParamsAI.Alt));
         COutputDebug.WriteOutput("Relação larguras identificador: " + String.valueOf(ParamsAI.RelacaoMedianasLargurasEncEmb));
-        COutputDebug.WriteOutput("Profundeza vale: " + String.valueOf(ParamsAI.ProfundezaVale));
         if (ParamsAI.RelacaoMedianasLargurasEncEmb > 0) {
             COutputDebug.WriteOutput("Relação inversa larguras identificador: " + String.valueOf(1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb));
         }
@@ -859,14 +848,14 @@ public class UTioPatinhas {
                     //ifdef DEBUG
                     COutputDebug.WriteOutput("Relação medianas larguras menor que o limite, pode ser \tR$1\tR$5");
                     //endif
-                    if (ParamsAI.ProfundezaVale < ParamsAI.ProfundezaValeMin) {
+                    if (ParamsAI.MaisVerdeDoQueVermelho) {
                         //ifdef DEBUG
-                        COutputDebug.WriteOutput("Número médio de colunas menor que o limite, é R$1");
+                        COutputDebug.WriteOutput("Número de verde maior que o de vermelho, é R$1");
                         //endif
                         ParamsAI.ValorCedula = 1;
                     } else {
                         //ifdef DEBUG
-                        COutputDebug.WriteOutput("Número médio de colunas maior que o limite, é R$5");
+                        COutputDebug.WriteOutput("Número de verde menor que o de vermelho, é R$5");
                         //endif
                         ParamsAI.ValorCedula = 5;
                     }
