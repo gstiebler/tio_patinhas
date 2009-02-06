@@ -44,15 +44,12 @@ class TPonto {
     int x;
     int y;
 
-    public TPonto()
-    {
-        
+    public TPonto() {
     }
 
-    public TPonto(int X, int Y)
-    {
-        x=X;
-        y=Y;
+    public TPonto(int X, int Y) {
+        x = X;
+        y = Y;
     }
 };
 
@@ -78,16 +75,12 @@ class TLimitesVerticaisGrupo {
     }
 }
 //---------------------------------------------------------------------------
+
+//contém informações do ponto vermelho, verde e amarelo de uma coluna
 class TMeioBordas {
 
     int Y1, Y2, yMeio, Altura;
 
-    /*public TMeioBordas(TMeioBordas MeioBordas){
-    Y1=MeioBordas.Y1;
-    Y1=MeioBordas.Y1;
-    yMeio=MeioBordas.yMeio;
-    Altura=MeioBordas.Altura;
-    }*/
     public TMeioBordas(int y1, int y2) {
         Inicializa(y1, y2);
     }
@@ -100,6 +93,7 @@ class TMeioBordas {
     }
 };
 
+//lista de pontos de borda, guardando também se é verde ou vermelha
 class TBorda {
 
     int Y;
@@ -122,6 +116,7 @@ class TBordasColunas {
     }
 };
 
+//lista de TMeioBordas, usado para listar todos os TMeioBordas de uma coluna
 class TVectorMeioBordas extends Vector {
 
     TVectorMeioBordas() {
@@ -137,6 +132,9 @@ class TVectorMeioBordas extends Vector {
     }
 }
 
+//vetor de TVectorMeioBordas. Cada posição deste vetor contém uma coluna.
+//cada coluna contém uma lista de TMeioBorda referente a cada par de pontos
+//vermelhos e verdes da coluna
 class TConjuntoMeioBordas {
 
     TVectorMeioBordas[] VectorMeioBordas;
@@ -167,22 +165,27 @@ class TVectorInt extends Vector {
     }
 }
 
+//Lista de pontos amarelos consecutivos de uma possível tarja
 class TTarja {
 
-    int X;
-    int UltYMeio;
-    int PriYEnc;
+    int X;//x do primeiro ponto adicionado
+    int UltYMeio;//Y do último ponto amarelo adicionado na lista
+    int PriYEnc;//Y do primeiro ponto amarelo adicionado à lista
+    int DistHorMaxPartesTarja;//gap máximo permitido entre 2 partes da tarja
+    TVectorInt VetorAlturas;
 
-    TTarja() {
+    TTarja(int distHorMaxPartesTarja) {
         VetorAlturas = new TVectorInt();
+        DistHorMaxPartesTarja=distHorMaxPartesTarja;
     }
 
     boolean Ativa(int x) {
-        return ((x - X) == VetorAlturas.size());
+        int xFimTarja=X+VetorAlturas.size();
+        return ((x-xFimTarja) <= DistHorMaxPartesTarja);
     }
-    TVectorInt VetorAlturas;
 };
 
+//lista de TTarja
 class TVectorTarja extends Vector {
 
     TVectorTarja() {
@@ -198,6 +201,7 @@ class TVectorTarja extends Vector {
     }
 }
 
+//lista de TBorda
 class TVectorBorda extends Vector {
 
     TVectorBorda() {
@@ -216,9 +220,9 @@ class TVectorBorda extends Vector {
 class ComparaInteiro implements java.util.Comparator {
 
     public int compare(Object o1, Object o2) {
-        int primeiro = ((Integer)o1).intValue();
-        int segundo = ((Integer)o2).intValue();
-        return segundo-primeiro;
+        int primeiro = ((Integer) o1).intValue();
+        int segundo = ((Integer) o2).intValue();
+        return segundo - primeiro;
     }
 }
 
@@ -258,6 +262,8 @@ class TParamsABT {
 
     CBitmap BImgDest;
     CTonsCinza TCImgSrc;
+    //gap máximo entre 2 partes da tarja
+    int DistHorMaxPartesTarja;
     //diferença mínima de luminosidade
     int DifMinLum;
     //largura da região do contraste do lado esquerdo da tarja
@@ -375,6 +381,7 @@ class TParamsIni {
 
     int PropYIni;
     int PropXFim;
+    int DistHorMaxPartesTarja;
     int DifMinLum;
     int LargRegiaoContrasteLadoEsqTarja;
     int NumMinLinhasComContraste;
@@ -404,6 +411,7 @@ class TParamsIni {
     int DifMinEmbGrupoEmbRegiaoIdentificador;
     public String[] ListaParametros = {//"PropYIni",
         //"PropXFim",
+        "DistHorMaxPartesTarja",
         "DifMinLum",
         "LargRegiaoContrasteLadoEsqTarja",
         "NumMinLinhasComContraste",
@@ -439,6 +447,9 @@ class TParamsIni {
         }
         if (nome.equals("PropXFim")) {
             PropXFim = valor;
+        }
+        if (nome.equals("DistHorMaxPartesTarja")) {
+            DistHorMaxPartesTarja = valor;
         }
         if (nome.equals("DifMinLum")) {
             DifMinLum = valor;
@@ -532,6 +543,9 @@ class TParamsIni {
         }
         if (nome.equals("PropXFim")) {
             return PropXFim;
+        }
+        if (nome.equals("DistHorMaxPartesTarja")) {
+            return DistHorMaxPartesTarja;
         }
         if (nome.equals("DifMinLum")) {
             return DifMinLum;
@@ -631,6 +645,7 @@ class TParamsIni {
     public void copia(TParamsIni outro) {
         PropYIni = outro.PropYIni;
         PropXFim = outro.PropXFim;
+        DistHorMaxPartesTarja = outro.DistHorMaxPartesTarja;
         DifMinLum = outro.DifMinLum;
         LargRegiaoContrasteLadoEsqTarja = outro.LargRegiaoContrasteLadoEsqTarja;
         NumMinLinhasComContraste = outro.NumMinLinhasComContraste;
@@ -666,6 +681,7 @@ class TParamsIni {
         PropYIni = objINI.getIntegerProperty("Geral", "PropYIni");
         PropXFim = objINI.getIntegerProperty("Geral", "PropXFim");
 
+        DistHorMaxPartesTarja = objINI.getIntegerProperty("Geral", "DistHorMaxPartesTarja");
         DifMinLum = objINI.getIntegerProperty("Geral", "DifMinLum");
         LargRegiaoContrasteLadoEsqTarja = objINI.getIntegerProperty("Geral", "LargRegiaoContrasteLadoEsqTarja");
         NumMinLinhasComContraste = objINI.getIntegerProperty("Geral", "NumMinLinhasComContraste");
@@ -728,6 +744,7 @@ class TParamsRC {
         ParamsMLT.PropYIni = (float) (ParamsIni.PropYIni / 1000.0);
         ParamsMLT.PropXFim = (float) (ParamsIni.PropXFim / 1000.0);
 
+        ParamsABT.DistHorMaxPartesTarja = ParamsIni.DistHorMaxPartesTarja;
         ParamsABT.DifMinLum = ParamsIni.DifMinLum;
         ParamsABT.LargRegiaoContrasteLadoEsqTarja = (float) (ParamsIni.LargRegiaoContrasteLadoEsqTarja / 1000.0);
         ParamsABT.NumMinLinhasComContraste = (float) (ParamsIni.NumMinLinhasComContraste / 1000.0);
@@ -765,6 +782,7 @@ class TParamsRC {
         retorno += "PropYIni = " + ParamsMLT.PropYIni + "\n";
         retorno += "PropXFim = " + ParamsMLT.PropXFim + "\n";
 
+        retorno += "DistHorMaxPartesTarja = " + ParamsABT.DistHorMaxPartesTarja + "\n";
         retorno += "DifMinLum = " + ParamsABT.DifMinLum + "\n";
         retorno += "LargRegiaoContrasteLadoEsqTarja = " + ParamsABT.LargRegiaoContrasteLadoEsqTarja + "\n";
         retorno += "NumMinLinhasComContraste = " + ParamsABT.NumMinLinhasComContraste + "\n";

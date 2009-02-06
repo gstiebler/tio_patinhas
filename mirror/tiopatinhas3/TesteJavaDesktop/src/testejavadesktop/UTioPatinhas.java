@@ -25,10 +25,10 @@ public class UTioPatinhas {
     static void ReconheceCedula(TParamsRC ParamsRC) {
         ParamsRC.LumMedianaImagem = Histograma(ParamsRC.ParamsMLT.TCImgSrc);
         ParamsRC.ConverteParametrosDependentesLumMediana();
-        ParamsRC.ParamsMLT.DifMinLum=ParamsRC.ParamsABT.DifMinLum;
+        ParamsRC.ParamsMLT.DifMinLum = ParamsRC.ParamsABT.DifMinLum;
         MostraLimiteTarja(ParamsRC.ParamsMLT);
         ParamsRC.ParamsABT.BImgDest = ParamsRC.ParamsMLT.BImgDest;
-        ParamsRC.ParamsABT.TCImgSrc=ParamsRC.ParamsMLT.TCImgSrc;
+        ParamsRC.ParamsABT.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
@@ -38,7 +38,7 @@ public class UTioPatinhas {
             ParamsRC.ParamsAI.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
             AnalizaIdentificador(ParamsRC.ParamsAI);
         }
-        //EscreveParametros(ParamsRC);
+    //EscreveParametros(ParamsRC);
     }
 
     static int Histograma(CTonsCinza TCImgSrc) {
@@ -183,18 +183,18 @@ public class UTioPatinhas {
      */
     static void AnalizaBordasTarja(TParamsABT ParamsABT) {
 
-        int x,
-                n;
+        int x, n;
         int NumColunas = ParamsABT.BordasColunas.NumColunas;
         ParamsABT.ConjuntoMeioBordas = new TConjuntoMeioBordas(NumColunas);
         int dif;
-        TVectorBorda BordasTemp;
+        TVectorBorda BordasTemp;//guarda as bordas da coluna corrente
         TBorda BordaEnc, BordaEmb;
-        TMeioBordas MeioBordasTemp;//= new TMeioBordas();
+        TMeioBordas MeioBordasTemp;//TMeioBordas: ponto amarelo, verde e vermelho
         Cor[][] ImgDest = null;
         if (ParamsABT.BImgDest != null) {
             ImgDest = ParamsABT.BImgDest.PMCor;
         }
+        //percorre todas as colunas
         for (x = 0; x < NumColunas; x++) {
             BordasTemp = ParamsABT.BordasColunas.Bordas[x];
             //percorre todas as bordas da coluna
@@ -202,11 +202,16 @@ public class UTioPatinhas {
                 BordaEnc = BordasTemp.retornaTBorda(n - 1);
                 BordaEmb = BordasTemp.retornaTBorda(n);
                 dif = BordaEmb.Y - BordaEnc.Y;
+                //se a borda de cima for vermelha, a de baixo for verde,
+                //e a distância entre elas for de borda, marca ponto amarelo
                 if ((BordaEmb.TipoBorda == BORDA_ESCURO_CLARO) &&
                         (BordaEnc.TipoBorda == BORDA_CLARO_ESCURO) &&
                         (dif >= ParamsABT.AltMinTarja) && (dif <= ParamsABT.AltMaxTarja)) {
+                    //cria ponto amarelo
                     MeioBordasTemp = new TMeioBordas(BordaEnc.Y, BordaEmb.Y);
+                    //adiciona ponto amarelo na lista de pontos da coluna corrente
                     ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].addElement(MeioBordasTemp);
+                    //se tiver imagem de destino, pinta o ponto amarelo
                     if (ImgDest != null) {
                         ImgDest[MeioBordasTemp.yMeio][x].SetAmarelo();
                     }
@@ -258,7 +263,7 @@ public class UTioPatinhas {
                 //calcula o desvio padrão
                 soma = 0;
                 for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    AlturaTarjaMColunaN = 
+                    AlturaTarjaMColunaN =
                             ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
                     soma = Math.abs(media - AlturaTarjaMColunaN);
                 }
@@ -268,12 +273,11 @@ public class UTioPatinhas {
                 if (desvio < ParamsABT.DesvioMax) {
                     boolean TemContrasteSuficienteNoLadoEsquerdo;
                     COutputDebug.WriteOutput("menor do que o limite de : " + String.valueOf(ParamsABT.DesvioMax));
-                    TemContrasteSuficienteNoLadoEsquerdo=
-                               GeraContrasteLadoEsquerdoTarja(ParamsABT, (int) media,
-                                        new TPonto(TarjaCandidata.X, TarjaCandidata.PriYEnc),
-                                        ParamsABT.DifMinLum);
-                    if (TemContrasteSuficienteNoLadoEsquerdo
-                                && ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
+                    TemContrasteSuficienteNoLadoEsquerdo =
+                            GeraContrasteLadoEsquerdoTarja(ParamsABT, (int) media,
+                            new TPonto(TarjaCandidata.X, TarjaCandidata.PriYEnc),
+                            ParamsABT.DifMinLum);
+                    if (TemContrasteSuficienteNoLadoEsquerdo && ParamsABT.VectorTarja.retornaTTarja(n).X < MenorX) {
                         MenorX = ParamsABT.VectorTarja.retornaTTarja(n).X;
                         nMenorX = n;
                         MediaTarjaSelecionada = media;
@@ -290,11 +294,12 @@ public class UTioPatinhas {
     }
 
     /**
-     * Calcula os desvios padrões das alturas de cada coluna das tarjas detectadas.
+     * Agrupa pontos amarelos em listas de pontos amarelos conectados
      */
     static void PreparaSelecionaTarja(TParamsABT ParamsABT) {
         int x;
-
+        int DistYTarjas;
+        boolean TarjaAtiva;
         int n, m;
         boolean Adicionou;
         TMeioBordas MeioBordasTemp;
@@ -303,19 +308,26 @@ public class UTioPatinhas {
             //percorre todos os meio de bordas da coluna (pixels amarelos)
             for (m = 0; m < ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].size(); m++) {
                 Adicionou = false;
+                //MeioBordasTemp ponto amarelo, e par de pontos vermelho e verde
+                //da coluna x, e o ponto amarelo de índice m, de cima para baixo
                 MeioBordasTemp = ParamsABT.ConjuntoMeioBordas.VectorMeioBordas[x].retornaTMeioBordas(m);
                 //percorre todas as tarjas que estão ativas na coluna corrente
                 for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
-                    if (ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x)) {
-                        if (Math.abs(ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio - MeioBordasTemp.yMeio) <= ParamsABT.DistMaxTarjas) {
-                            ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
-                            ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio = MeioBordasTemp.yMeio;
-                            Adicionou = true;
-                        }
+                    //distância em Y entre o ponto amarelo corrente e o último ponto amarelo
+                    //adicionado na tarja sendo processada no momento (Tarja n)
+                    DistYTarjas = Math.abs(ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio -
+                            MeioBordasTemp.yMeio);
+                    TarjaAtiva = ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x);
+                    if (TarjaAtiva && (DistYTarjas <= ParamsABT.DistMaxTarjas)) {
+                        ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
+                        ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio = MeioBordasTemp.yMeio;
+                        Adicionou = true;
                     }
                 }
+                //se o ponto amarelo não faz contato com nenhuma tarja, cria-se
+                //uma tarja nova para ele
                 if (!Adicionou) {
-                    TTarja TarjaTemp = new TTarja();
+                    TTarja TarjaTemp = new TTarja(ParamsABT.DistHorMaxPartesTarja);
                     TarjaTemp.X = x;
                     TarjaTemp.UltYMeio = MeioBordasTemp.yMeio;
                     TarjaTemp.PriYEnc = MeioBordasTemp.Y1;
@@ -329,7 +341,7 @@ public class UTioPatinhas {
     static boolean GeraContrasteLadoEsquerdoTarja(TParamsABT ParamsABT,
             int AltTarja, TPonto OrigemTarja, int LimiarDifLum) {
         int DX = 2;
-        int LargRegiaoContrasteD2=
+        int LargRegiaoContrasteD2 =
                 (int) (ParamsABT.LargRegiaoContrasteLadoEsqTarja * AltTarja);
         short[][] ImgSrc = ParamsABT.TCImgSrc.TonsCinza;
         Cor[][] ImgDest = null;
@@ -338,7 +350,7 @@ public class UTioPatinhas {
         }
         short dif;
         int XIni, XFim, YIni, YFim;
-        int NumPontosContraste=0;
+        int NumPontosContraste = 0;
         YIni = OrigemTarja.y;
         YFim = OrigemTarja.y + AltTarja;
         XIni = OrigemTarja.x - LargRegiaoContrasteD2;
@@ -346,23 +358,23 @@ public class UTioPatinhas {
         if (XIni < 0) {
             XIni = 0;
         }
-        COutputDebug.WriteOutput("XIni busca contraste: "+XIni);
-        COutputDebug.WriteOutput("XFim busca contraste: "+XFim);
+        COutputDebug.WriteOutput("XIni busca contraste: " + XIni);
+        COutputDebug.WriteOutput("XFim busca contraste: " + XFim);
 
         for (int y = YIni; y < YFim; y++) {
             for (int x = XIni; x <= XFim; x++) {
                 dif = (short) (ImgSrc[y][x] - ImgSrc[y][x + DX]);
                 if (dif > LimiarDifLum) {
                     NumPontosContraste++;
-                    if (ImgDest!=null)
-                        ImgDest[y][x+1].SetCyan();
+                    if (ImgDest != null) {
+                        ImgDest[y][x + 1].SetCyan();
+                    }
                     break;
                 }
             }
         }
-        COutputDebug.WriteOutput("Num pontos contraste: "
-                        +NumPontosContraste*100.0/AltTarja+"%");
-        return NumPontosContraste>(ParamsABT.NumMinLinhasComContraste*AltTarja);
+        COutputDebug.WriteOutput("Num pontos contraste: " + NumPontosContraste * 100.0 / AltTarja + "%");
+        return NumPontosContraste > (ParamsABT.NumMinLinhasComContraste * AltTarja);
     }
 
 //Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
