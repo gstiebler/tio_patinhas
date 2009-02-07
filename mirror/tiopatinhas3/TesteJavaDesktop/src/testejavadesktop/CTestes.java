@@ -159,6 +159,7 @@ class CResultadosTeste
     int NumNotasTotal;
     int NumAcertosTotal;
     StringMatrizConfusao MatrizConfusao;
+
     public CResultadosTeste()
     {
         ProporcaoAcertos=new double [7];
@@ -167,9 +168,9 @@ class CResultadosTeste
         MatrizConfusao = new StringMatrizConfusao();
     }
 
-    public String AcertoGeral()
+    public double AcertoGeral()
     {
-        return NumAcertosTotal*100.0/NumNotasTotal+"%";
+        return NumAcertosTotal*100.0/NumNotasTotal;
     }
 }
 

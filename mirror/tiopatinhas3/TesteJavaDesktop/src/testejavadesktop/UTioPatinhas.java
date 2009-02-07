@@ -28,7 +28,7 @@ public class UTioPatinhas {
         ParamsRC.ParamsABT.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
-        DeterminaInclinaçãoTarja(ParamsRC.ParamsABT, ParamsRC.ParamsAI);
+        //DeterminaInclinaçãoTarja(ParamsRC.ParamsABT, ParamsRC.ParamsAI);
         ParamsRC.ParamsAI.AltTarja = (int) ParamsRC.ParamsABT.MediaAlturaTarja;
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
         if (ParamsRC.ParamsABT.AchouTarja) {
@@ -383,27 +383,29 @@ public class UTioPatinhas {
     }
 
     public static void DeterminaInclinaçãoTarja(TParamsABT ParamsABT,
-            TParamsAI ParamsAI) {
-        int somax = 0, somay = 0, somaxy = 0, somax2 = 0;
-        int x, y;
-        TTarja Tarja = ParamsABT.VectorTarja.retornaTTarja(ParamsABT.nTarjaSelecionada);
-        int NumPontos = Tarja.VectorPontoAmarelo.size();
-        for (int n = 0; n < NumPontos; n++) {
-            x = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).x;
-            y = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).y;
-            somax += x;
-            somay += y;
-            somaxy += x * y;
-            somax2 += x * x;
-        }
-        //fórmula do coeficiente "a" da reta dos mínimos quadrados
-        int denominador = NumPontos * somax2 - somax*somax;
-        if (denominador > 0) {
-            ParamsAI.InclinacaoTarja = (NumPontos * somaxy - somax * somay)*1.0 /
-                                                                    denominador;
-            COutputDebug.WriteOutput("Inclinação tarja: "+ParamsAI.InclinacaoTarja);
-        } else {
-            ParamsAI.InclinacaoTarja = 0;
+                                                        TParamsAI ParamsAI) {
+        if (ParamsABT.nTarjaSelecionada >= 0) {
+            int somax = 0, somay = 0, somaxy = 0, somax2 = 0;
+            int x, y;
+            TTarja Tarja = ParamsABT.VectorTarja.retornaTTarja(ParamsABT.nTarjaSelecionada);
+            int NumPontos = Tarja.VectorPontoAmarelo.size();
+            for (int n = 0; n < NumPontos; n++) {
+                x = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).x;
+                y = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).y;
+                somax += x;
+                somay += y;
+                somaxy += x * y;
+                somax2 += x * x;
+            }
+            //fórmula do coeficiente "a" da reta dos mínimos quadrados
+            int denominador = NumPontos * somax2 - somax * somax;
+            if (denominador > 0) {
+                ParamsAI.InclinacaoTarja = (NumPontos * somaxy - somax * somay) * 1.0 /
+                        denominador;
+                COutputDebug.WriteOutput("Inclinação tarja: " + ParamsAI.InclinacaoTarja);
+            } else {
+                ParamsAI.InclinacaoTarja = 0;
+            }
         }
     }
 
@@ -702,8 +704,8 @@ public class UTioPatinhas {
         MaiorUltXEnc = 0;
         NumPixelsIdentificador = 0;
         UltYComLinha = -1;
-        COutputDebug.WriteOutput("Área do identificador: X: (" + String.valueOf(xIni) + ", " +
-                String.valueOf(xFim) + " Y: (" + String.valueOf(yIni) + ", " + String.valueOf(yFim) + ")");
+        COutputDebug.WriteOutput("Área do identificador: X: (" + xIni + ", " +
+                xFim + ") Y: (" + yIni + ", " + yFim + ")");
         //percorre a imagem de baixo até encima
 
         for (y = ARect.Height(); y > 0; y--) {
