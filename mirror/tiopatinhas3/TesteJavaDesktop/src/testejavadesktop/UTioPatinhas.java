@@ -28,8 +28,8 @@ public class UTioPatinhas {
         ParamsRC.ParamsABT.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
-        DeterminaInclinaçãoTarja(ParamsRC.ParamsABT);
-        ParamsRC.ParamsAI.AltTarja=(int) ParamsRC.ParamsABT.MediaAlturaTarja;
+        DeterminaInclinaçãoTarja(ParamsRC.ParamsABT, ParamsRC.ParamsAI);
+        ParamsRC.ParamsAI.AltTarja = (int) ParamsRC.ParamsABT.MediaAlturaTarja;
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
         if (ParamsRC.ParamsABT.AchouTarja) {
             ParamsRC.ParamsAI.RefTarja = ParamsRC.ParamsABT.RefTarja;
@@ -285,7 +285,7 @@ public class UTioPatinhas {
                 }
             }
         }
-        ParamsABT.nTarjaSelecionada=nMenorX;
+        ParamsABT.nTarjaSelecionada = nMenorX;
         if (nMenorX != -1) {
             ParamsABT.RefTarja.x = ParamsABT.VectorTarja.retornaTTarja(nMenorX).X;
             ParamsABT.RefTarja.y = ParamsABT.VectorTarja.retornaTTarja(nMenorX).PriYEnc;
@@ -320,10 +320,9 @@ public class UTioPatinhas {
                             MeioBordasTemp.yMeio);
                     TarjaAtiva = ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x);
                     if (TarjaAtiva && (DistYTarjas <= ParamsABT.DistMaxTarjas)) {
-                        ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.
-                                 adicionaPontoAmarelo(
-                                 new TPontoAmarelo(MeioBordasTemp.Altura,
-                                 x, MeioBordasTemp.yMeio));
+                        ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.adicionaPontoAmarelo(
+                                new TPontoAmarelo(MeioBordasTemp.Altura,
+                                x, MeioBordasTemp.yMeio));
                         ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio = MeioBordasTemp.yMeio;
                         Adicionou = true;
                     }
@@ -335,10 +334,9 @@ public class UTioPatinhas {
                     TarjaTemp.X = x;
                     TarjaTemp.UltYMeio = MeioBordasTemp.yMeio;
                     TarjaTemp.PriYEnc = MeioBordasTemp.Y1;
-                    TarjaTemp.VectorPontoAmarelo.
-                                 adicionaPontoAmarelo(
-                                 new TPontoAmarelo(MeioBordasTemp.Altura,
-                                 x, MeioBordasTemp.yMeio));
+                    TarjaTemp.VectorPontoAmarelo.adicionaPontoAmarelo(
+                            new TPontoAmarelo(MeioBordasTemp.Altura,
+                            x, MeioBordasTemp.yMeio));
                     ParamsABT.VectorTarja.adicionaTTarja(TarjaTemp);
                 }
             }
@@ -384,10 +382,29 @@ public class UTioPatinhas {
         return NumPontosContraste > (ParamsABT.NumMinLinhasComContraste * AltTarja);
     }
 
-    public static void DeterminaInclinaçãoTarja(TParamsABT ParamsABT)
-    {
-        //TTarja Tarja=ParamsABT.VectorTarja.retornaTTarja(ParamsABT.nTarjaSelecionada);
-        //for (int n=0; n<Tarja.)
+    public static void DeterminaInclinaçãoTarja(TParamsABT ParamsABT,
+            TParamsAI ParamsAI) {
+        int somax = 0, somay = 0, somaxy = 0, somax2 = 0;
+        int x, y;
+        TTarja Tarja = ParamsABT.VectorTarja.retornaTTarja(ParamsABT.nTarjaSelecionada);
+        int NumPontos = Tarja.VectorPontoAmarelo.size();
+        for (int n = 0; n < NumPontos; n++) {
+            x = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).x;
+            y = Tarja.VectorPontoAmarelo.retornaPontoAmarelo(n).y;
+            somax += x;
+            somay += y;
+            somaxy += x * y;
+            somax2 += x * x;
+        }
+        //fórmula do coeficiente "a" da reta dos mínimos quadrados
+        int denominador = NumPontos * somax2 - somax*somax;
+        if (denominador > 0) {
+            ParamsAI.InclinacaoTarja = (NumPontos * somaxy - somax * somay)*1.0 /
+                                                                    denominador;
+            COutputDebug.WriteOutput("Inclinação tarja: "+ParamsAI.InclinacaoTarja);
+        } else {
+            ParamsAI.InclinacaoTarja = 0;
+        }
     }
 
 //Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
@@ -593,31 +610,29 @@ public class UTioPatinhas {
     }
     //---------------------------------------------------------------------------
 
-    static void VerificaSeTemMaisVerdeDoQueVermelho(TParamsAI ParamsAI)
-    {
+    static void VerificaSeTemMaisVerdeDoQueVermelho(TParamsAI ParamsAI) {
         Cor[][] ImgOriginal = ParamsAI.ImagemCores.PMCor;
         Cor Pixel;
-        int QuartoAltura=(int) (ParamsAI.AltTarja * 0.25);
+        int QuartoAltura = (int) (ParamsAI.AltTarja * 0.25);
         int xIni, xFim, yIni, yFim, x, y;
-        xIni=ParamsAI.RefTarja.x + QuartoAltura;
-        xFim=ParamsAI.RefTarja.x+ParamsAI.AltTarja-QuartoAltura;
-        yIni=ParamsAI.RefTarja.y+QuartoAltura;
-        yFim=ParamsAI.RefTarja.y+ParamsAI.AltTarja-QuartoAltura;
-        int NumVerde=0, NumVermelho=0;
-        for (y=yIni; y<yFim; y+=2)
-        {
-            for (x=xIni; x<xFim; x+=2)
-            {
-                Pixel=ImgOriginal[y][x];
-                if (((Pixel.Vermelho % 255)-Pixel.Verde)>ParamsAI.DifVermelhoVerdeMin)
+        xIni = ParamsAI.RefTarja.x + QuartoAltura;
+        xFim = ParamsAI.RefTarja.x + ParamsAI.AltTarja - QuartoAltura;
+        yIni = ParamsAI.RefTarja.y + QuartoAltura;
+        yFim = ParamsAI.RefTarja.y + ParamsAI.AltTarja - QuartoAltura;
+        int NumVerde = 0, NumVermelho = 0;
+        for (y = yIni; y < yFim; y += 2) {
+            for (x = xIni; x < xFim; x += 2) {
+                Pixel = ImgOriginal[y][x];
+                if (((Pixel.Vermelho % 255) - Pixel.Verde) > ParamsAI.DifVermelhoVerdeMin) {
                     NumVermelho++;
-                else
+                } else {
                     NumVerde++;
+                }
             }
         }
-        COutputDebug.WriteOutput("NumVerde: "+NumVerde);
-        COutputDebug.WriteOutput("NumVermelho: "+NumVermelho);
-        ParamsAI.MaisVerdeDoQueVermelho=(NumVerde>NumVermelho);
+        COutputDebug.WriteOutput("NumVerde: " + NumVerde);
+        COutputDebug.WriteOutput("NumVermelho: " + NumVermelho);
+        ParamsAI.MaisVerdeDoQueVermelho = (NumVerde > NumVermelho);
     }
 
     /**

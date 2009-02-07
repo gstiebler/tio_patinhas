@@ -76,6 +76,7 @@ class COutputDebug
     static private PrintWriter out;
     static private String StrLog;
     static private boolean GravaEmArquivo=false;
+    static public boolean OutTela=true;
     public static void InicializaArquivo()
     {
         GravaEmArquivo=true;
@@ -98,8 +99,10 @@ class COutputDebug
     public static void WriteOutput(String str) {
         if (GravaEmArquivo)
             StrLog+=str+"\n";
-        //else
-        //    System.out.println(str);
+        else if (OutTela)
+        {
+            System.out.println(str);
+        }
     }
 }
 
