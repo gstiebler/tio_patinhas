@@ -20,7 +20,7 @@ public class CTestes {
         String retorno = "";
         TParamsDir ParamsDir = new TParamsDir();
         TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase() + "ParamsTP.ini");
-        double[] Acertos = new double[7];
+        CResultadosTeste ResultadosTeste=new CResultadosTeste();
         String PastaBase = ParamsDir.getDir("DiretorioSelecionadas");
         long tempo1 = System.currentTimeMillis();
         CArquivosTeste ArquivosTeste;
@@ -30,36 +30,31 @@ public class CTestes {
             ArquivosTeste = new CArquivosTeste(PastaBase, CarregaArquivos);
         }
         long tempo2 = System.currentTimeMillis();
-        StringMatrizConfusao MatrizConfusao = new StringMatrizConfusao();
-        CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, SalvaErradas);
+        CalculaAcertos(ParamsIni, ArquivosTeste, SalvaErradas, ResultadosTeste);
         for (int n = 0; n < 7; n++) {
-            retorno += CNota.NotaPorIndice(n) + ": " + Acertos[n] * 100.0 + "\n";
+            retorno += CNota.NotaPorIndice(n) + ": " + 
+                            ResultadosTeste.ProporcaoAcertos[n] * 100.0 + "\n";
         }
+        retorno += "\n";
+        retorno+="Acertos geral: "+ResultadosTeste.AcertoGeral()+"\n";
         retorno += "\n";
         for (int n = 0; n < 7; n++) {
             retorno += CNota.NotaPorIndice(n) + "\t";
         }
         retorno += "\n";
         for (int n = 0; n < 7; n++) {
-            retorno += MatrizConfusao.RetornaString(n) + "\n";
+            retorno += ResultadosTeste.MatrizConfusao.RetornaString(n) + "\n";
         }
         retorno += "\n";
         for (int n = 0; n < 7; n++) {
-            retorno += MatrizConfusao.RetornaStringPorcentagem(n) + "\n";
+            retorno += ResultadosTeste.MatrizConfusao.RetornaStringPorcentagem(n) + "\n";
         }
         retorno += "Carga arquivos: " + new Double((tempo2 - tempo1) / 1000.0).toString() + "\n";
         retorno += "Reconhecimentos: " + new Double((System.currentTimeMillis() - tempo2) / 1000.0).toString() + "\n";
 
         FileWriter outFile;
         PrintWriter out;
-        int ano=Calendar.getInstance().get(Calendar.YEAR);
-        int mes=Calendar.getInstance().get(Calendar.MONTH);
-        int dia=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        int hora=Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int minuto=Calendar.getInstance().get(Calendar.MINUTE);
-        int segundo=Calendar.getInstance().get(Calendar.SECOND);
-        String caminho_arq=ParamsDir.getDir("DiretorioLogs")+
-                    ano+"-"+mes+"-"+dia+"_"+hora+"-"+minuto+"-"+segundo+".txt";
+        String caminho_arq=ParamsDir.getDir("DiretorioLogs")+NomeLog();
         try {
             outFile = new FileWriter(caminho_arq);
             out = new PrintWriter(outFile);
@@ -73,14 +68,14 @@ public class CTestes {
     }
 
     public static void CalculaAcertos(TParamsIni ParamsIni,
-            CArquivosTeste ArquivosTeste, double[] AcertosNota, StringMatrizConfusao MatrizConfusao,
-            boolean SalvaErradas) {
+            CArquivosTeste ArquivosTeste, boolean SalvaErradas,
+            CResultadosTeste ResultadosTeste) {
         TParamsDir ParamsDir = new TParamsDir();
-        int TotalNotas, Acertos;
+        int NumNotas, Acertos;
         CNota NotaTemp;
         for (int n = 0; n < ArquivosTeste.NumNotas(); n++) {
             CImagensNota ImagensNota = ArquivosTeste.ImagensNota(n);
-            TotalNotas = 0;
+            NumNotas = 0;
             Acertos = 0;
             System.out.println("Nota: " + n);
             for (int i = 0; i < ImagensNota.NumElementos(); i++) {
@@ -99,7 +94,7 @@ public class CTestes {
                             new CBitmap(NotaTemp.imagem));
                 }
                 UTioPatinhas.ReconheceCedula(ParamsRC);
-                TotalNotas++;
+                NumNotas++;
                 if ((i % 10) == 0) {
                     System.out.println(i);
                 }
@@ -121,11 +116,53 @@ public class CTestes {
                     }
                 }
 
-                MatrizConfusao.AdicionaReconhecimento(ImagensNota.nota,
-                        ParamsRC.ParamsAI.ValorCedula);
+                ResultadosTeste.MatrizConfusao.AdicionaReconhecimento(
+                        ImagensNota.nota, ParamsRC.ParamsAI.ValorCedula);
             }
-            AcertosNota[n] = Acertos * 1.0 / TotalNotas;
+            ResultadosTeste.ProporcaoAcertos[n] = Acertos * 1.0 / NumNotas;
+            ResultadosTeste.NumNotasTotal+=NumNotas;
+            ResultadosTeste.NumAcertosTotal+=Acertos;
         }
+    }
+
+    private static String NomeLog()
+    {
+        java.text.DecimalFormat nft = new java.text.DecimalFormat("#00.###");
+        nft.setDecimalSeparatorAlwaysShown(false);
+        int ano=Calendar.getInstance().get(Calendar.YEAR);
+        int mes=Calendar.getInstance().get(Calendar.MONTH);
+        int dia=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int hora=Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minuto=Calendar.getInstance().get(Calendar.MINUTE);
+        int segundo=Calendar.getInstance().get(Calendar.SECOND);
+        String caminho_arq=
+                    ano+"-"+
+                    nft.format(mes)+"-"+
+                    nft.format(dia)+"_"+
+                    nft.format(hora)+"-"+
+                    nft.format(minuto)+"-"+
+                    nft.format(segundo)+".txt";
+        return caminho_arq;
+    }
+}
+
+class CResultadosTeste
+{
+    double[] ProporcaoAcertos;
+    int NumNotasTotal;
+    int NumAcertosTotal;
+    StringMatrizConfusao MatrizConfusao;
+    public CResultadosTeste()
+    {
+        ProporcaoAcertos=new double [7];
+        NumNotasTotal=0;
+        NumAcertosTotal=0;
+        MatrizConfusao = new StringMatrizConfusao();
+    }
+
+    public String AcertoGeral()
+    {
+        return NumAcertosTotal*100.0/NumNotasTotal+"%";
     }
 }
 

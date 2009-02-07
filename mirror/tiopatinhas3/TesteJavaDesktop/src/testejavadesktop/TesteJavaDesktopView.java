@@ -20,7 +20,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

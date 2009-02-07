@@ -165,6 +165,34 @@ class TVectorInt extends Vector {
     }
 }
 
+class TPontoAmarelo {
+
+    int x, y, Altura;
+
+    public TPontoAmarelo(int altura, int X, int Y) {
+        x = X;
+        y = Y;
+        Altura = altura;
+    }
+}
+
+class TVectorPontoAmarelo extends Vector {
+
+    TVectorPontoAmarelo() {
+        super();
+    }
+
+    void adicionaPontoAmarelo(TPontoAmarelo PontoAmarelo)
+    {
+        addElement(PontoAmarelo);
+    }
+
+    TPontoAmarelo retornaPontoAmarelo(int indice)
+    {
+        return (TPontoAmarelo) (elementAt(indice));
+    }
+}
+
 //Lista de pontos amarelos consecutivos de uma possível tarja
 class TTarja {
 
@@ -172,16 +200,18 @@ class TTarja {
     int UltYMeio;//Y do último ponto amarelo adicionado na lista
     int PriYEnc;//Y do primeiro ponto amarelo adicionado à lista
     int DistHorMaxPartesTarja;//gap máximo permitido entre 2 partes da tarja
-    TVectorInt VetorAlturas;
+    //TVectorInt VetorAlturas;
+    TVectorPontoAmarelo VectorPontoAmarelo;
 
     TTarja(int distHorMaxPartesTarja) {
-        VetorAlturas = new TVectorInt();
-        DistHorMaxPartesTarja=distHorMaxPartesTarja;
+        //VetorAlturas = new TVectorInt();
+        VectorPontoAmarelo=new TVectorPontoAmarelo();
+        DistHorMaxPartesTarja = distHorMaxPartesTarja;
     }
 
     boolean Ativa(int x) {
-        int xFimTarja=X+VetorAlturas.size();
-        return ((x-xFimTarja) <= DistHorMaxPartesTarja);
+        int xFimTarja = X + VectorPontoAmarelo.size();
+        return ((x - xFimTarja) <= DistHorMaxPartesTarja);
     }
 };
 
@@ -285,6 +315,7 @@ class TParamsABT {
     //Este desvio é a média da diferença de altura de cada coluna da faixa para a média das alturas
     double DesvioMax;
     boolean AchouTarja;
+    int nTarjaSelecionada;
     TPonto RefTarja;
     //Vetor com locais de bordas que são analizadas para saber se são bordas da tarja
     TBordasColunas BordasColunas;
@@ -752,7 +783,7 @@ class TParamsRC {
         CarregaParametros(ParamsIni);
         ParamsMLT.TCImgSrc = TonsCinza;
         ParamsMLT.BImgDest = Bitmap;
-        ParamsAI.ImagemCores=ImagemCores;
+        ParamsAI.ImagemCores = ImagemCores;
 
         ConverteParametrosDependentesLargura();
     }
