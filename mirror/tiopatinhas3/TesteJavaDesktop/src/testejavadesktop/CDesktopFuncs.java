@@ -129,7 +129,7 @@ class TParamsDir{
     private String DirImagens;
     public TParamsDir()
     {
-        objINI = new INIFile("D:\\Projetos\\TioPatinhas\\ParamsDir.ini");
+        objINI = new INIFile("C:\\ParamsDir.ini");
         DirBase=objINI.getStringProperty("Geral", "DiretorioBase");
         DirImagens=objINI.getStringProperty("Geral", "DiretorioImagens");
     }
