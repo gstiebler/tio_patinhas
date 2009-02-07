@@ -55,8 +55,14 @@ public class CTestes {
         FileWriter outFile;
         PrintWriter out;
         String caminho_arq=ParamsDir.getDir("DiretorioLogs")+NomeLog();
+        String caminho_ultimo_log=ParamsDir.getDir("DiretorioLogs")+"ultimo_log.txt";
         try {
             outFile = new FileWriter(caminho_arq);
+            out = new PrintWriter(outFile);
+            out.println(retorno);
+            out.close();
+
+            outFile = new FileWriter(caminho_ultimo_log);
             out = new PrintWriter(outFile);
             out.println(retorno);
             out.close();
