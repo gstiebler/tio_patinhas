@@ -28,7 +28,7 @@ public class AjustesParametros {
     }
 
     public static void AjustaParametros() {
-        double[] Acertos = new double[7];
+        //double[] Acertos = new double[7];
         double Avaliacao, MelhorAvaliacao;
         int PASSO = 5;
         double intervalo, MelhorAvaliacaoGeral, MelhorAvaliacaoGeralAnterior;
@@ -62,14 +62,17 @@ public class AjustesParametros {
                 for (int n = 0; n < PASSO; n++) {
                     Valor = ParamsInf.LeParametro(parametro) + MathUtils.round(n * (intervalo * 1.0 / PASSO));
                     ParamsIni.EscreveParametro(parametro, Valor);
-                    StringMatrizConfusao MatrizConfusao=new StringMatrizConfusao();
-                    CTestes.CalculaAcertos(ParamsIni, ArquivosTeste, Acertos, MatrizConfusao, false);
-                    Avaliacao = AvaliaAcertosMedia(Acertos);
+                    CResultadosTeste ResultadosTeste=new CResultadosTeste();
+                    //StringMatrizConfusao MatrizConfusao=new StringMatrizConfusao();
+                    CTestes.CalculaAcertos(ParamsIni, ArquivosTeste, false,
+                                    ResultadosTeste);
+                    Avaliacao = ResultadosTeste.NumAcertosTotal;
                     if (Avaliacao > MelhorAvaliacao) {
                         MelhorAvaliacao = Avaliacao;
                         MelhorValor = Valor;
                     }
-                    log.EscreveLinha(Valor + ": " + df.format(Avaliacao) + StrAcertos(Acertos));
+                    log.EscreveLinha(Valor + ": " + df.format(Avaliacao) + 
+                                StrAcertos(ResultadosTeste.ProporcaoAcertos));
                     log.Atualiza();
                 }
                 ParamsIni.EscreveParametro(parametro, MelhorValor);

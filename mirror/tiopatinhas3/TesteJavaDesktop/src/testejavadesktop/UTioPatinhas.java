@@ -28,6 +28,7 @@ public class UTioPatinhas {
         ParamsRC.ParamsABT.TCImgSrc = ParamsRC.ParamsMLT.TCImgSrc;
         ParamsRC.ParamsABT.BordasColunas = ParamsRC.ParamsMLT.BordasColunas;
         AnalizaBordasTarja(ParamsRC.ParamsABT);
+        DeterminaInclinaçãoTarja(ParamsRC.ParamsABT);
         ParamsRC.ParamsAI.AltTarja=(int) ParamsRC.ParamsABT.MediaAlturaTarja;
         ParamsRC.ConverteParametrosDependentesAlturaFaixa();
         if (ParamsRC.ParamsABT.AchouTarja) {
@@ -244,7 +245,7 @@ public class UTioPatinhas {
         //percorre vector com todas as tarjas
         for (n = 0; n < ParamsABT.VectorTarja.size(); n++) {
             TarjaCandidata = ParamsABT.VectorTarja.retornaTTarja(n);
-            LargTarjaCandidata = TarjaCandidata.VetorAlturas.size();
+            LargTarjaCandidata = TarjaCandidata.VectorPontoAmarelo.size();
             //ifdef DEBUG
             COutputDebug.WriteOutput("Tarja candidata " + String.valueOf(n) + ".\tLargura:\t" + String.valueOf(LargTarjaCandidata) +
                     "\tX:\t" + String.valueOf(TarjaCandidata.X) +
@@ -255,18 +256,18 @@ public class UTioPatinhas {
                     (LargTarjaCandidata >= ParamsABT.LargMinTarja)) {
                 soma = 0;
                 //calcula a média da altura de cada coluna da possível tarja
-                for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
-                    soma += ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
+                for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.size(); m++) {
+                    soma += ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.retornaPontoAmarelo(m).Altura;
                 }
-                AlturaMedia = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
+                AlturaMedia = soma / ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.size();
                 //calcula o desvio padrão
                 soma = 0;
-                for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size(); m++) {
+                for (m = 0; m < ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.size(); m++) {
                     AlturaTarjaMColunaN =
-                            ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.retornaInteiro(m).intValue();
+                            ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.retornaPontoAmarelo(m).Altura;
                     soma = Math.abs(AlturaMedia - AlturaTarjaMColunaN);
                 }
-                desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.size();
+                desvio = soma / ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.size();
                 COutputDebug.WriteOutput("desvio padrão alturas: " + String.valueOf(desvio));
 
                 if (desvio < ParamsABT.DesvioMax) {
@@ -284,6 +285,7 @@ public class UTioPatinhas {
                 }
             }
         }
+        ParamsABT.nTarjaSelecionada=nMenorX;
         if (nMenorX != -1) {
             ParamsABT.RefTarja.x = ParamsABT.VectorTarja.retornaTTarja(nMenorX).X;
             ParamsABT.RefTarja.y = ParamsABT.VectorTarja.retornaTTarja(nMenorX).PriYEnc;
@@ -318,7 +320,10 @@ public class UTioPatinhas {
                             MeioBordasTemp.yMeio);
                     TarjaAtiva = ParamsABT.VectorTarja.retornaTTarja(n).Ativa(x);
                     if (TarjaAtiva && (DistYTarjas <= ParamsABT.DistMaxTarjas)) {
-                        ParamsABT.VectorTarja.retornaTTarja(n).VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
+                        ParamsABT.VectorTarja.retornaTTarja(n).VectorPontoAmarelo.
+                                 adicionaPontoAmarelo(
+                                 new TPontoAmarelo(MeioBordasTemp.Altura,
+                                 x, MeioBordasTemp.yMeio));
                         ParamsABT.VectorTarja.retornaTTarja(n).UltYMeio = MeioBordasTemp.yMeio;
                         Adicionou = true;
                     }
@@ -330,7 +335,10 @@ public class UTioPatinhas {
                     TarjaTemp.X = x;
                     TarjaTemp.UltYMeio = MeioBordasTemp.yMeio;
                     TarjaTemp.PriYEnc = MeioBordasTemp.Y1;
-                    TarjaTemp.VetorAlturas.adicionaInteiro(new Integer(MeioBordasTemp.Altura));
+                    TarjaTemp.VectorPontoAmarelo.
+                                 adicionaPontoAmarelo(
+                                 new TPontoAmarelo(MeioBordasTemp.Altura,
+                                 x, MeioBordasTemp.yMeio));
                     ParamsABT.VectorTarja.adicionaTTarja(TarjaTemp);
                 }
             }
@@ -374,6 +382,12 @@ public class UTioPatinhas {
         }
         COutputDebug.WriteOutput("Num pontos contraste: " + NumPontosContraste * 100.0 / AltTarja + "%");
         return NumPontosContraste > (ParamsABT.NumMinLinhasComContraste * AltTarja);
+    }
+
+    public static void DeterminaInclinaçãoTarja(TParamsABT ParamsABT)
+    {
+        //TTarja Tarja=ParamsABT.VectorTarja.retornaTTarja(ParamsABT.nTarjaSelecionada);
+        //for (int n=0; n<Tarja.)
     }
 
 //Mostra a linha cyan (azul claro) que representa o ponto de referência da tarja para a localização
