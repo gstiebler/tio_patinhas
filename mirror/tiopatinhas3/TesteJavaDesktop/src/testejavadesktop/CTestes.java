@@ -67,7 +67,8 @@ public class CTestes {
             out.println(retorno);
             out.close();
         } catch (IOException ex) {
-            COutputDebug.WriteOutput("Erro ao abrir o arquivo " + caminho_arq);
+            COutputDebug.WriteOutput("Erro ao abrir o arquivo " + caminho_arq+
+                    "\n"+ex.getMessage());
         }
 
         return retorno;

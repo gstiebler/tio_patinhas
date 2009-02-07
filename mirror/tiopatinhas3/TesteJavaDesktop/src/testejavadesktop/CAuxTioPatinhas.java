@@ -394,6 +394,7 @@ class TParamsAI {
     float LimiarRelacaoLargAlt;
     float LimiarRelacaoMenorLargAlt;
     float LimiarNumMedColunas;
+    double InclinacaoTarja;
     //Diferença máxima entre entre a parte de baixo da região do identificador e a parte de baixo.
     //de cada região candidata à região de identificador. Multiplicado pela altura da tarja
     int DifMinEmbGrupoEmbRegiaoIdentificador;    //Retorno

@@ -98,6 +98,7 @@ public class TesteJavaDesktopView extends FrameView {
     @Action
     public void ExecutarUma() {
         try {
+            COutputDebug.OutTela=true;
             JPanel cp = new JPanel(new GridLayout(0, 1));
             ImageProcessor imgProc = new ImageProcessor();
             TParamsDir ParamsDir = new TParamsDir();
@@ -134,6 +135,7 @@ public class TesteJavaDesktopView extends FrameView {
     @Action
     public void ExecutaTestes() {
         try {
+            COutputDebug.OutTela=false;
             jTextArea1.append(CTestes.ExecutaTestes(cbCarregaImagens.isSelected(), cbSalvaErradas.isSelected(), cbServidorImagens.isSelected()));
         } catch (IOException ex) {
             Logger.getLogger(TesteJavaDesktopView.class.getName()).log(Level.SEVERE, null, ex);
