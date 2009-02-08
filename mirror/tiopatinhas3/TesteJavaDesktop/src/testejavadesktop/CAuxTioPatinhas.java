@@ -390,6 +390,7 @@ class TParamsAI {
     //Limiar que define a proporção entre a largura mediana da parte de cima e de baixo
     //do identificador
     float LimiarLargLinhasIdentificador;
+    float LimiarLargLinhasIdentificadorInverso;
     //limiar que define a maior relação entre largura e altura do identificador
     float LimiarRelacaoLargAlt;
     float LimiarRelacaoMenorLargAlt;
@@ -444,6 +445,7 @@ class TParamsIni {
     int AltMinGrupoConexoIdentificador;
     int ProfundezaValeMin;
     int LimiarLargLinhasIdentificador;
+    int LimiarLargLinhasIdentificadorInverso;
     int LimiarRelacaoLargAlt;
     int LimiarRelacaoMenorLargAlt;
     int LimiarNumMedColunas;
@@ -475,6 +477,7 @@ class TParamsIni {
         "AltMinGrupoConexoIdentificador",
         "ProfundezaValeMin",
         "LimiarLargLinhasIdentificador",
+        "LimiarLargLinhasIdentificadorInverso",
         "LimiarRelacaoLargAlt",
         "LimiarRelacaoMenorLargAlt",
         "LimiarNumMedColunas",
@@ -565,6 +568,9 @@ class TParamsIni {
         }
         if (nome.equals("LimiarLargLinhasIdentificador")) {
             LimiarLargLinhasIdentificador = valor;
+        }
+        if (nome.equals("LimiarLargLinhasIdentificadorInverso")) {
+            LimiarLargLinhasIdentificadorInverso = valor;
         }
         if (nome.equals("LimiarRelacaoLargAlt")) {
             LimiarRelacaoLargAlt = valor;
@@ -665,6 +671,9 @@ class TParamsIni {
         if (nome.equals("LimiarLargLinhasIdentificador")) {
             return LimiarLargLinhasIdentificador;
         }
+        if (nome.equals("LimiarLargLinhasIdentificadorInverso")) {
+            return LimiarLargLinhasIdentificadorInverso;
+        }
         if (nome.equals("LimiarRelacaoLargAlt")) {
             return LimiarRelacaoLargAlt;
         }
@@ -717,6 +726,7 @@ class TParamsIni {
         AltMinGrupoConexoIdentificador = outro.AltMinGrupoConexoIdentificador;
         ProfundezaValeMin = outro.ProfundezaValeMin;
         LimiarLargLinhasIdentificador = outro.LimiarLargLinhasIdentificador;
+        LimiarLargLinhasIdentificadorInverso = outro.LimiarLargLinhasIdentificadorInverso;
         LimiarRelacaoLargAlt = outro.LimiarRelacaoLargAlt;
         LimiarRelacaoMenorLargAlt = outro.LimiarRelacaoMenorLargAlt;
         LimiarNumMedColunas = outro.LimiarNumMedColunas;
@@ -754,6 +764,7 @@ class TParamsIni {
         AltMinGrupoConexoIdentificador = objINI.getIntegerProperty("Geral", "AltMinGrupoConexoIdentificador");
         ProfundezaValeMin = objINI.getIntegerProperty("Geral", "ProfundezaValeMin");
         LimiarLargLinhasIdentificador = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificador");
+        LimiarLargLinhasIdentificadorInverso = objINI.getIntegerProperty("Geral", "LimiarLargLinhasIdentificadorInverso");
         LimiarRelacaoLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoLargAlt");
         LimiarRelacaoMenorLargAlt = objINI.getIntegerProperty("Geral", "LimiarRelacaoMenorLargAlt");
         LimiarNumMedColunas = objINI.getIntegerProperty("Geral", "LimiarNumMedColunas");
@@ -819,6 +830,7 @@ class TParamsRC {
         ParamsAI.AltMinGrupoConexoIdentificador = ParamsIni.AltMinGrupoConexoIdentificador;
         ParamsAI.ProfundezaValeMin = ParamsIni.ProfundezaValeMin;
         ParamsAI.LimiarLargLinhasIdentificador = (float) (ParamsIni.LimiarLargLinhasIdentificador / 1000.0);
+        ParamsAI.LimiarLargLinhasIdentificadorInverso = (float) (ParamsIni.LimiarLargLinhasIdentificadorInverso / 1000.0);
         ParamsAI.LimiarRelacaoLargAlt = (float) (ParamsIni.LimiarRelacaoLargAlt / 1000.0);
         ParamsAI.LimiarRelacaoMenorLargAlt = (float) (ParamsIni.LimiarRelacaoMenorLargAlt / 1000.0);
         ParamsAI.LimiarNumMedColunas = (float) (ParamsIni.LimiarNumMedColunas / 1000.0);
@@ -857,6 +869,7 @@ class TParamsRC {
         retorno += "AltMinGrupoConexoIdentificador = " + ParamsAI.AltMinGrupoConexoIdentificador + "\n";
         retorno += "ProfundezaValeMin = " + ParamsAI.ProfundezaValeMin + "\n";
         retorno += "LimiarLargLinhasIdentificador = " + ParamsAI.LimiarLargLinhasIdentificador + "\n";
+        retorno += "LimiarLargLinhasIdentificadorInverso = " + ParamsAI.LimiarLargLinhasIdentificadorInverso + "\n";
         retorno += "LimiarRelacaoLargAlt = " + ParamsAI.LimiarRelacaoLargAlt + "\n";
         retorno += "LimiarRelacaoMenorLargAlt = " + ParamsAI.LimiarRelacaoMenorLargAlt + "\n";
         retorno += "LimiarNumMedColunas = " + ParamsAI.LimiarNumMedColunas + "\n";

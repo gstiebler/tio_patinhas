@@ -50,7 +50,8 @@ public class CTestes {
             retorno += ResultadosTeste.MatrizConfusao.RetornaStringPorcentagem(n) + "\n";
         }
         retorno += "Carga arquivos: " + new Double((tempo2 - tempo1) / 1000.0).toString() + "\n";
-        retorno += "Reconhecimentos: " + new Double((System.currentTimeMillis() - tempo2) / 1000.0).toString() + "\n";
+        retorno += "Reconhecimentos: " + new Double((System.currentTimeMillis() - tempo2)
+                                                / 1000.0).toString() + "\n";
 
         FileWriter outFile;
         PrintWriter out;

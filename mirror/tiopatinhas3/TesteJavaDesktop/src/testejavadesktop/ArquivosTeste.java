@@ -25,9 +25,8 @@ class CNota {
         arquivo = Arquivo;
         imagem = Imagem;
     }
-    
-    public static int NotaPorIndice(int indice)
-    {
+
+    public static int NotaPorIndice(int indice) {
         int[] notas = {1, 2, 5, 10, 20, 50, 100};
         return notas[indice];
     }
@@ -36,13 +35,14 @@ class CNota {
 //interface para a classe que disponibiliza todas as imagens de um determinado
 //valor de nota
 interface CBaseCImagensNota {
-    
+
     public CNota Imagens(int indice);
+
     public int NumElementos();
 }
 
+abstract class CImagensNota extends Vector implements CBaseCImagensNota {
 
-abstract class CImagensNota extends Vector implements CBaseCImagensNota{
     public int nota;
 }
 
@@ -56,12 +56,18 @@ class CImagensNotaEmMemoria extends CImagensNota {
             // Either dir does not exist or is not a directory
             } else {
             for (int i = 0; i < children.length; i++) {
-                // Get filename of file or directory
-                String sarq = Pasta + "/" + children[i];
-                ImageProcessor imgProc = new ImageProcessor();
-                Image image2 = imgProc.loadbitmap(sarq);
-                Image image = ImageProcessor.toBufferedImage(image2);
-                addElement(new CNota(children[i], image));
+                try {
+                    // Get filename of file or directory
+                    String sarq = Pasta + "/" + children[i];
+                    ImageProcessor imgProc = new ImageProcessor();
+                    Image image2 = imgProc.loadbitmap(sarq);
+                    Image image = ImageProcessor.toBufferedImage(image2);
+                    addElement(new CNota(children[i], image));
+                } catch (Exception e) {
+                    System.out.println("Erro no construtor de CImagensNotaEmMemoria."+
+                                        e.getMessage());
+                }
+
             }
         }
     }
@@ -104,6 +110,7 @@ class CImagensNotaEmArquivo extends CImagensNota {
         return ListaArquivos.length;
     }
 }
+
 class CArquivosTeste {
 
     public CImagensNota[] Imagens;
@@ -112,10 +119,11 @@ class CArquivosTeste {
         int[] notas = {1, 2, 5, 10, 20, 50, 100};
         Imagens = new CImagensNota[7];
         for (int n = 0; n < notas.length; n++) {
-            if (EmMemoria)
+            if (EmMemoria) {
                 Imagens[n] = new CImagensNotaEmMemoria(notas[n], PastaBase + notas[n]);
-            else
+            } else {
                 Imagens[n] = new CImagensNotaEmArquivo(notas[n], PastaBase + notas[n]);
+            }
         }
     }
 

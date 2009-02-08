@@ -27,10 +27,11 @@ public class AjustesParametros {
         return soma*100.0 / 7;
     }
 
-    public static void AjustaParametros() {
+    public static void AjustaParametros(boolean CarregaImagensMemoria) {
         //double[] Acertos = new double[7];
         COutputDebug.OutTela=false;
         double Avaliacao, MelhorAvaliacao;
+        MelhorAvaliacao=0;
         int PASSO = 10;
         int UltimoValor;
         double intervalo, MelhorAvaliacaoGeral, MelhorAvaliacaoGeralAnterior;
@@ -38,7 +39,8 @@ public class AjustesParametros {
         DecimalFormat df = new DecimalFormat("#,###.00");
         TParamsDir ParamsDir=new TParamsDir();
         WriteText log = new WriteText(ParamsDir.getDirBase()+DateUtils.nowCurto()+" log.txt");
-        CArquivosTeste ArquivosTeste = new CArquivosTeste(ParamsDir.getDir("DiretorioSelecionadas"), true);
+        CArquivosTeste ArquivosTeste = new CArquivosTeste(
+                ParamsDir.getDir("DiretorioSelecionadas"), CarregaImagensMemoria);
         TParamsIni ParamsIni = new TParamsIni(ParamsDir.getDirBase()+"ParamsTP.ini");
         TParamsIni ParamsSup = new TParamsIni(ParamsDir.getDirBase()+"ParamsTPSup.ini");
         TParamsIni ParamsInf = new TParamsIni(ParamsDir.getDirBase()+"ParamsTPInf.ini");
@@ -56,13 +58,13 @@ public class AjustesParametros {
             //PERCORRE TODOS OS PARÂMETROS
             for (int k = 0; k < ParamsIni.ListaParametros.length; k++) {
                 String parametro=ParamsIni.ListaParametros[k];
-                MelhorAvaliacao = 0;
                 MelhorValor = -1;
                 intervalo = ParamsSup.LeParametro(parametro) - ParamsInf.LeParametro(parametro);
                 log.EscreveLinha(DateUtils.now());
                 log.EscreveLinha(parametro);
                 log.Atualiza();
                 UltimoValor=-10000000;
+                boolean AchouMelhor=false;
                 //PERCORRE OS VALORES DO PARÂMETRO ATUAL
                 for (int n = 0; n < PASSO; n++) {
                     Valor = ParamsInf.LeParametro(parametro) + MathUtils.round(n * (intervalo * 1.0 / PASSO));
@@ -78,14 +80,18 @@ public class AjustesParametros {
                     if (Avaliacao > MelhorAvaliacao) {
                         MelhorAvaliacao = Avaliacao;
                         MelhorValor = Valor;
+                        AchouMelhor=true;
                     }
                     log.EscreveLinha(Valor + ": " + df.format(Avaliacao) + 
                                 StrAcertos(ResultadosTeste.ProporcaoAcertos,
                                 ResultadosTeste.AcertoGeral()));
                     log.Atualiza();
                 }
-                ParamsIni.EscreveParametro(parametro, MelhorValor);
-                log.Escreve(ParamsIni.dump());
+                if (AchouMelhor)
+                {
+                    ParamsIni.EscreveParametro(parametro, MelhorValor);
+                    log.Escreve(ParamsIni.dump());
+                }
                 if (MelhorAvaliacao > MelhorAvaliacaoGeral) {
                     log.EscreveLinha("Melhora de "+df.format(MelhorAvaliacao-MelhorAvaliacaoGeral)+
                                                 "% na otimização da variável");

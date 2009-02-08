@@ -92,7 +92,7 @@ public class TesteJavaDesktopView extends FrameView {
 
     @Action
     public void AjustaParametros() {
-        AjustesParametros.AjustaParametros();
+        AjustesParametros.AjustaParametros(cbCarregaImagensAjusta.isSelected());
     }
 
     @Action
@@ -185,6 +185,7 @@ public class TesteJavaDesktopView extends FrameView {
         jButton5 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         taArquivos = new javax.swing.JTextArea();
+        cbCarregaImagensAjusta = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -262,6 +263,10 @@ public class TesteJavaDesktopView extends FrameView {
         taArquivos.setName("taArquivos"); // NOI18N
         jScrollPane2.setViewportView(taArquivos);
 
+        cbCarregaImagensAjusta.setSelected(true);
+        cbCarregaImagensAjusta.setText(resourceMap.getString("cbCarregaImagensAjusta.text")); // NOI18N
+        cbCarregaImagensAjusta.setName("cbCarregaImagensAjusta"); // NOI18N
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -282,12 +287,15 @@ public class TesteJavaDesktopView extends FrameView {
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(mainPanelLayout.createSequentialGroup()
                                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(45, 45, 45)
-                                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addComponent(cbSalvaErradas)
-                                            .addComponent(cbCarregaImagens))
+                                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(cbCarregaImagens))
+                                                .addGap(45, 45, 45)
+                                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(cbCarregaImagensAjusta)
+                                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                         .addGap(39, 39, 39)
                                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(cbServidorImagens)))
@@ -312,7 +320,9 @@ public class TesteJavaDesktopView extends FrameView {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(cbCarregaImagens)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbCarregaImagens)
+                            .addComponent(cbCarregaImagensAjusta))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbSalvaErradas)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -365,6 +375,7 @@ public class TesteJavaDesktopView extends FrameView {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox cbCarregaImagens;
+    private javax.swing.JCheckBox cbCarregaImagensAjusta;
     private javax.swing.JCheckBox cbSalvaErradas;
     private javax.swing.JCheckBox cbServidorImagens;
     private javax.swing.JButton jButton1;

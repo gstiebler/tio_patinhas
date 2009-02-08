@@ -676,6 +676,7 @@ public class UTioPatinhas {
         int Media = MediaFaixa(ParamsAI);
         COutputDebug.WriteOutput("Luminosidade média faixa: " + String.valueOf(Media));
         int Limiar = Media - ParamsAI.DifMinMediaFaixaRef;
+        COutputDebug.WriteOutput("Luminosidade limiar pixel identificador: " + Limiar);
 
         CMatrizInteiro MatrizGrupos = new CMatrizInteiro(xFim - xIni + 1, yFim - yIni + 1);
         TLimitesVerticaisGrupo[] VetorLimitesVerticaisGrupo =
@@ -747,6 +748,8 @@ public class UTioPatinhas {
             if ((LargLinha > 0) && (xIni > 0) && (XEsq > 0)) {
                 //preenche vetor VetorMaisEscuroEsqDir
                 yImagemOriginal = y + yIni;
+                if (yImagemOriginal<0)
+                    yImagemOriginal=0;
                 MaisEscuroAteAgora = 255;
                 int contador = 0;
                 for (x = xIni + XEsq; x <= (xIni + XDir); x++) {
@@ -842,11 +845,12 @@ public class UTioPatinhas {
         COutputDebug.WriteOutput("Relação Altura/Menor Largura: " + String.valueOf(ParamsAI.RelacaoMenorLargAlt));
         COutputDebug.WriteOutput("Número médio de colunas: " + String.valueOf(ParamsAI.NumMedColunas));
         //endif
-        if (ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) {
+        if ((ParamsAI.Inclinacao > ParamsAI.LimiarInclinacaoidentificador) &&
+                        (ParamsAI.Alt > ParamsAI.LimiarAlturaIdentificador)) {
             //ifdef DEBUG
-            COutputDebug.WriteOutput("Inclinação maior que o limite, pode ser \tR$2\tR$20");
+            COutputDebug.WriteOutput("Inclinação e altura maiores que o limite, pode ser \tR$2\tR$20");
             ///endif
-            if (ParamsAI.RelacaoLargAlt > ParamsAI.LimiarRelacaoLargAlt) {
+            if ((ParamsAI.RelacaoLargAlt > ParamsAI.LimiarRelacaoLargAlt)) {
                 //ifdef DEBUG
                 COutputDebug.WriteOutput("Relação Altura/Largura maior que o limite, é R$2");
                 //endif
@@ -870,7 +874,7 @@ public class UTioPatinhas {
                     COutputDebug.WriteOutput("Relação medianas larguras maior que o limite, é R$50");
                     //endif
                     ParamsAI.ValorCedula = 50;
-                } else if (1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificador) {
+                } else if (1.0 / ParamsAI.RelacaoMedianasLargurasEncEmb > ParamsAI.LimiarLargLinhasIdentificadorInverso) {
                     //ifdef DEBUG
                     COutputDebug.WriteOutput("Relação inversa medianas larguras maior que o limite, é R$100");
                     //endif
