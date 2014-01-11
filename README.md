@@ -1,4 +1,4 @@
 tio_patinhas
 ============
 
-A money paper recognizer using computer vision and cell phones.
+It reconizes money paper currency for blind people using the cell phone camera.
