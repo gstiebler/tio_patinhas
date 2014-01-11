@@ -1,8 +1,0 @@
-Reconhecimento para todos os caracteres
-Colocar parâmetros dos identificadores como parâmetros que deverão ser multiplicados com a altura média da tarja
-processando da esquerda para a direita, depois de achar um grupo de pixels de identificador, se ficar muito espaço sem pixels escuros, então dá break
-
-
-mediana da largura da parte de cima e de baixo do identificador
-Log em Memo
-Refazer programa para inserir facilmente novos parâmetros
